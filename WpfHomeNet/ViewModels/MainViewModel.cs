@@ -1,10 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using HomeNetCore.Helpers;
+using HomeNetCore.Models;
+using HomeNetCore.Services;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using WpfHomeNet.Services;
-using WpfHomeNet.Helpers;
-using WpfHomeNet.Models;
 
 namespace WpfHomeNet.ViewModels
 {

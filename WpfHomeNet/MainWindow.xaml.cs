@@ -1,33 +1,41 @@
-﻿using WpfHomeNet.Helpers;
-using WpfHomeNet.Services;
-
+﻿using HomeNetCore.Data.Builders.TablesBuilder;
+using HomeNetCore.Data.DBProviders.Sqlite;
+using HomeNetCore.Data.Repositories;
+using HomeNetCore.Data.Schemes;
+using HomeNetCore.Data.SqliteClasses;
+using HomeNetCore.Helpers;
+using HomeNetCore.Services;
+using Microsoft.Data.Sqlite;
 using System.Diagnostics;
 using System.Windows;
+using WpfHomeNet.Data.SqliteClasses;
 using WpfHomeNet.UiHelpers;
-using WpfHomeNet.Data.Repositories;
-using Microsoft.Data.Sqlite;
-using WpfHomeNet.Data.TableUserBDs;
-using WpfHomeNet.Data.GetTableStructure;
 using WpfHomeNet.ViewModels;
+
 namespace WpfHomeNet
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-
+    /// 
+   
     public partial class MainWindow : Window
     {
-        SqliteConnection _sqliteConnection;
-        private ILogger _logger;
-        private UserService _userService;
+        private readonly string dbPath = DatabasePathHelper.GetDatabasePath("home_net.db");
+        private string _connection;
+        private DBTableInitializer _databaseInitializer;
+        private SqliteGetSchemaProvider _schemaProvider;
+        private SqliteSchemaSqlInit _schemaSqlInit;
+        private TableSchema _tableSchema;        
+        private SqliteConnection _sqliteConnection;
         private LogManager _logManager;
-        public LogWindow _logWindow;
+        public  LogWindow _logWindow;
+        private UserService _userService;
         private MainViewModel _mainVm; 
         private IStatusUpdater _status;
-        private DBInitializer _databaseInitializer;
-        private string _connectionDB;
-        SqliteUsersTable _sqliteUsersTable;
-        GetSqliteTableSchema _getTableSchema;
+        private ILogger _logger;
+        private SqliteUserSqlGen _userSqlGen;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -51,31 +59,26 @@ namespace WpfHomeNet
         private async Task InitializeAsync()
         {
             try
-            {
-                _getTableSchema = new GetSqliteTableSchema();
-                _sqliteUsersTable = new SqliteUsersTable(); // Создаём папку Data/DB/, если её нет
-                PathBaseFiles.EnsureDatabaseDirectoryExists();
-
-
-                // Получаем корректный путь к БД (основной или резервный)
-                string dbPath = PathBaseFiles.GetValidDatabasePath(); ; _connectionDB = $"Data Source={dbPath}";
-                _sqliteConnection = new SqliteConnection(_connectionDB);
-                _logWindow = new LogWindow();
-                _logManager = new LogManager(_logWindow);
-                _logger = new GenericLogger(_logManager.WriteLog);
-                // Получаем валидный путь к БД (основной или резервный)
-               
+            {                
+                 _connection = $"Data Source={dbPath}";
+                 _sqliteConnection = new SqliteConnection(_connection);
+                 _logWindow = new LogWindow();
+                 _logManager = new LogManager(_logWindow);
+                 _logger = new GenericLogger(_logManager.WriteLog);
+                 _schemaSqlInit = new SqliteSchemaSqlInit();
+                 _schemaProvider = new SqliteGetSchemaProvider(_schemaSqlInit,_sqliteConnection,_logger);
+                _tableSchema = new UsersTable().Build();
                 _logger.LogInformation($"Путь бд {dbPath}");
-                       
 
+                
                 _logger.LogInformation("Application started. PID: " + Process.GetCurrentProcess().Id);
 
-                _databaseInitializer = new DBInitializer(_sqliteConnection,_sqliteUsersTable,_getTableSchema,_logger);
+                _databaseInitializer = new DBTableInitializer(_schemaProvider,_sqliteConnection,_schemaSqlInit, _tableSchema,_logger);
 
                 // Асинхронное ожидание инициализации БД
                 await _databaseInitializer.InitializeAsync();
 
-                var repo = new UserRepository(_sqliteConnection, _logger,_sqliteUsersTable);
+                var repo = new UserRepository(_sqliteConnection, _logger,_userSqlGen);
 
                 _userService = new UserService(repo, _logger);
 
@@ -97,7 +100,7 @@ namespace WpfHomeNet
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Инициализация завершилась с ошибкой: {ex.Message}");
+                _logger.LogError($"Инициализация завершилась с ошибкой: {ex.Message}"); Close();
                 throw; // Передаём исключение в ContinueWith
             }
         }

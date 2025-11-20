@@ -1,10 +1,10 @@
 ﻿using HomeSocialNetwork;
-using WpfHomeNet.Models;
 using WpfHomeNet.ViewModels;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using HomeNetCore.Models;
 
 namespace WpfHomeNet
 {

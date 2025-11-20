@@ -22,9 +22,7 @@ namespace WpfHomeNet.UiHelpers
 
         public LogManager(LogWindow logWindow)
         {
-            _logWindow = logWindow ?? throw new ArgumentNullException(nameof(logWindow));
-           
-
+            _logWindow = logWindow ?? throw new ArgumentNullException(nameof(logWindow));           
         }
 
 

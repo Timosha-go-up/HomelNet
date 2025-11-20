@@ -11,18 +11,20 @@
   <ItemGroup>
     <Compile Remove="Converters\**" />
     <Compile Remove="Properties\**" />
+    <Compile Remove="Resources\**" />
+    <Compile Remove="Views\**" />
     <EmbeddedResource Remove="Converters\**" />
     <EmbeddedResource Remove="Properties\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <EmbeddedResource Remove="Views\**" />
     <None Remove="Converters\**" />
     <None Remove="Properties\**" />
+    <None Remove="Resources\**" />
+    <None Remove="Views\**" />
     <Page Remove="Converters\**" />
     <Page Remove="Properties\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
-    <Folder Include="Services\" />
-    <Folder Include="Views\" />
+    <Page Remove="Resources\**" />
+    <Page Remove="Views\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +32,10 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview2.25289.6" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="Npgsql" Version="10.0.0-rc.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HomeNetCore\HomeNetCore.csproj" />
   </ItemGroup>
 
 </Project>
