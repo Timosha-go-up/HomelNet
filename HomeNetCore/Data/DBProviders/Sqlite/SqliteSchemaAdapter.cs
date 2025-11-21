@@ -7,8 +7,95 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
 {
     public class SqliteSchemaAdapter : ISchemaAdapter
     {
-        public string GetTableName(string rawName) =>
-            ToSnakeCase(rawName);
+        public string GetTableName(string? rawName)
+        {
+            if (string.IsNullOrEmpty(rawName))
+            {
+                throw new ArgumentException("Имя таблицы не может быть пустым");
+            }
+
+            return ToSnakeCase(rawName);
+        }
+
+        // Метод для преобразования имени колонки
+        public string GetColumnName(string? rawName)
+        {
+            if (string.IsNullOrEmpty(rawName))
+            {
+                throw new ArgumentException("Имя колонки не может быть пустым");
+            }
+
+            // Добавляем дополнительную проверку на специальные символы
+            if (rawName.Any(char.IsWhiteSpace))
+            {
+                throw new ArgumentException("Имя колонки не должно содержать пробелы");
+            }
+
+            return ToSnakeCase(rawName);
+        }
+
+        /// <summary>
+        /// Преобразует схему в формат snake_case для использования в SQL-запросах
+        /// </summary>
+        /// <param name="originalSchema">Исходная схема таблицы</param>
+        /// <returns>Отформатированная схема с именами в snake_case</returns>
+        public TableSchema ConvertToSnakeCaseSchema(TableSchema originalSchema)
+        {
+            if (originalSchema == null)
+            {
+                throw new ArgumentNullException(nameof(originalSchema), "Исходная схема не может быть null");
+            }
+
+            if (string.IsNullOrEmpty(originalSchema.TableName))
+            {
+                throw new ArgumentException("Имя таблицы не может быть пустым или null", nameof(originalSchema.TableName));
+            }
+
+            var snakeCaseSchema = new TableSchema
+            {
+                TableName = GetTableName(originalSchema.TableName),
+                Columns = originalSchema.Columns?.Select(col =>
+                {
+                    if (col == null)
+                    {
+                        throw new InvalidOperationException("Колонка в схеме не может быть null");
+                    }
+                    return new ColumnSchema
+                    {
+                        Name = GetColumnName(col.Name) ?? throw new InvalidOperationException("Не удалось преобразовать имя колонки"),
+                        Type = col.Type,
+                        Length = col.Length,
+                        IsNullable = col.IsNullable,
+                        IsPrimaryKey = col.IsPrimaryKey,
+                        IsUnique = col.IsUnique,
+                        IsAutoIncrement = col.IsAutoIncrement,
+                        CreatedAt = col.CreatedAt,
+                        IsCreatedAt = col.IsCreatedAt,
+                        Comment = col.Comment,
+                        DefaultValue = col.DefaultValue
+                    };
+                }).ToList() ?? new List<ColumnSchema>()
+            };
+
+            // Добавляем проверку перед инициализацией
+            if (!snakeCaseSchema.Columns.Any())
+            {
+                throw new InvalidOperationException("Схема не содержит колонок после преобразования");
+            }
+
+            snakeCaseSchema.Initialize();
+
+            // Проверяем результат инициализации
+            if (string.IsNullOrEmpty(snakeCaseSchema.Fields))
+            {
+                throw new InvalidOperationException("Не удалось сгенерировать список полей после инициализации");
+            }
+
+            return snakeCaseSchema;
+        }
+
+
+
 
         public List<string> GetColumnDefinitions(TableSchema schema)
         {
@@ -20,14 +107,14 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
 
             return schema.Columns.Select(col =>
             {
-                var name = $"\"{ToSnakeCase(col.Name)}\"";
+                var name = $"\"{GetColumnName(col.Name)}\"";  // Используем новый метод
 
                 string sqlType = col.Type switch
                 {
-                    ColumnType.Varchar => $"TEXT",                    // SQLite: нет VARCHAR(N), используем TEXT
-                    ColumnType.Integer => "INTEGER",                     // INTEGER = знаковое 64‑битное число
-                    ColumnType.DateTime => "TIMESTAMP",                // поддерживается, но без точности
-                    ColumnType.Boolean => "INTEGER",               // Boolean эмулируется как 0/1
+                    ColumnType.Varchar => "TEXT",
+                    ColumnType.Integer => "INTEGER",
+                    ColumnType.DateTime => "TIMESTAMP",
+                    ColumnType.Boolean => "INTEGER",
                     _ => throw new NotSupportedException($"Тип {col.Type} не поддерживается")
                 };
 
@@ -35,7 +122,6 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
 
                 if (col.IsCreatedAt)
                 {
-                    // SQLite: DEFAULT CURRENT_TIMESTAMP работает только для TIMESTAMP
                     constraints.Add("DEFAULT CURRENT_TIMESTAMP");
                 }
 
@@ -47,9 +133,6 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
                 if (col.IsPrimaryKey)
                 {
                     constraints.Add("PRIMARY KEY");
-
-                    // В SQLite PRIMARY KEY на INTEGER автоматически становится AUTOINCREMENT
-                    // Но явное указание не требуется — достаточно INTEGER PRIMARY KEY
                 }
 
                 if (col.IsUnique)
@@ -100,4 +183,5 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
             return builder.ToString();
         }
     }
+
 }

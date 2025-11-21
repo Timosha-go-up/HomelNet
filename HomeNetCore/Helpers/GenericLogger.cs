@@ -11,42 +11,89 @@ namespace HomeNetCore.Helpers
         {
             _output = output ?? throw new ArgumentNullException(nameof(output));
         }
+
         public void Log(
-      LogLevel level,
-      string message,
-      [CallerMemberName] string memberName = "",
-      [CallerFilePath] string filePath = "",
-      [CallerLineNumber] int lineNumber = 0)
+            LogLevel level,
+            string message,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0,
+            params object[] args)
         {
+            // Форматируем сообщение с параметрами
+            string formattedMessage = string.Format(message, args);
+
             // Извлекаем имя класса из пути к файлу
             string className = string.IsNullOrEmpty(filePath)
                 ? "UnknownClass"
                 : Path.GetFileNameWithoutExtension(filePath)
-                     .Split('.').Last() ?? "Unknown";
+                      .Split('.').Last() ?? "Unknown";
 
-            // Очищаем имена (удаляем лишние символы, если нужно)
             className = CleanName(className);
             memberName = CleanName(memberName);
 
-            // Формируем запись лога
             var timestamp = DateTime.UtcNow.ToString("MM/dd HH:mm:ss.fff");
             var levelStr = level.ToString().ToUpper();
-            var logEntry = $"[{timestamp}] [{levelStr}] {className}.{memberName}:{lineNumber} | {message}";
+            var logEntry = $"[{timestamp}] [{levelStr}] {className}.{memberName}:{lineNumber} | {formattedMessage}";
 
             _output(logEntry);
         }
 
+        public void LogDebug(
+            string message,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0,
+            params object[] args)
+        {
+            Log(LogLevel.Debug, message, memberName, filePath, lineNumber, args);
+        }
 
+        public void LogInformation(
+            string message,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0,
+            params object[] args)
+        {
+            Log(LogLevel.Information, message, memberName, filePath, lineNumber, args);
+        }
 
+        public void LogWarning(
+            string message,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0,
+            params object[] args)
+        {
+            Log(LogLevel.Warning, message, memberName, filePath, lineNumber, args);
+        }
 
+        public void LogError(
+            string message,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0,
+            params object[] args)
+        {
+            Log(LogLevel.Error, message, memberName, filePath, lineNumber, args);
+        }
 
+        public void LogCritical(
+            string message,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0,
+            params object[] args)
+        {
+            Log(LogLevel.Critical, message, memberName, filePath, lineNumber, args);
+        }
 
         private string CleanName(string name)
         {
             if (string.IsNullOrEmpty(name))
                 return "Unknown";
 
-            
             int startIndex = name.IndexOf('<');
             if (startIndex >= 0)
             {
@@ -57,12 +104,9 @@ namespace HomeNetCore.Helpers
                 }
             }
 
-            // Удаляем лишние символы (если нужно)
             name = name.Replace("<", "").Replace(">", "").Trim();
-
             return string.IsNullOrEmpty(name) ? "Unknown" : name;
         }
-
     }
 
 }

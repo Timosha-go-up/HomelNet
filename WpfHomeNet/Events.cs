@@ -10,8 +10,6 @@ namespace WpfHomeNet
 {
     public partial class MainWindow
     {
-
-
         private void ShowScrollViewerButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainViewModel vm)
@@ -19,15 +17,10 @@ namespace WpfHomeNet
             else
                 Debug.WriteLine("DataContext не является MainViewModel!");
         }
-
-
-
-
         private async void ShowUser_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainViewModel vm)
             {
-
 
                 vm.ScrollViewerVisibility = Visibility.Visible;
             }
@@ -37,21 +30,13 @@ namespace WpfHomeNet
             }
         }
 
-
-
-
         private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
-
-
 
         private void UsersGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
                 DragMove();
         }
-
-
-
 
         private async void AddUser_Click(object sender, RoutedEventArgs e)
         {
@@ -96,9 +81,6 @@ namespace WpfHomeNet
                 button.IsEnabled = true;
             }
         }
-
-
-
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {

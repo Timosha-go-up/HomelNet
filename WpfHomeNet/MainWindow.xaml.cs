@@ -1,8 +1,8 @@
-﻿using HomeNetCore.Data.Builders.TablesBuilder;
-using HomeNetCore.Data.DBProviders.Sqlite;
+﻿using HomeNetCore.Data.DBProviders.Sqlite;
 using HomeNetCore.Data.Repositories;
 using HomeNetCore.Data.Schemes;
 using HomeNetCore.Data.SqliteClasses;
+using HomeNetCore.Data.TableSchemas;
 using HomeNetCore.Helpers;
 using HomeNetCore.Services;
 using Microsoft.Data.Sqlite;
@@ -65,20 +65,39 @@ namespace WpfHomeNet
                  _logWindow = new LogWindow();
                  _logManager = new LogManager(_logWindow);
                  _logger = new GenericLogger(_logManager.WriteLog);
-                 _schemaSqlInit = new SqliteSchemaSqlInit();
-                 _schemaProvider = new SqliteGetSchemaProvider(_schemaSqlInit,_sqliteConnection,_logger);
+                 _schemaSqlInit = new SqliteSchemaSqlInit(_logger);
+                 _schemaProvider = new SqliteGetSchemaProvider
+                    (
+                         _schemaSqlInit,
+                         _sqliteConnection,
+                         _logger
+                     );
+               
                 _tableSchema = new UsersTable().Build();
+                _userSqlGen = new SqliteUserSqlGen(_tableSchema);
                 _logger.LogInformation($"Путь бд {dbPath}");
-
+ 
                 
                 _logger.LogInformation("Application started. PID: " + Process.GetCurrentProcess().Id);
 
-                _databaseInitializer = new DBTableInitializer(_schemaProvider,_sqliteConnection,_schemaSqlInit, _tableSchema,_logger);
+                _databaseInitializer = new DBTableInitializer
+                    (
+                        _schemaProvider,
+                        _sqliteConnection,
+                        _schemaSqlInit,
+                        _tableSchema,
+                        _logger
+                    );
 
                 // Асинхронное ожидание инициализации БД
                 await _databaseInitializer.InitializeAsync();
 
-                var repo = new UserRepository(_sqliteConnection, _logger,_userSqlGen);
+                var repo = new UserRepository
+                    (
+                        _sqliteConnection,
+                        _logger,
+                        _userSqlGen
+                    );
 
                 _userService = new UserService(repo, _logger);
 

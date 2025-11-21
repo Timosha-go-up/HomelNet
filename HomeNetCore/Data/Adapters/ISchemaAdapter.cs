@@ -5,7 +5,8 @@ namespace HomeNetCore.Data.Adapters
 {
     public interface ISchemaAdapter
     {
-        string GetTableName(string rawName);
+        string GetTableName(string? rawName);
+        public string GetColumnName(string? rawName);
         List<string> GetColumnDefinitions(TableSchema schema);
     }
 

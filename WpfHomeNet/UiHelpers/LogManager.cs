@@ -24,9 +24,6 @@ namespace WpfHomeNet.UiHelpers
         {
             _logWindow = logWindow ?? throw new ArgumentNullException(nameof(logWindow));           
         }
-
-
-
         public void WriteLog(string message)
         {
             // Очищаем от лишних переносов
@@ -52,12 +49,9 @@ namespace WpfHomeNet.UiHelpers
                     {
                         _currentAnimation += c;
                         await UpdateLogDisplayAsync(_currentAnimation, true);
-
-                        
-
-                        await Task.Delay(60);
+                       
+                        await Task.Delay(25);
                     }
-
                     // 2. Добавляем перенос строки (только один раз!)
                     await UpdateLogDisplayAsync("\n", false);
                 }
@@ -98,11 +92,5 @@ namespace WpfHomeNet.UiHelpers
             }, DispatcherPriority.Background);
         }
     }
-
-
-
-
-
-
 
 }
