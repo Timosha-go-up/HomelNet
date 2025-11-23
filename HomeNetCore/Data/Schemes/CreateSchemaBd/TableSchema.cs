@@ -33,7 +33,8 @@
         public string? IdColumnName { get; set; }
 
         public void Initialize()
-        {                      
+        {           
+           
             string idColumn = Columns.FirstOrDefault(c => c.IsPrimaryKey)?.Name
                 ?? throw new InvalidOperationException("ID-колонка не найдена в таблице");
 

@@ -6,7 +6,7 @@ using System.Text;
 namespace WpfHomeNet.Data.DBProviders.Postgres
 
 {
-    public class PostgresSchemaAdapter : ISchemaAdapter
+    public class PostgresSchemaAdapter 
     {
         public string GetTableName(string? rawName)
         {

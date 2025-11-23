@@ -2,6 +2,7 @@
 using HomeNetCore.Data.Builders;
 using HomeNetCore.Data.Schemes;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WpfHomeNet.Data.DBProviders.SqliteClasses
 {
@@ -18,7 +19,7 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
         }
 
         // Метод для преобразования имени колонки
-        public string GetColumnName(string? rawName)
+        public string GetColumnName(string? rawName,bool toSnakeCase = true,bool toCamelCase = false)
         {
             if (string.IsNullOrEmpty(rawName))
             {
@@ -31,8 +32,20 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
                 throw new ArgumentException("Имя колонки не должно содержать пробелы");
             }
 
-            return ToSnakeCase(rawName);
+            if (toSnakeCase)
+            {
+                toCamelCase = false;
+                return ToSnakeCase(rawName);
+            } 
+
+           else 
+            {
+               toSnakeCase = false;
+                return ToCamelCase(rawName);
+            }
         }
+
+       
 
         /// <summary>
         /// Преобразует схему в формат snake_case для использования в SQL-запросах
@@ -46,11 +59,11 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
                 TableName = GetTableName(originalSchema.TableName),
                 Columns = originalSchema.Columns.Select(col =>
                     new ColumnSchema
-                    {
-                        Name = GetColumnName(col.Name),
-                        OriginalName = col.Name,
+                    { 
+                        OriginalName = GetColumnName(col.Name,toCamelCase:true),
+                        Name = GetColumnName(col.Name),                       
                         Type = col.Type,
-                        Length = col.Length,
+                        Length = null,
                         IsNullable = col.IsNullable,
                         IsPrimaryKey = col.IsPrimaryKey,
                         IsUnique = col.IsUnique,
@@ -69,7 +82,7 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
             return snakeCaseSchema;
         }
 
-       
+
 
 
 
@@ -141,6 +154,7 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
                     $"или другой метод установки типа.");
         }
 
+        // Преобразование в snake_case (старый метод)
         private string ToSnakeCase(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -165,6 +179,37 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
 
             return builder.ToString();
         }
+
+        private string ToCamelCase(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return name;
+
+
+            if (!name.Contains('_') && char.IsUpper(name[0]))
+                return name;
+
+                // Проверяем, есть ли подчёркивания
+                if (name.Contains('_'))
+            {
+                // Преобразуем первую букву в нижний регистр (для camelCase)
+                name = char.ToUpper(name[0]) + name.Substring(1);
+            }
+            else
+            {
+                // Если нет подчёркиваний - делаем первую букву заглавной
+                name = char.ToUpper(name[0]) + name.Substring(1);
+            }
+
+            // Применяем регулярное выражение для обработки подчёркиваний
+            return Regex.Replace(
+                name,
+                @"_([a-zA-Z])",
+                match => match.Groups[1].Value.ToUpper()
+            ).Replace("_", "");
+        }
+
+        
     }
 
 }

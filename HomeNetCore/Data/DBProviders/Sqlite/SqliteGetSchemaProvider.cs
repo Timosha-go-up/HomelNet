@@ -26,47 +26,58 @@ namespace HomeNetCore.Data.SqliteClasses
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+       
         public async Task<TableSchema> GetActualTableSchemaAsync(string? tableName)
         {
             if (string.IsNullOrWhiteSpace(tableName))
                 throw new ArgumentException("Имя таблицы не может быть пустым", nameof(tableName));
 
-            var columns = new List<ColumnSchema>();
-
             try
             {
-                _logger.LogInformation("Получение схемы для таблицы {TableName} (SQLite)", tableName);
+               // _logger.LogInformation("Получение схемы для таблицы {TableName} (SQLite)", tableName);
 
                 using var command = _requiredConnection.CreateCommand();
                 command.CommandText = _generator.GenerateGetTableStructureSql(tableName);
 
                 using var reader = await command.ExecuteReaderAsync();
 
+                var columns = new List<ColumnSchema>();                               
+
                 while (await reader.ReadAsync())
                 {
-                    columns.Add(new ColumnSchema
+                    
+                    var column = new ColumnSchema
                     {
                         Name = reader.GetString(1),
+                        OriginalName = reader.GetString(1),
                         Type = _generator.MapDatabaseType(reader.GetString(2)),
                         IsNullable = !reader.GetBoolean(3),
-                        IsPrimaryKey = reader.GetInt32(5) > 0
-                    });
+                        IsPrimaryKey = reader.GetInt32(5) > 0,                                                
+                    };
+                   
+                    columns.Add(column);
                 }
+
+                _logger.LogDebug($"Получено {columns.Count} столбцов для таблицы {tableName}");
+
+                var getSchema = new TableSchema
+                {
+                    TableName = tableName,
+                    Columns = columns,
+                };
+                
+               getSchema.Initialize();
+
+               return getSchema;
             }
+
             catch (Exception ex)
             {
                 throw new SchemaProviderException(
                     $"Ошибка при получении схемы для таблицы {tableName} в SQLite: {ex.Message}", ex);
             }
-
-            _logger.LogDebug($"Получено ColumnCount {columns.Count} столбцов для TableName{tableName}");
-
-            return new TableSchema
-            {
-                TableName = tableName,
-                Columns = columns
-            };
         }
+
     }
 
 }

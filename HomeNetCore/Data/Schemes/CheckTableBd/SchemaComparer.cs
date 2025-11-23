@@ -92,33 +92,34 @@ namespace WpfHomeNet.Data.Schemes.CheckTableBd
         /// <summary>
         /// Проверяет, полностью ли совпадают свойства двух колонок.
         /// </summary>
+
+
+
         private bool AreColumnsEqual(ColumnSchema expected, ColumnSchema actual)
         {
-            return expected.Type == actual.Type &&
-                   expected.Length == actual.Length &&
-                   expected.IsNullable == actual.IsNullable &&
-                   expected.IsPrimaryKey == actual.IsPrimaryKey &&
-                   expected.IsUnique == actual.IsUnique &&
-                   // Особое сравнение для значения по умолчанию (может быть null или разным типом)
-                   AreDefaultValuesEqual(expected.DefaultValue, actual.DefaultValue) &&
-                   expected.IsAutoIncrement == actual.IsAutoIncrement;
+            // Базовые проверки, которые всегда доступны
+            if (expected.Name != actual.Name) return false;
+            if (expected.Type != actual.Type) return false;
+            if (expected.IsNullable != actual.IsNullable) return false;
+
+            // Проверка PRIMARY KEY, так как это критично для структуры
+            if (expected.IsPrimaryKey != actual.IsPrimaryKey) return false;
+
+            // Если есть значение по умолчанию - проверяем его
+            if (expected.DefaultValue != null || actual.DefaultValue != null)
+            {
+                return AreDefaultValuesEqual(expected.DefaultValue, actual.DefaultValue);
+            }
+
+            return true;
         }
 
-        /// <summary>
-        /// Сравнивает значения по умолчанию с учётом возможных null и разных типов.
-        /// </summary>
-        private bool AreDefaultValuesEqual(object? expected, object? actual)
+        private bool AreDefaultValuesEqual(object expectedValue, object actualValue)
         {
-            // Оба значения null — считаем равными
-            if (expected == null && actual == null)
-                return true;
+            if (expectedValue == null && actualValue == null) return true;
+            if (expectedValue == null || actualValue == null) return false;
 
-            // Одно null, другое нет — не равны
-            if (expected == null || actual == null)
-                return false;
-
-            // Оба не null — используем стандартный метод Equals для сравнения значений
-            return expected.Equals(actual);
+            return expectedValue.Equals(actualValue);
         }
 
         /// <summary>

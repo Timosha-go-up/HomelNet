@@ -6,11 +6,7 @@ namespace HomeNetCore.Data.Schemes
    
     public class ColumnSchema
     {
-        public string? Name { get; set; }
-        /// <summary>
-        ///  сюда присвоится имя которое не попадет в метод ToSnakeCase();  
-        /// </summary>
-        public string? OriginalName { get; set; }
+        public string? Name { get; set; }                
         public ColumnType Type { get; set; }
         public int? Length { get; set; }
         /// <summary>
@@ -26,6 +22,11 @@ namespace HomeNetCore.Data.Schemes
         public bool IsCreatedAt { get; set; }  // true, если колонка — «время создания»
         public string? Comment { get; internal set; }
         public object? DefaultValue { get; internal set; }
+
+        /// <summary>
+        ///  сюда присвоится имя которое не попадет в метод ToSnakeCase();  
+        /// </summary>
+        public string? OriginalName { get; set; }
     }
 }
 

@@ -5,6 +5,7 @@ using HomeNetCore.Data.Schemes.GetSchemaTableBd;
 using HomeNetCore.Helpers;
 using System.Data;
 using System.Data.Common;
+using WpfHomeNet.Data.DBProviders.SqliteClasses;
 using WpfHomeNet.Data.Schemes.CheckTableBd;
 public class DBTableInitializer
 {
@@ -13,11 +14,11 @@ public class DBTableInitializer
     private readonly ILogger _logger;
     private readonly GetSchemaProvider _schemaProvider;
     private readonly TableSchema _tableSchema;
-
+    private readonly SqliteSchemaAdapter _schemaAdapter;
 
     public DBTableInitializer
         (
-        GetSchemaProvider schemaProvider,
+        GetSchemaProvider schemaProvider,SqliteSchemaAdapter schemaAdapter,
         DbConnection connection,
         ISchemaSqlInitializer schemaSqlGenerator,
         TableSchema tableSchema,
@@ -34,6 +35,8 @@ public class DBTableInitializer
             throw new ArgumentNullException(nameof(tableSchema));
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));
+
+        _schemaAdapter = schemaAdapter;
     }
 
     public async Task InitializeAsync()
@@ -106,7 +109,7 @@ public class DBTableInitializer
 
     private async Task CheckTableStructureAsync()
     {
-        var expectedSchema = _tableSchema;
+       var actualSchema = _tableSchema; 
 
         try
         {            
@@ -115,20 +118,25 @@ public class DBTableInitializer
             {
                 await conn.OpenAsync();
             }
+            
+            var expectedSchema = await _schemaProvider.GetActualTableSchemaAsync(_tableSchema.TableName);
 
-            // Получаем фактическую схему
-            var actualSchema = await _schemaProvider.GetActualTableSchemaAsync(expectedSchema.TableName);
+
+            var actualAdaptedSchema = _schemaAdapter.ConvertToSnakeCaseSchema(actualSchema);
+            var expectedAdaptedSchema =_schemaAdapter.ConvertToSnakeCaseSchema(expectedSchema);
 
             // Обрабатываем случай отсутствия схемы
             if (actualSchema is null)
             {
-                _logger.LogError($"❌ Не удалось получить схему таблицы {expectedSchema.TableName}");
+                _logger.LogError($"❌ Не удалось получить схему таблицы {expectedAdaptedSchema.TableName}");
                 return;
             }
 
+            
+
             // Сравниваем схемы
             var comparer = new SchemaComparer();
-            var diff = comparer.Compare(expectedSchema, actualSchema);
+            var diff = comparer.Compare(expectedAdaptedSchema, actualAdaptedSchema);
 
             // Выводим детализированные результаты
             if (diff.IsIdentical)

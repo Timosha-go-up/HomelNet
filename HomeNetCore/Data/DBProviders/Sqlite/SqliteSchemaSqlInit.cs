@@ -96,7 +96,11 @@ namespace WpfHomeNet.Data.SqliteClasses
                 case "text":
                     return ColumnType.Varchar;
                 case "datetime":
+                case "date":
+                case "timestamp":
+                case "real": // SQLite часто хранит даты как REAL
                     return ColumnType.DateTime;
+                   
                 case "boolean":
                     return ColumnType.Boolean;
                 default:

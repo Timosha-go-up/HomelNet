@@ -91,6 +91,7 @@ namespace WpfHomeNet
                 _databaseInitializer = new DBTableInitializer
                     (
                         _schemaProvider,
+                        _sqliteSchemaAdapter,
                         _sqliteConnection,
                         _schemaSqlInit,
                         _tableSchema,
