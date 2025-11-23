@@ -1,39 +1,63 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Linq;
-using System.Media;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace WpfHomeNet.UiHelpers
 {
+
     public class LogManager
     {
-       
-        private readonly System.Media.SoundPlayer _soundPlayer;
-        private readonly ConcurrentQueue<string> _logQueue = new();
+        private readonly ConcurrentQueue<(string level, string message)> _logQueue = new();
         private bool _isProcessing;
         private LogWindow _logWindow;
         private string _currentAnimation = "";
 
         public LogManager(LogWindow logWindow)
         {
-            _logWindow = logWindow ?? throw new ArgumentNullException(nameof(logWindow));           
+            _logWindow = logWindow ?? throw new ArgumentNullException(nameof(logWindow));
         }
+
         public void WriteLog(string message)
         {
-            // Очищаем от лишних переносов
-            message = message.Trim('\r', '\n');
-            _logQueue.Enqueue(message);
+            Debug.WriteLine($"Получено сообщение для логирования: {message}");
+
+            // Удаляем лишние переносы строк
+            message = message
+                .Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine)
+                .Trim('\r', '\n');
+
+            var level = ExtractLogLevel(message);
+            _logQueue.Enqueue((level, message));
 
             if (!_isProcessing)
                 ProcessLogQueue();
         }
 
+        private string ExtractLogLevel(string message)
+        {
+            try
+            {
+                int[] indices = new int[]
+                {
+                message.IndexOf('['),
+                message.IndexOf(']', message.IndexOf('[')),
+                message.IndexOf('[', message.IndexOf(']')),
+                message.IndexOf(']', message.IndexOf('[', message.IndexOf(']')) + 1)
+                };
+
+                if (indices[0] >= 0 && indices[1] > indices[0] &&
+                    indices[2] > indices[1] && indices[3] > indices[2])
+                {
+                    return message.Substring(indices[2] + 1, indices[3] - indices[2] - 1)
+                                 .Trim()
+                                 .ToUpper();
+                }
+            }
+            catch { }
+
+            return "INFO";
+        }
+
+        // В LogManager добавим проверку и обработку первой строки
         private async void ProcessLogQueue()
         {
             if (_isProcessing) return;
@@ -41,19 +65,34 @@ namespace WpfHomeNet.UiHelpers
 
             try
             {
-                while (_logQueue.TryDequeue(out string? message))
+                bool isFirstMessage = true; // Флаг для первой строки
+
+                while (_logQueue.TryDequeue(out var logEntry))
                 {
-                    // 1. Анимация по символам
+                    // Проверяем первую строку на лишние переносы
+                    if (isFirstMessage)
+                    {
+                        // Удаляем лишние переносы только для первой строки
+                        logEntry.message = logEntry.message
+                            .Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine)
+                            .TrimStart('\r', '\n');
+
+                        isFirstMessage = false;
+                    }
+
                     _currentAnimation = "";
-                    foreach (char c in message)
+                    foreach (char c in logEntry.message)
                     {
                         _currentAnimation += c;
-                        await UpdateLogDisplayAsync(_currentAnimation, true);
-                       
+                        await _logWindow.AddLog(_currentAnimation, logEntry.level, true);
                         await Task.Delay(25);
                     }
-                    // 2. Добавляем перенос строки (только один раз!)
-                    await UpdateLogDisplayAsync("\n", false);
+
+                    // Добавляем перенос строки только если сообщение не заканчивается на перенос
+                    if (!logEntry.message.EndsWith(Environment.NewLine))
+                    {
+                        await _logWindow.AddLog(Environment.NewLine, logEntry.level, false);
+                    }
                 }
             }
             finally
@@ -62,35 +101,12 @@ namespace WpfHomeNet.UiHelpers
             }
         }
 
-        private async Task UpdateLogDisplayAsync(string text, bool isAnimating)
-        {
-            await _logWindow.Dispatcher.InvokeAsync(() =>
-            {
-                if (isAnimating)
-                {
-                    // Режим анимации: заменяем последнюю строку
-                    var lines = _logWindow.LogTextBox.Text
-                        .Split(new[] { '\n' }, StringSplitOptions.None);
-
-                    if (lines.Length > 0)
-                    {
-                        lines[lines.Length - 1] = text;
-                        _logWindow.LogTextBox.Text = string.Join("\n", lines);
-                    }
-                    else
-                    {
-                        _logWindow.LogTextBox.Text = text;
-                    }
-                }
-                else
-                {
-                    // Финальный перенос строки
-                    _logWindow.LogTextBox.Text += text;
-                }
-
-                _logWindow.LogTextBox.ScrollToEnd();
-            }, DispatcherPriority.Background);
-        }
     }
+
+
+
+
+
+
 
 }

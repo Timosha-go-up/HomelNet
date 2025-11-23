@@ -4,12 +4,16 @@ using WpfHomeNet.Data.Schemes;
 namespace HomeNetCore.Data.Adapters
 {
     public interface ISchemaAdapter
-    {
-        string GetTableName(string? rawName);
-        public string GetColumnName(string? rawName, bool toSnakeCase = true, bool toCamelCase = false);
+    {         
+        string ConvertTableName(string rawName, NameFormat format);
+         string ConvertColumnName(string? rawName, NameFormat format);
         List<string> GetColumnDefinitions(TableSchema schema);
     }
 
-
+  public  enum NameFormat
+    {
+        SnakeCase,
+        CamelCase
+    }
 
 }

@@ -18,7 +18,7 @@ public class DBTableInitializer
 
     public DBTableInitializer
         (
-        GetSchemaProvider schemaProvider,SqliteSchemaAdapter schemaAdapter,
+        GetSchemaProvider schemaProvider, SqliteSchemaAdapter schemaAdapter,
         DbConnection connection,
         ISchemaSqlInitializer schemaSqlGenerator,
         TableSchema tableSchema,
@@ -41,7 +41,7 @@ public class DBTableInitializer
 
     public async Task InitializeAsync()
     {
-        _logger.LogDebug("Инициализация БД: проверка таблицы users...");
+        _logger.LogDebug($"Инициализация БД: проверка таблицы {_tableSchema.TableName} ...");
 
         if (!await TableExistsAsync())
         {
@@ -50,23 +50,19 @@ public class DBTableInitializer
 
         else
         {
+            _logger.LogDebug($"Таблица {_tableSchema.TableName} существует ");
             await CheckTableStructureAsync();
         }
     }
 
     private async Task<bool> TableExistsAsync()
     {
-        var query = _schemaSqlGenerator.GenerateTableExistsSql(_tableSchema.TableName);
-        _logger.LogDebug($"Выполняемый запрос: {query}");
+        var sql = _schemaSqlGenerator.GenerateTableExistsSql(_tableSchema.TableName);
 
         try
         {
-            var result = await _dbConnection.ExecuteScalarAsync<int>(
-                query,
-                new { tableName = _tableSchema.TableName }
-            );
-
-            _logger.LogDebug($"Результат запроса: {result}");
+            var result = await _dbConnection.ExecuteScalarAsync<int>
+                (sql, new { tableName = _tableSchema.TableName });
             return result > 0;
         }
         catch (Exception ex)
@@ -74,9 +70,7 @@ public class DBTableInitializer
             _logger.LogError($"Ошибка при проверке таблицы: {ex.Message}");
             return false;
         }
-
     }
-
 
     private async Task CreateTableAsync()
     {
@@ -89,7 +83,7 @@ public class DBTableInitializer
             }
             await _dbConnection.ExecuteAsync(_schemaSqlGenerator.GenerateCreateTableSql(_tableSchema));
 
-            if (await TableExistsAsync()) _logger.LogDebug("Таблица users успешно создана.");
+            if (await TableExistsAsync()) _logger.LogDebug("Таблица users успешно создана");
 
             else
             {
@@ -106,24 +100,21 @@ public class DBTableInitializer
         }
     }
 
-
     private async Task CheckTableStructureAsync()
     {
-       var actualSchema = _tableSchema; 
-
         try
-        {            
+        {
+            _logger.LogInformation("Проверка структуры таблицы ...");
             await using var conn = _dbConnection;
             if (conn.State != ConnectionState.Open)
             {
                 await conn.OpenAsync();
             }
-            
+            var actualSchema = _tableSchema;
             var expectedSchema = await _schemaProvider.GetActualTableSchemaAsync(_tableSchema.TableName);
 
-
             var actualAdaptedSchema = _schemaAdapter.ConvertToSnakeCaseSchema(actualSchema);
-            var expectedAdaptedSchema =_schemaAdapter.ConvertToSnakeCaseSchema(expectedSchema);
+            var expectedAdaptedSchema = _schemaAdapter.ConvertToSnakeCaseSchema(expectedSchema);
 
             // Обрабатываем случай отсутствия схемы
             if (actualSchema is null)
@@ -131,8 +122,6 @@ public class DBTableInitializer
                 _logger.LogError($"❌ Не удалось получить схему таблицы {expectedAdaptedSchema.TableName}");
                 return;
             }
-
-            
 
             // Сравниваем схемы
             var comparer = new SchemaComparer();
@@ -162,12 +151,7 @@ public class DBTableInitializer
         }
         catch (Exception ex)
         {
-            _logger.LogError("❌ Ошибка проверки схемы:  ",ex.Message);
-                
-                
-            
+            _logger.LogError("❌ Ошибка проверки схемы:  ", ex.Message);            
         }
     }
-
-
 }

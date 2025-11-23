@@ -9,7 +9,7 @@ namespace HomeNetCore.Data.Generators.SqlQueriesGenerator
         string GenerateCreateTableSql(TableSchema schema);
         string GenerateTableExistsSql(string? tableName);
         string GenerateGetTableStructureSql(string? tableName);  // Для получения структуры
-        ColumnType MapDatabaseType(string? dbType);     // Для парсинга типов
+        
     }
 
 }

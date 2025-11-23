@@ -3,16 +3,6 @@
 namespace HomeNetCore.Helpers
 {
 
-
-    public enum LogLevel
-    {
-        Debug,
-        Information,
-        Warning,
-        Error,
-        Critical
-    }
-
     public interface ILogger
     {
         void Log(
@@ -57,6 +47,9 @@ namespace HomeNetCore.Helpers
             [CallerFilePath] string filePath = "",
             [CallerLineNumber] int lineNumber = 0,
             params object[] args);
+
+
+
     }
 
 }

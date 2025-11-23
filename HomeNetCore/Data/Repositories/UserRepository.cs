@@ -23,8 +23,6 @@ namespace HomeNetCore.Data.Repositories
             _logger = logger ??
                 throw new ArgumentNullException(nameof(logger));
             _userSqlGenerator =  queryGenerator;
-
-
         }
 
         public async Task<UserEntity> InsertUserAsync(UserEntity user)
@@ -48,8 +46,7 @@ namespace HomeNetCore.Data.Repositories
                 throw; // просто перебрасываем дальше — лог уже есть
             }
         }
-
-        
+       
 
         public async Task DeleteByIdAsync(int id)
         {
@@ -64,6 +61,7 @@ namespace HomeNetCore.Data.Repositories
 
             _logger.LogInformation($"Пользователь с ID {id} удалён.");
         }
+
 
         public async Task<List<UserEntity>> GetAllAsync()
         {
@@ -89,7 +87,6 @@ namespace HomeNetCore.Data.Repositories
                 throw;
             }
         }
-
 
 
         public async Task<UserEntity?> GetByIdAsync(int id)

@@ -1,17 +1,22 @@
-﻿using HomeNetCore.Data.Generators.SqlQueriesGenerator;
+﻿using HomeNetCore.Data.Builders;
+using HomeNetCore.Data.Generators.SqlQueriesGenerator;
 using HomeNetCore.Data.Schemes;
 using HomeNetCore.Data.Schemes.GetSchemaTableBd;
+using HomeNetCore.Helpers;
 using HomeNetCore.Helpers.Exceptions;
 using Microsoft.Data.Sqlite;
-
 using System.Data;
-using HomeNetCore.Helpers;
+using System.Data.Common;
 
 
 namespace HomeNetCore.Data.SqliteClasses
 {
     public class SqliteGetSchemaProvider : GetSchemaProvider
     {
+         const int ColumnNameIndex = 1;
+         const int ColumnTypeIndex = 2;
+         const int IsNullableIndex = 3;
+         const int IsPrimaryKeyIndex = 5;
         private readonly ISchemaSqlInitializer _generator;
         private readonly SqliteConnection _requiredConnection;
         private readonly ILogger _logger;
@@ -26,7 +31,6 @@ namespace HomeNetCore.Data.SqliteClasses
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-       
         public async Task<TableSchema> GetActualTableSchemaAsync(string? tableName)
         {
             if (string.IsNullOrWhiteSpace(tableName))
@@ -34,50 +38,85 @@ namespace HomeNetCore.Data.SqliteClasses
 
             try
             {
-               // _logger.LogInformation("Получение схемы для таблицы {TableName} (SQLite)", tableName);
-
                 using var command = _requiredConnection.CreateCommand();
                 command.CommandText = _generator.GenerateGetTableStructureSql(tableName);
 
                 using var reader = await command.ExecuteReaderAsync();
 
-                var columns = new List<ColumnSchema>();                               
-
-                while (await reader.ReadAsync())
-                {
-                    
-                    var column = new ColumnSchema
-                    {
-                        Name = reader.GetString(1),
-                        OriginalName = reader.GetString(1),
-                        Type = _generator.MapDatabaseType(reader.GetString(2)),
-                        IsNullable = !reader.GetBoolean(3),
-                        IsPrimaryKey = reader.GetInt32(5) > 0,                                                
-                    };
-                   
-                    columns.Add(column);
-                }
+                var columns = await ReadColumnsAsync(reader);
 
                 _logger.LogDebug($"Получено {columns.Count} столбцов для таблицы {tableName}");
 
                 var getSchema = new TableSchema
                 {
                     TableName = tableName,
-                    Columns = columns,
+                    Columns = columns
                 };
-                
-               getSchema.Initialize();
 
-               return getSchema;
+                getSchema.Initialize();
+                return getSchema;
             }
-
             catch (Exception ex)
             {
                 throw new SchemaProviderException(
-                    $"Ошибка при получении схемы для таблицы {tableName} в SQLite: {ex.Message}", ex);
+                    $"Ошибка при получении схемы для таблицы {tableName} в SQLite: {ex.Message}",
+                    ex);
             }
         }
 
+        private async Task<List<ColumnSchema>> ReadColumnsAsync(DbDataReader reader)
+        {
+            var columns = new List<ColumnSchema>();
+
+            while (await reader.ReadAsync())
+            {
+                var column = CreateColumnSchema(reader);
+                columns.Add(column);
+            }
+
+            return columns;
+        }
+
+        private ColumnSchema CreateColumnSchema(DbDataReader reader)
+        {
+            string columnName = reader.GetString(ColumnNameIndex);
+            string dbType = reader.GetString(ColumnTypeIndex);
+            bool isNullable = !reader.GetBoolean(IsNullableIndex);
+            bool isPrimaryKey = reader.GetInt32(IsPrimaryKeyIndex) > 0;
+
+            return new ColumnSchema
+            {
+                Name = columnName,
+                OriginalName = columnName,
+                Type = MapType(dbType),
+                IsNullable = isNullable,
+                IsPrimaryKey = isPrimaryKey
+            };
+        }
+
+
+
+        public ColumnType MapType(string? dbType)
+        {
+            if (dbType is null)
+            {
+                return ColumnType.Unknown;
+            }
+
+            var type = dbType.ToLower();
+            return type switch
+            {
+                "integer" => ColumnType.Integer,
+                "text" => ColumnType.Varchar,
+                "datetime" => ColumnType.DateTime,
+                "date" => ColumnType.DateTime,
+                "timestamp" => ColumnType.DateTime,
+                "real" => ColumnType.DateTime,
+                "boolean" => ColumnType.Boolean,
+                _ => ColumnType.Unknown
+            };
+        }
     }
+
 
 }

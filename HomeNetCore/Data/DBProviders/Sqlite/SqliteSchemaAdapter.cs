@@ -8,45 +8,38 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
 {
     public class SqliteSchemaAdapter : ISchemaAdapter
     {
-        public string GetTableName(string? rawName)
+        public string ConvertTableName(string? rawName, NameFormat format)
         {
             if (string.IsNullOrEmpty(rawName))
             {
                 throw new ArgumentException("Имя таблицы не может быть пустым");
             }
 
-            return ToSnakeCase(rawName);
+            return format switch
+            {
+                NameFormat.SnakeCase => ToSnakeCase(rawName),
+                NameFormat.CamelCase => ToCamelCase(rawName),
+                _ => throw new ArgumentException("Неизвестный формат")
+            };
         }
-
-        // Метод для преобразования имени колонки
-        public string GetColumnName(string? rawName,bool toSnakeCase = true,bool toCamelCase = false)
+       
+        public string ConvertColumnName(string? rawName, NameFormat format)
         {
             if (string.IsNullOrEmpty(rawName))
-            {
                 throw new ArgumentException("Имя колонки не может быть пустым");
-            }
 
-            // Добавляем дополнительную проверку на специальные символы
             if (rawName.Any(char.IsWhiteSpace))
-            {
                 throw new ArgumentException("Имя колонки не должно содержать пробелы");
-            }
 
-            if (toSnakeCase)
+            return format switch
             {
-                toCamelCase = false;
-                return ToSnakeCase(rawName);
-            } 
-
-           else 
-            {
-               toSnakeCase = false;
-                return ToCamelCase(rawName);
-            }
+                NameFormat.SnakeCase => ToSnakeCase(rawName),
+                NameFormat.CamelCase => ToCamelCase(rawName),
+                _ => throw new ArgumentException("Неизвестный формат")
+            };          
         }
 
        
-
         /// <summary>
         /// Преобразует схему в формат snake_case для использования в SQL-запросах
         /// </summary>
@@ -56,12 +49,12 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
         {
             var snakeCaseSchema = new TableSchema
             {
-                TableName = GetTableName(originalSchema.TableName),
+                TableName = ConvertTableName(originalSchema.TableName,NameFormat.SnakeCase),
                 Columns = originalSchema.Columns.Select(col =>
                     new ColumnSchema
                     { 
-                        OriginalName = GetColumnName(col.Name,toCamelCase:true),
-                        Name = GetColumnName(col.Name),                       
+                        OriginalName = ConvertColumnName(col.Name,NameFormat.CamelCase),
+                        Name = ConvertColumnName(col.Name,NameFormat.SnakeCase),                       
                         Type = col.Type,
                         Length = null,
                         IsNullable = col.IsNullable,
@@ -82,11 +75,6 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
             return snakeCaseSchema;
         }
 
-
-
-
-
-
         public List<string> GetColumnDefinitions(TableSchema schema)
         {
             // Валидация всех колонок
@@ -97,7 +85,7 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
 
             return schema.Columns.Select(col =>
             {
-                var name = $"\"{GetColumnName(col.Name)}\"";  // Используем новый метод
+                var name = $"\"{ConvertColumnName(col.Name,NameFormat.SnakeCase)}\"";
 
                 string sqlType = col.Type switch
                 {
@@ -135,7 +123,6 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
                     constraints.Add("AUTOINCREMENT");
                 }
 
-
                 var parts = new List<string> { name, sqlType };
 
                 if (constraints.Any())
@@ -154,7 +141,7 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
                     $"или другой метод установки типа.");
         }
 
-        // Преобразование в snake_case (старый метод)
+       
         private string ToSnakeCase(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -207,9 +194,6 @@ namespace WpfHomeNet.Data.DBProviders.SqliteClasses
                 @"_([a-zA-Z])",
                 match => match.Groups[1].Value.ToUpper()
             ).Replace("_", "");
-        }
-
-        
+        }   
     }
-
 }

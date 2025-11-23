@@ -1,4 +1,5 @@
-﻿using HomeNetCore.Data.Generators.SqlQueriesGenerator;
+﻿using HomeNetCore.Data.Builders;
+using HomeNetCore.Data.Generators.SqlQueriesGenerator;
 using HomeNetCore.Data.Schemes;
 using HomeNetCore.Data.Schemes.GetSchemaTableBd;
 using Npgsql;
@@ -41,7 +42,7 @@ namespace WpfHomeNet.Data.PostgreClasses
                 columns.Add(new ColumnSchema
                 {
                     Name = reader.GetString(0),
-                    Type = _generator.MapDatabaseType(reader.GetString(1)),
+                    Type = MapType(reader.GetString(1)),
                     Length = reader.IsDBNull(2) ? null : reader.GetInt32(2),
                     IsNullable = reader.GetString(3) == "YES",
                     IsPrimaryKey = reader.GetString(4) == "PRI",
@@ -55,6 +56,49 @@ namespace WpfHomeNet.Data.PostgreClasses
                 Columns = columns
             };
         }
+
+
+
+
+        public ColumnType MapType(string? dbType)
+        {
+            if (dbType is null)
+            {
+                return ColumnType.Unknown;
+            }
+
+            var type = dbType.ToLower();
+            return type switch
+            {
+                // Числовые типы
+                "integer" => ColumnType.Integer,
+                "smallint" => ColumnType.Integer,
+                "bigint" => ColumnType.Integer,
+                "serial" => ColumnType.Integer,                           
+                // Строковые типы
+
+                "varchar" => ColumnType.Varchar,
+                "character varying" => ColumnType.Varchar,
+                "text" => ColumnType.Varchar,
+                "char" => ColumnType.Varchar,
+                "character" => ColumnType.Varchar,
+
+                // Дата и время
+                "timestamp" => ColumnType.DateTime,
+                "timestamp with time zone" => ColumnType.DateTime,
+                "timestamp without time zone" => ColumnType.DateTime,
+                "date" => ColumnType.DateTime,
+                "time" => ColumnType.DateTime,
+                "time with time zone" => ColumnType.DateTime,
+                "time without time zone" => ColumnType.DateTime,
+
+                // Логический тип
+                "boolean" => ColumnType.Boolean,
+                "bool" => ColumnType.Boolean,                            
+                _ => ColumnType.Unknown
+            };
+        }
+
     }
 
 

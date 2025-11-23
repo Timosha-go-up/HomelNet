@@ -66,7 +66,7 @@ namespace WpfHomeNet
                  _sqliteConnection = new SqliteConnection(_connection);
                  _logWindow = new LogWindow();
                  _logManager = new LogManager(_logWindow);
-                 _logger = new GenericLogger(_logManager.WriteLog);
+                 _logger = new Logger(_logManager.WriteLog);
                  _schemaSqlInit = new SqliteSchemaSqlInit(_logger);
                  _schemaProvider = new SqliteGetSchemaProvider
                     (
@@ -83,9 +83,29 @@ namespace WpfHomeNet
                         _sqliteSchemaAdapter,
                         _logger
                     );
+               _logger.LogInformation($"Путь бд {dbPath}");
+                _logger.LogInformation("Тестирование информационного сообщения");
+                _logger.LogDebug("Тестирование отладочного сообщения");
+                _logger.LogWarning("Тестирование предупреждения");
+                _logger.LogError("Тестирование сообщения об ошибке");
+                _logger.LogCritical("Тестирование критического сообщения");
 
-                _logger.LogInformation($"Путь бд {dbPath}");
-                 
+               
+ 
+
+
+
+                
+                
+
+            
+            
+            
+            
+            
+            
+
+
                 _logger.LogInformation("Application started. PID: " + Process.GetCurrentProcess().Id);
 
                 _databaseInitializer = new DBTableInitializer
@@ -130,7 +150,7 @@ namespace WpfHomeNet
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Инициализация завершилась с ошибкой: {ex.Message}"); Close();
+                _logger.LogError($"Инициализация завершилась с ошибкой: {ex.Message}");
                 throw; // Передаём исключение в ContinueWith
             }
         }

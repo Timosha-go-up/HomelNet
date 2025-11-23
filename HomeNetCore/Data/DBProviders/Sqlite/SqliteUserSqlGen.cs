@@ -12,7 +12,6 @@ namespace HomeNetCore.Data.DBProviders.Sqlite
         private readonly SqliteSchemaAdapter _adapter;
         private readonly ILogger _logger;
        
-
         public SqliteUserSqlGen(
             TableSchema tableSchema,
             SqliteSchemaAdapter adapter,
@@ -27,9 +26,9 @@ namespace HomeNetCore.Data.DBProviders.Sqlite
             {
                 _logger.LogError("Имя таблицы не может быть пустым или null");
                 throw new ArgumentException("Таблица не может быть пустой");
-            }
-                           
+            }                           
         }
+
 
         public string GenerateInsert()
         {
@@ -40,6 +39,7 @@ namespace HomeNetCore.Data.DBProviders.Sqlite
             return $@"INSERT INTO {_formattedTable.TableName} ({_formattedTable.InsertFields}) VALUES ({_formattedTable.InsertParameters});
             SELECT last_insert_rowid() AS id"; 
         }
+
 
         public string GenerateUpdate()
         {
@@ -55,7 +55,6 @@ namespace HomeNetCore.Data.DBProviders.Sqlite
         }
 
 
-
         public string GenerateDelete()
         {
             string idColumn = _formattedTable.IdColumnName
@@ -63,12 +62,14 @@ namespace HomeNetCore.Data.DBProviders.Sqlite
             return $"DELETE FROM {_formattedTable.TableName} WHERE {idColumn} = @{idColumn}";
         }
 
+
         public string GenerateSelectById()
         {
             string idColumn = _formattedTable.IdColumnName
                 ?? throw new InvalidOperationException("ID-колонка не найдена в таблице");
             return $"SELECT {_formattedTable.AllFields} FROM {_formattedTable.TableName} WHERE {idColumn} = @{idColumn}";
         }
+
 
         public string GenerateSelectByEmail()
         {
@@ -84,6 +85,7 @@ namespace HomeNetCore.Data.DBProviders.Sqlite
             return $"SELECT {_formattedTable.AllFields} FROM {_formattedTable.TableName} WHERE {emailColumn} = @{emailColumn}";
         }
 
+
         public string GenerateSelectAll()
         {
             if (string.IsNullOrEmpty(_formattedTable.AllFields))
@@ -94,5 +96,4 @@ namespace HomeNetCore.Data.DBProviders.Sqlite
             return $"SELECT {_formattedTable.AllFields} FROM {_formattedTable.TableName}";
         }
     }
-
 }
