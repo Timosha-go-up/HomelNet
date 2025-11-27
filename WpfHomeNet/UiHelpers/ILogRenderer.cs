@@ -1,4 +1,4 @@
-﻿using HomeNetCore.Helpers;
+﻿using HomeNetCore.Data.Enums;
 
 namespace WpfHomeNet.UiHelpers
 {

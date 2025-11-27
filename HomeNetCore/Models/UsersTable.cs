@@ -1,7 +1,7 @@
 ﻿using HomeNetCore.Data.Builders;
 using HomeNetCore.Data.Schemes;
 
-namespace HomeNetCore.Data.TableSchemas
+namespace HomeNetCore.Models
 {
     public class UsersTable : TableSchemaBuilder
     {

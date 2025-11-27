@@ -1,5 +1,5 @@
-﻿ using HomeNetCore.Data.Builders;
-    using System;
+﻿using HomeNetCore.Data.Enums;
+using System;
 
 namespace HomeNetCore.Data.Schemes
 {

@@ -1,6 +1,5 @@
 ﻿using Dapper;
-using HomeNetCore.Data.Generators.SqlQueriesGenerator;
-using HomeNetCore.Helpers;
+using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Helpers.Exceptions;
 using HomeNetCore.Models;
 using Microsoft.Data.SqlClient;
@@ -12,10 +11,10 @@ namespace HomeNetCore.Data.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly DbConnection _connection;
-        IUserSqlGenerator _userSqlGenerator;
+        ISchemaUserSqlGenerator _userSqlGenerator;
         private readonly ILogger _logger;
 
-        public UserRepository(DbConnection connection, ILogger logger, IUserSqlGenerator queryGenerator)
+        public UserRepository(DbConnection connection, ILogger logger, ISchemaUserSqlGenerator queryGenerator)
         {
             _connection = connection ??
                 throw new ArgumentNullException(nameof(connection));
@@ -24,31 +23,31 @@ namespace HomeNetCore.Data.Repositories
             _userSqlGenerator = queryGenerator;
         }
 
-        
-            public async Task<bool> EmailExistsAsync(string email)
+
+        public async Task<bool> EmailExistsAsync(string? email)
+        {
+            var sql = _userSqlGenerator.GenerateEmailExists();
+            return await _connection.ExecuteScalarAsync<bool>(sql, new { email = email });
+        }
+
+        public async Task<UserEntity> InsertUserAsync(UserEntity user)
+        {
+            try
             {
-                var sql = _userSqlGenerator.GenerateEmailExists();
-                return await _connection.ExecuteScalarAsync<bool>(sql, new { email = email });
+                var sql = _userSqlGenerator.GenerateInsert();
+                var newId = await _connection.ExecuteScalarAsync<int>(sql, user);
+                user.Id = newId;
+                return user;
             }
-
-            public async Task<UserEntity> InsertUserAsync(UserEntity user)
+            catch (Exception ex)
             {
-                try
-                {
-                    var sql = _userSqlGenerator.GenerateInsert();
-                    var newId = await _connection.ExecuteScalarAsync<int>(sql, user);
-                    user.Id = newId;
-                    return user;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Ошибка при вставке: {ex.Message}");
-                    throw;
-                }
+                _logger.LogError($"Ошибка при вставке: {ex.Message}");
+                throw;
             }
+        }
 
 
-            public async Task DeleteByIdAsync(int id)
+        public async Task DeleteByIdAsync(int id)
         {
 
             var affectedRows =

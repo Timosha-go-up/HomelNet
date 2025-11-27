@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using HomeNetCore.Models;
-using HomeNetCore.Helpers.Exeptions;
+using HomeNetCore.Helpers.Exceptions;
 
 
 namespace WpfHomeNet
@@ -26,11 +26,7 @@ namespace WpfHomeNet
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
-
-                if (_logWindow == null)
-                {
-                    throw new InvalidOperationException("Логическое нарушение: окно логов не было создано");
-                }
+              
                 _logWindow.WindowStartupLocation = WindowStartupLocation.Manual;
                 _logWindow.Left = Application.Current.MainWindow.Left + 1005;
                 _logWindow.Top = Application.Current.MainWindow.Top + 0;
@@ -48,18 +44,8 @@ namespace WpfHomeNet
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
-
-            if (_logWindow is null || _logger is null)
-            {
-                throw new InvalidOperationException(
-                            $"Не инициализированы зависимости: " +
-                            $"_logWindow: {_logWindow}, _logger: {_logger}, ");
-            }
-
-            else
-            {
-                _logWindow.Close();
-            }
+                      
+           _logWindow.Close();            
         }
 
         #endregion
@@ -89,30 +75,15 @@ namespace WpfHomeNet
 
         private void ShowWindowLogs_Click(object sender, RoutedEventArgs e)
         {
-
-            // Проверяем на null и бросаем исключение
-            if (_logWindow == null)
-            {
-                throw new InvalidOperationException("Логическое нарушение: окно логов не было создано");
-            }
-
-
-
-
+                                  
             if (_logWindow.IsVisible)
-            {
-
-
-                // Скрываем логи и центрируем главное окно
+            {                
                 _logWindow.Hide();
                 CenterMainAndHideLogs();
             }
             else
-            {
-                // Показываем логи и сдвигаем окна
-                ShowLogsAndShift(_logWindow);
-
-                
+            {                
+                ShowWindowLogs(_logWindow);                
             }
         }
 
@@ -152,27 +123,22 @@ namespace WpfHomeNet
             }
         }
 
+
         private async void RemoveUser_Click(object sender, RoutedEventArgs e)
-        {
-            if (_userService is null || _logger is null)
+        {            
+            var mainVm = (MainViewModel)DataContext;
+
+            var deleteWindow = new DeleteUserDialog(
+                mainVm.Users, _userService,_logger)                                             
             {
-                throw new InvalidOperationException(
-                            $"Не инициализированы зависимости: " +
-                            $"_userService: {_userService}, _logger: {_logger}, ");
-            }
-            // Открываем окно удаления
-            var deleteWindow = new DeleteUserWindow(_userService,_logger);
-            deleteWindow.Owner = this;
+                Owner = this
+            };
+
             deleteWindow.ShowDialog();
-            try
-            {
-                await RefreshDataAsync();
-            }
-            catch (Exception ex)
-            {
-                HandleException(ex);
-            }
         }
+
+
+
 
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
@@ -186,89 +152,67 @@ namespace WpfHomeNet
             }
         }
 
-
-
-
         #region методы логики обработки пользователей добавление удаление обновление
         
-
-
-
         private async Task RefreshDataAsync()
-        {
-            // 1. Показываем статус "Обновление..."
-            if (_status is null || _mainVm is null)
-                throw new ArgumentNullException(
-                     $"Не инициализированы зависимости: " +
-                     $"_userService: {_status}, " +
-                     $"_logger: {_mainVm} ");
-
+        {            
             try
-            {
-                // Показываем статус "Обновление..."
+            {                
                 _status.SetStatus("Обновление...");
-
-                // Ждём 2 секунды
-                await Task.Delay(2000);
-
-                // Обновляем статус
-                _status.SetStatus("Список обновлён");
-
-                // Ждём ещё 2 секунды
-                await Task.Delay(2000);
-
-                // Загружаем пользователей
+                
+                await Task.Delay(2000); 
                 await _mainVm.LoadUsersAsync();
+                _status.SetStatus("Список обновлён");
+                await Task.Delay(2000);
+
+               
+               
             }
             catch (Exception ex)
             {
-                // Обработка ошибок
                 _status.SetStatus($"Ошибка обновления: {ex.Message}");
+
                 HandleException(ex);
             }
         }
 
 
-        private async Task ExecuteAddUserOperation(UserEntity newUser, Button button)
+        private async Task ExecuteAddUserOperation(UserEntity? newUser, Button button)
         {
             try
             {
-                // Проверяем зависимости
-                if (_userService is null || _logger is null || _status is null)
-                    throw new ArgumentNullException("Не инициализированы зависимости");
-
-                // Предварительная проверка email
-                if (await _userService.EmailExistsAsync(newUser.Email))
+                                               
+                if (await _userService.EmailExistsAsync(newUser?.Email))
                 {
-                    throw new DuplicateEmailException(newUser.Email);
+                    throw new DuplicateEmailException(newUser?.Email);
                 }
 
                 await _userService.AddUserAsync(newUser);
 
-                _logger.LogInformation($"Пользователь {newUser.FirstName} добавлен");
+                _logger.LogInformation($"Пользователь {newUser?.FirstName} добавлен");
+
                 await RefreshDataAsync();
+                
                 _status.SetStatus("Пользователь добавлен");
+
+                await Task.Delay(2000);
+
+                _status.SetStatus($"Загружено {_mainVm.Users.Count}");
             }
             catch (DuplicateEmailException ex)
             {
-                HandleDuplicateEmail(ex);
+                _logger?.LogWarning("Существующий имейл ");
+
+                MessageBox.Show(ex.GetUserMessage(),string.Empty,
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        
             }
             catch (Exception ex)
             {
                 HandleException(ex);
             }
         }
-
-        private void HandleDuplicateEmail(DuplicateEmailException ex)
-        {
-            _logger?.LogError($"Попытка регистрации существующего email: {ex.Email}");
-            MessageBox.Show(
-                $"Email {ex.Email} уже зарегистрирован в системе",
-                "Ошибка регистрации",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
-        }
-
+       
         private void HandleException(Exception ex)
         {
             if (ex is ArgumentNullException)
@@ -278,15 +222,7 @@ namespace WpfHomeNet
                     "Ошибка инициализации",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-            }
-            else
-            {
-                MessageBox.Show(
-                    $"Не удалось добавить пользователя: {ex.Message}",
-                    "Ошибка выполнения",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
+            }          
         }
 
         #endregion

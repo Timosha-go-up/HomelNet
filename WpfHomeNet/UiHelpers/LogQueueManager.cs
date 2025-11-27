@@ -1,4 +1,4 @@
-﻿using HomeNetCore.Helpers;
+﻿using HomeNetCore.Data.Enums;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 

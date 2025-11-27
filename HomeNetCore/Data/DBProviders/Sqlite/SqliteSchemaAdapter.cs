@@ -1,5 +1,5 @@
 ﻿using HomeNetCore.Data.Adapters;
-using HomeNetCore.Data.Builders;
+using HomeNetCore.Data.Enums;
 using HomeNetCore.Data.Schemes;
 using System.Text;
 using System.Text.RegularExpressions;

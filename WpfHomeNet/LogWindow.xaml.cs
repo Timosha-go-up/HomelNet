@@ -1,4 +1,5 @@
-﻿using HomeNetCore.Helpers;
+﻿using HomeNetCore.Data.Enums;
+using HomeNetCore.Data.Interfaces;
 using System.Windows;
 using WpfHomeNet.UiHelpers;
 

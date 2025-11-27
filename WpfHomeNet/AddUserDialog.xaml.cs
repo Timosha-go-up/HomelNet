@@ -1,80 +1,79 @@
-﻿using HomeNetCore.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
 namespace HomeSocialNetwork
 {
     public partial class AddUserDialog : Window
-    {   public string FirstName => FirstNameTextBox.Text;
+    {
+        #region Свойства формы
+        public string FirstName => FirstNameTextBox.Text;
         public string LastName => LastNameTextBox.Text;
         public string PhoneNumber => PhoneNumberTextBox.Text;
         public string Email => EmailTextBox.Text;
         public string Password => PasswordBox.Password;
-  
-        
+        #endregion
+
+        #region Константы сообщений
+        private const string EmptyFirstNameMsg = "имя";
+        private const string EmptyEmailMsg = "email";
+        private const string EmptyPasswordMsg = "пароль";
+        #endregion
+
         public AddUserDialog()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
-            
-        // Свойства для получения данных из формы
-      
+
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            // Валидация обязательных полей
-            if (string.IsNullOrWhiteSpace(FirstName))
+            try
             {
-                MessageBox.Show(
-                    "Пожалуйста, укажите имя (FirstName).",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                FirstNameTextBox.Focus();
-                return;
-            }
+                if (string.IsNullOrWhiteSpace(FirstName))
+                {
+                    EmptyInput(EmptyFirstNameMsg);
+                    FirstNameTextBox.Focus();
+                    return;
+                }
 
-            if (string.IsNullOrWhiteSpace(Email))
+                if (!IsValidEmail(Email))
+                {
+                    EmptyInput(EmptyEmailMsg);
+                    EmailTextBox.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Password))
+                {
+                    EmptyInput(EmptyPasswordMsg);
+                    PasswordBox.Focus();
+                    return;
+                }
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Пожалуйста, укажите email.",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                EmailTextBox.Focus();
-                return;
+                MessageBox.Show($"Ошибка: {ex.Message}", "Критическая ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            if (string.IsNullOrWhiteSpace(Password))
-            {
-                MessageBox.Show(
-                    "Пожалуйста, укажите пароль.",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                PasswordBox.Focus();
-                return;
-            }
-
-            // Если все проверки пройдены — подтверждаем действие
-            DialogResult = true;
-            Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
+        }
+
+        private bool IsValidEmail(string email) =>
+            !string.IsNullOrWhiteSpace(email) && email.Contains('@');
+
+        private static void EmptyInput(string fieldName, string title = "Ошибка")
+        {
+            MessageBox.Show
+                ($"Пожалуйста, укажите  {fieldName}",
+                title,
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
         }
     }
 

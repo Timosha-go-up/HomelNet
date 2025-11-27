@@ -1,6 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using HomeNetCore.Data.Enums;
+using System.Runtime.CompilerServices;
 
-namespace HomeNetCore.Helpers
+namespace HomeNetCore.Data.Interfaces
 {
 
     public interface ILogger

@@ -1,8 +1,8 @@
 ﻿using HomeNetCore.Data.Schemes;
 
-namespace HomeNetCore.Data.Generators.SqlQueriesGenerator
+namespace HomeNetCore.Data.Interfaces
 {
-    public interface IUserSqlGenerator
+    public interface ISchemaUserSqlGenerator
     {
         
       public  string GenerateInsert();

@@ -1,9 +1,8 @@
 ﻿using HomeNetCore.Data.Adapters;
 using HomeNetCore.Data.Builders;
 using HomeNetCore.Data.DBProviders.Sqlite;
-using HomeNetCore.Data.Generators.SqlQueriesGenerator;
+using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Data.Schemes;
-using HomeNetCore.Helpers;
 
 
 namespace HomeNetCore.Data.DBProviders.Sqlite

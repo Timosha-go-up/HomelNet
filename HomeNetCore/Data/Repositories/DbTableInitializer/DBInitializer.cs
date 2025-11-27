@@ -1,14 +1,12 @@
 ﻿using Dapper;
 using HomeNetCore.Data.Adapters;
-using HomeNetCore.Data.Generators.SqlQueriesGenerator;
+using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Data.Schemes;
-using HomeNetCore.Data.Schemes.GetSchemaTableBd;
-using HomeNetCore.Helpers;
 using System.Data;
 using System.Data.Common;
 
 using WpfHomeNet.Data.Schemes.CheckTableBd;
-public class DBTableInitializer
+public class DBInitializer
 {
     private readonly DbConnection _dbConnection;
     private readonly ISchemaSqlInitializer _schemaSqlGenerator;
@@ -17,7 +15,7 @@ public class DBTableInitializer
     private readonly TableSchema _tableSchema;
     private readonly ISchemaAdapter _schemaAdapter;
 
-    public DBTableInitializer
+    public DBInitializer
                       (
                         DbConnection connection,
                         ISchemaProvider schemaProvider,

@@ -1,33 +1,22 @@
 ﻿using HomeNetCore.Data.Adapters;
 using HomeNetCore.Data.DBProviders.Postgres;
 using HomeNetCore.Data.DBProviders.Sqlite;
-using HomeNetCore.Data.Generators.SqlQueriesGenerator;
+using HomeNetCore.Data.Enums;
+using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Data.PostgreClasses;
 using HomeNetCore.Data.Schemes;
-using HomeNetCore.Data.Schemes.GetSchemaTableBd;
 using HomeNetCore.Data.SqliteClasses;
-using HomeNetCore.Helpers;
 using Microsoft.Data.Sqlite;
 using Npgsql;
 using System.Data.Common;
 using WpfHomeNet.Data.DBProviders.Postgres;
 
-
-
+namespace HomeNetCore.Services
+{
+}
 
 namespace HomeNetCore.Data
 {
-
-    public enum DatabaseType
-    {
-        SQLite,
-        PostgreSQL
-    }
-
-
-
-
-
     public class DatabaseServiceFactory
     {
         private readonly string _connectionString;
@@ -35,8 +24,10 @@ namespace HomeNetCore.Data
 
         public DatabaseServiceFactory(string connectionString, ILogger logger)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _connectionString = connectionString ??
+                throw new ArgumentNullException(nameof(connectionString));
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -49,7 +40,7 @@ namespace HomeNetCore.Data
                  ISchemaSqlInitializer initializer,
                  ISchemaProvider schemaProvider,
                  ISchemaAdapter schemaAdapter,
-                 IUserSqlGenerator userSqlGen)
+                 ISchemaUserSqlGenerator userSqlGen)
             CreateServices(DatabaseType databaseType, TableSchema tableSchema)
         {
             if (tableSchema == null)

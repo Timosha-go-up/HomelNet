@@ -1,7 +1,6 @@
-﻿using HomeNetCore.Data.Builders;
-using HomeNetCore.Data.Generators.SqlQueriesGenerator;
+﻿using HomeNetCore.Data.Enums;
+using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Data.Schemes;
-using HomeNetCore.Data.Schemes.GetSchemaTableBd;
 using Microsoft.Data.Sqlite;
 using Npgsql;
 using NpgsqlTypes;

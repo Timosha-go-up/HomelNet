@@ -1,8 +1,6 @@
-﻿
+﻿using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Data.Repositories;
-using HomeNetCore.Helpers;
 using HomeNetCore.Helpers.Exceptions;
-using HomeNetCore.Helpers.Exeptions;
 using HomeNetCore.Models;
 namespace HomeNetCore.Services
 {
@@ -32,7 +30,7 @@ namespace HomeNetCore.Services
         }
 
 
-        public async Task AddUserAsync(UserEntity user)
+        public async Task AddUserAsync(UserEntity? user)
         {
             // Проверяем существование email
             if (await _repo.EmailExistsAsync(user.Email))
@@ -62,7 +60,7 @@ namespace HomeNetCore.Services
 
 
 
-        public async Task<bool> EmailExistsAsync(string email)
+        public async Task<bool> EmailExistsAsync(string? email)
         {
             try
             {

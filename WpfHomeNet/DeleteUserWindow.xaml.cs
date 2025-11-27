@@ -1,44 +1,45 @@
-﻿using HomeNetCore.Helpers;
+﻿using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Models;
 using HomeNetCore.Services;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace WpfHomeNet
 {
-    public partial class DeleteUserWindow : Window
+    public partial class DeleteUserDialog : Window
     {
-        private readonly UserService? _userService;
-        private List<UserEntity>? _allUsers; // Храним все пользователи
-        private UserEntity? _selectedUser;
-        ILogger _logger;
-        public DeleteUserWindow(UserService userService,ILogger logger)
+        private readonly ObservableCollection<UserEntity> _users;
+        private readonly UserService _userService;
+        private readonly ILogger _logger;
+        private UserEntity? _selectedUser; // Может быть null, если пользователь не найден
+
+
+        public DeleteUserDialog(
+            ObservableCollection<UserEntity> users,
+            UserService userService,
+            ILogger logger)
         {
             InitializeComponent();
+            _users = users;
             _userService = userService;
             _logger = logger;
-            LoadAllUsers();
+
+            // Привязываем ListBox к общей коллекции
+            userListBox.ItemsSource = _users;
         }
 
-        private async void LoadAllUsers()
-        {
-            if (_userService is null )
-            {
-                throw new InvalidOperationException(
-                            $"Не инициализированы зависимости: " +
-                            $"_userService: {_userService}");
-            }
-            try
-            {
-                _allUsers = await _userService.GetAllUsersAsync();
-                userListBox.ItemsSource = _allUsers;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки: {ex.Message}");
-                Close();
-            }
-        }
+
+
+
+
+
+
+
+
 
         private async void SearchUser_Click(object sender, RoutedEventArgs e)
         {
@@ -50,19 +51,55 @@ namespace WpfHomeNet
 
             try
             {
-                if (_userService is null || _allUsers is null)
-                {
-                    throw new InvalidOperationException(
-                                $"Не инициализированы зависимости: " +
-                                $"_userService: {_userService}, _allUsers: {_allUsers}, ");
-                }
-                // Ищем пользователя в локальной коллекции
-                _selectedUser = _allUsers.FirstOrDefault(u => u.Id == userId);
+                // 1. Сбрасываем все предыдущие выделения
+                ClearHighlights();
+                userListBox.SelectedItem = null;
+
+                // 2. Ищем пользователя в общей коллекции (_users)
+                _selectedUser = _users.FirstOrDefault(u => u.Id == userId);
 
                 if (_selectedUser != null)
                 {
-                    // Устанавливаем выбранный элемент
+                    // 3. Устанавливаем SelectedItem
                     userListBox.SelectedItem = _selectedUser;
+
+                    // 4. Получаем контейнер ListBoxItem
+                    ListBoxItem? container = userListBox.ItemContainerGenerator.ContainerFromItem(_selectedUser) as ListBoxItem;
+
+                    if (container != null)
+                    {
+                        // 5. Помечаем как найденный
+                        container.Tag = "Found";
+                        container.Focus();
+                    }
+                    else
+                    {
+                        // 6. Если контейнер не создан (виртуализация), прокручиваем к элементу
+                        userListBox.ScrollIntoView(_selectedUser);
+
+                        // 7. Ждём создания контейнера
+                        await Task.Delay(100);
+                        container = userListBox.ItemContainerGenerator.ContainerFromItem(_selectedUser) as ListBoxItem;
+
+                        if (container != null)
+                        {
+                            container.Tag = "Found";
+                            container.Focus();
+                        }
+                        else
+                        {
+                            // 8. Пробуем ещё раз через Dispatcher
+                            Dispatcher?.BeginInvoke(new Action(() =>
+                            {
+                                container = userListBox.ItemContainerGenerator.ContainerFromItem(_selectedUser) as ListBoxItem;
+                                if (container != null)
+                                {
+                                    container.Tag = "Found";
+                                    container.Focus();
+                                }
+                            }));
+                        }
+                    }
                 }
                 else
                 {
@@ -74,6 +111,77 @@ namespace WpfHomeNet
                 MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
+
+
+
+
+
+        
+
+
+
+
+
+        private void userIdTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // Если текст — это подсказка, очищаем поле и делаем текст чёрным
+            if (userIdTextBox.Text == "Введите ID")
+            {
+                userIdTextBox.Text = "";
+                userIdTextBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void userIdTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Если поле пустое, возвращаем подсказку и серый цвет
+            if (string.IsNullOrWhiteSpace(userIdTextBox.Text))
+            {
+                userIdTextBox.Text = "Введите ID";
+                userIdTextBox.Foreground = Brushes.Gray;
+            }
+        }
+
+
+        // Метод для сброса выделений
+        private void ClearHighlights()
+        {
+            foreach (var item in userListBox.Items)
+            {
+                ListBoxItem container = userListBox.ItemContainerGenerator.ContainerFromItem(item) as ListBoxItem;
+                if (container != null)
+                {
+                    container.Tag = null; // Снимаем метку
+                }
+            }
+        }
+
+
+        private async Task ShowStatus(string message, Brush color, int durationSec = 3)
+        {
+            if (statusTextBlock == null)
+                return;
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                statusTextBlock.Inlines.Clear();
+                statusTextBlock.Inlines.Add(new Run(message) { Foreground = color });
+                statusTextBlock.Opacity = 0;
+
+                var appearAnim = new DoubleAnimation(1, TimeSpan.FromMilliseconds(300));
+                statusTextBlock.BeginAnimation(OpacityProperty, appearAnim);
+            });
+
+            await Task.Delay(durationSec * 100);
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                var disappearAnim = new DoubleAnimation(0, TimeSpan.FromMilliseconds(500));
+                disappearAnim.Completed += (_, _) => statusTextBlock.Inlines.Clear();
+                statusTextBlock.BeginAnimation(OpacityProperty, disappearAnim);
+            });
+        }
+
 
 
         private void userListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -92,19 +200,20 @@ namespace WpfHomeNet
                     return;
                 }
 
-                if (_userService is null )
-                {
-                    throw new InvalidOperationException(
-                                $"Не инициализированы зависимости: " +
-                                $"_userService: {_userService}");
-                }
-
+                // 1. Удаляем из БД
                 await _userService.DeleteUserAsync(selectedUser.Id);
 
-                _logger.LogInformation($"Пользователь {selectedUser.FirstName} | успешно удален");
+                // 2. Удаляем из локальной коллекции (это обновит UI!)
+                _users.Remove(selectedUser);
 
-                MessageBox.Show("Пользователь успешно удален");
-                Close();
+                _logger.LogInformation($"Пользователь {selectedUser.FirstName} успешно удалён");
+
+                // 3. Сбрасываем выделение
+                userListBox.SelectedItem = null;
+                yesButton.IsEnabled = false;
+
+                // 4. Показываем статус
+                await ShowStatus("Пользователь удалён", Brushes.Green, 2);
             }
             catch (Exception ex)
             {
@@ -112,10 +221,18 @@ namespace WpfHomeNet
             }
         }
 
-        private void NoButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+
+
+
+
+        private void NoButton_Click(object sender, RoutedEventArgs e) => Close();
+       
+
+      
+
+
+
+
     }
 
 

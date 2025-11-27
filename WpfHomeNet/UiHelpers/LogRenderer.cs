@@ -1,4 +1,4 @@
-﻿using HomeNetCore.Helpers;
+﻿using HomeNetCore.Data.Enums;
 using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Documents;

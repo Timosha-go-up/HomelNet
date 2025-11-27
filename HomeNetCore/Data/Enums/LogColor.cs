@@ -1,4 +1,4 @@
-﻿namespace HomeNetCore.Helpers
+﻿namespace HomeNetCore.Data.Enums
 {
     // Обновляем enum с явным указанием цветов в том же порядке
     public enum LogColor
