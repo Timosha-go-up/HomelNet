@@ -50,6 +50,47 @@
             <Setter Property="BorderThickness" Value="0.2"/>
             <Setter Property="Background" Value="#00DDDDDD"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+              <Setter Property="Template">
+      <Setter.Value>
+          <ControlTemplate TargetType="Button">
+              <Border
+                   x:Name="border"
+      Background="{TemplateBinding Background}"
+      BorderBrush="{TemplateBinding BorderBrush}"
+      BorderThickness="{TemplateBinding BorderThickness}"
+      CornerRadius="1">
+                  <ContentPresenter
+          x:Name="contentPresenter" 
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          TextElement.FontWeight="{TemplateBinding FontWeight}"
+          TextElement.Foreground="{TemplateBinding Foreground}"
+          Margin="10,5"/>
+              </Border>
+
+              <!-- Триггеры для визуальной реакции -->
+              <ControlTemplate.Triggers>
+                  <!-- 1. При наведении курсора -->
+                  <Trigger Property="IsMouseOver" Value="True">
+                      <Setter TargetName="border" Property="Background" Value="#FFE5E5E5"/>
+                      <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF333333"/>
+                      <Setter TargetName="border" Property="BorderBrush" Value="#FFCCCCCC"/>
+                      <Setter TargetName="border" Property="CornerRadius" Value="1"/>
+                  </Trigger>
+                  <!-- 2. При нажатии -->
+                  <Trigger Property="IsPressed" Value="True">
+                      <Setter TargetName="border" Property="Background" Value="#FFD5D5D5"/>
+                      <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF000000"/>
+                  </Trigger>
+                  <!-- 3. Для отключённой кнопки -->
+                  <Trigger Property="IsEnabled" Value="False">
+                      <Setter TargetName="border" Property="Background" Value="#FFF5F5F5"/>
+                      <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF999999"/>
+                  </Trigger>
+              </ControlTemplate.Triggers>
+          </ControlTemplate>
+      </Setter.Value>
+  </Setter>
             <!-- Эффекты при наведении -->
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">

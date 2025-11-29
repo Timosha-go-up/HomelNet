@@ -7,6 +7,8 @@ using System.Windows.Input;
 using HomeNetCore.Models;
 using HomeNetCore.Helpers.Exceptions;
 
+using WpfHomeNet.SubWindows;
+
 
 namespace WpfHomeNet
 {
@@ -174,10 +176,15 @@ namespace WpfHomeNet
                 }
             }
             catch (DuplicateEmailException ex)
-            {               
+            {
 
-                MessageBox.Show(ex.GetUserMessage(), string.Empty,
-                MessageBoxButton.OK, MessageBoxImage.Information);
+                var message = new MessageWindow
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                message.Show();
+                message.MessageText.Text = ex.GetUserMessage();              
             }
 
             catch (Exception ex)
@@ -253,6 +260,15 @@ namespace WpfHomeNet
                     "Ошибка инициализации",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+
+
+                var message = new MessageWindow($"Критическая ошибка: {ex.Message}")
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                message.Show();
+               
             }          
         }
 
