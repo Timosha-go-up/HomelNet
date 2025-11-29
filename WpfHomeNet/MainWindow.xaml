@@ -55,21 +55,40 @@
                         <!-- Триггеры для визуальной реакции -->
                         <ControlTemplate.Triggers>
                             <!-- 1. При наведении курсора -->
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFE5E5E5"/>
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF333333"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="#FFCCCCCC"/>
-                                <Setter TargetName="border" Property="CornerRadius" Value="1"/>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#FFE5E5E5"/>
+                                <Setter TargetName="contentPresenter"
+                                        Property="TextElement.Foreground"
+                                        Value="#FF333333"/>
+                                <Setter TargetName="border"
+                                        Property="BorderBrush" 
+                                        Value="#FFCCCCCC"/>
+                                <Setter TargetName="border"
+                                        Property="CornerRadius"
+                                        Value="1"/>
                             </Trigger>
                             <!-- 2. При нажатии -->
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFD5D5D5"/>
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF000000"/>
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#FFD5D5D5"/>
+                                <Setter TargetName="contentPresenter"
+                                        Property="TextElement.Foreground"
+                                        Value="#FF000000"/>
                             </Trigger>
                             <!-- 3. Для отключённой кнопки -->
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="#FFF5F5F5"/>
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF999999"/>
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter TargetName="border"
+                                        Property="Background"
+                                        Value="#FFF5F5F5"/>
+                                <Setter TargetName="contentPresenter"
+                                        Property="TextElement.Foreground"
+                                        Value="#FF999999"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -82,10 +101,14 @@
     <Border   >
         <Grid>
             <Grid.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Color="#FF668C66" Offset="0.0"/>
-                    <GradientStop Color="Tan" Offset="0.7"/>
-                    <GradientStop Color="#99104710" Offset="1.0"/>
+                <LinearGradientBrush StartPoint="0.5,0"
+                                     EndPoint="0.5,1">
+                    <GradientStop Color="#FF668C66"
+                                  Offset="0.0"/>
+                    <GradientStop Color="Tan"
+                                  Offset="0.7"/>
+                    <GradientStop Color="#99104710"
+                                  Offset="1.0"/>
                 </LinearGradientBrush>
             </Grid.Background>
             <Grid.RowDefinitions>
@@ -144,7 +167,7 @@
             Content="Удалить юзера"
             Click="RemoveUser_Click"
             Margin="10"
-            IsEnabled="{Binding IsValidUserId}"/>
+            />
                 
                 <Button x:Name="ShowButton" 
                        Content="Показать юзеров"
@@ -167,27 +190,30 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>            
                 <Button
-                    Content="Регистрация"  VerticalAlignment="Center"  />
+                    Content="Регистрация"
+                    VerticalAlignment="Center"  />
                 <Button Grid.Column="1"
-                    Content="Вход в профиль" VerticalAlignment="Center"/>
+                    Content="Вход в профиль"
+                    VerticalAlignment="Center"/>
                </Grid>
 
             
 
             <controls:UsersTableView 
-            x:Name="userTableView"  
-              Grid.Row="2" 
-              Grid.ColumnSpan="5" Margin="2,0,2,0"/>
+                 x:Name="userTableView"  
+                 Grid.Row="2" 
+                 Grid.ColumnSpan="5"
+                 Margin="2,0,2,0"/>
             <!-- 5. Статус-бар (строка 4, весь width) -->
             <StatusBar x:Name="StatusUsers"
-             Grid.Row="3"
-             Grid.Column="0"
-             Grid.ColumnSpan="4"                   
-             FontSize="15"
-             Background="#00C3D1C3">
+                Grid.Row="3"
+                Grid.Column="0"
+                Grid.ColumnSpan="4"                   
+                FontSize="15"
+                Background="#00C3D1C3">
                 <TextBlock Name="StatusText"                    
-             Text="{Binding StatusText}"                       
-             FontWeight="Bold"/>
+                   Text="{Binding StatusText}"                       
+                   FontWeight="Bold"/>
             </StatusBar>
         </Grid>
     </Border>

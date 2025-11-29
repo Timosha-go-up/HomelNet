@@ -5,7 +5,9 @@ using System.Diagnostics;
 namespace WpfHomeNet.UiHelpers
 {
 
-    // Обновленный LogQueueManager
+    /// <summary>
+    /// менеджер  посимвольного вывода логов в окно
+    /// </summary>
     public class LogQueueManager : IDisposable
     {
         private readonly ConcurrentQueue<(LogLevel level, string message, LogColor color)> _logQueue = new();

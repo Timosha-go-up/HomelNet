@@ -4,6 +4,7 @@ using HomeNetCore.Services;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace WpfHomeNet
@@ -120,24 +121,21 @@ namespace WpfHomeNet
 
         private void UserIdTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            // Если текст — это подсказка, очищаем поле и делаем текст чёрным
             if (userIdTextBox.Text == DefaultInput)
             {
-                userIdTextBox.Text = string.Empty;
-                userIdTextBox.Foreground = Brushes.Black;
+                userIdTextBox.Text = "";
+                userIdTextBox.Foreground = Brushes.Black; // Явно задаём цвет
             }
         }
 
 
-        private void UserIdTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            // Если поле пустое, возвращаем подсказку и серый цвет
+       private void UserIdTextBox_LostFocus(object sender, RoutedEventArgs e)
+       {
             if (string.IsNullOrWhiteSpace(userIdTextBox.Text))
             {
-                userIdTextBox.Text = DefaultInput;
-                userIdTextBox.Foreground = Brushes.DarkSlateGray;
-            }
-        }
+                userIdTextBox.Text = DefaultInput;        
+            }    
+       }
 
       
         private async void YesButton_Click(object sender, RoutedEventArgs e)
@@ -165,18 +163,18 @@ namespace WpfHomeNet
                 // 4. Показываем статус
                 OnStatusUpdated?.Invoke($"Пользователь {selectedUser.FirstName} с ID {selectedUser.Id} удалён");
 
-                await Task.Delay(2000);
+                await Task.Delay(2500);
 
                 OnStatusUpdated?.Invoke("Обновление...");
                 await Task.Delay(1000);
 
                 OnStatusUpdated?.Invoke("Список обновлён");
-                await Task.Delay(1000);
+                await Task.Delay(1500);
                 OnStatusUpdated?.Invoke($"Загружено {_users.Count} пользователей");
 
                 _logger.LogInformation($"Загружено {_users.Count} пользователей");
 
-                userIdTextBox.Text = DefaultInput;
+               
             }
             catch (Exception ex)
             {
@@ -185,7 +183,20 @@ namespace WpfHomeNet
             }
         }
 
-   
+
+        private void UserIdTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                // Если поле содержит подсказку — не ищем
+                if (userIdTextBox.Text == DefaultInput)
+                    return;
+
+                SearchUser_Click(sender, e);
+            }
+        }
+
+
         private void NoButton_Click(object sender, RoutedEventArgs e) => Close();
 
 
@@ -198,7 +209,7 @@ namespace WpfHomeNet
                     container.Tag = null; // Снимаем метку
                 }
             }
-        }// Метод для сброса выделений
+        }
        
     }
 

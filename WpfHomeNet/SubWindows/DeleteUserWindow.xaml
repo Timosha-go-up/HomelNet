@@ -6,17 +6,17 @@
         Width="350"
         WindowStyle="None"
         AllowsTransparency="True"
-        BorderThickness="2"
+        BorderThickness="1"
         BorderBrush="Black"
         WindowStartupLocation="CenterOwner"
-        Background="#FF9CB486">
+        Background="#FFB8BE9B">
     <Window.Resources>
         <!-- Стиль для TextBox -->
         <Style TargetType="TextBox">
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Background" Value="#7FFFFFFF"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="0.2"/>
             <Setter Property="BorderBrush" Value="DarkGray"/>
@@ -50,131 +50,161 @@
             <Setter Property="BorderThickness" Value="0.2"/>
             <Setter Property="Background" Value="#00DDDDDD"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-              <Setter Property="Template">
-      <Setter.Value>
-          <ControlTemplate TargetType="Button">
-              <Border
-                   x:Name="border"
-      Background="{TemplateBinding Background}"
-      BorderBrush="{TemplateBinding BorderBrush}"
-      BorderThickness="{TemplateBinding BorderThickness}"
-      CornerRadius="1">
-                  <ContentPresenter
-          x:Name="contentPresenter" 
-          HorizontalAlignment="Center"
-          VerticalAlignment="Center"
-          TextElement.FontWeight="{TemplateBinding FontWeight}"
-          TextElement.Foreground="{TemplateBinding Foreground}"
-          Margin="10,5"/>
-              </Border>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                       <Border
+                          x:Name="border"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="1">
+                            <ContentPresenter
+                          x:Name="contentPresenter" 
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          TextElement.FontWeight="{TemplateBinding FontWeight}"
+                          TextElement.Foreground="{TemplateBinding Foreground}"
+                          Margin="10,5"/>
+                      </Border>
 
-              <!-- Триггеры для визуальной реакции -->
-              <ControlTemplate.Triggers>
-                  <!-- 1. При наведении курсора -->
-                  <Trigger Property="IsMouseOver" Value="True">
-                      <Setter TargetName="border" Property="Background" Value="#FFE5E5E5"/>
-                      <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF333333"/>
-                      <Setter TargetName="border" Property="BorderBrush" Value="#FFCCCCCC"/>
-                      <Setter TargetName="border" Property="CornerRadius" Value="1"/>
-                  </Trigger>
-                  <!-- 2. При нажатии -->
-                  <Trigger Property="IsPressed" Value="True">
-                      <Setter TargetName="border" Property="Background" Value="#FFD5D5D5"/>
-                      <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF000000"/>
-                  </Trigger>
-                  <!-- 3. Для отключённой кнопки -->
-                  <Trigger Property="IsEnabled" Value="False">
-                      <Setter TargetName="border" Property="Background" Value="#FFF5F5F5"/>
-                      <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF999999"/>
-                  </Trigger>
-              </ControlTemplate.Triggers>
-          </ControlTemplate>
-      </Setter.Value>
-  </Setter>
-            <!-- Эффекты при наведении -->
+                        <!-- Триггеры для визуальной реакции -->
+                        <ControlTemplate.Triggers>
+                            <!-- 1. При наведении курсора -->
+                            <Trigger Property="IsMouseOver"
+                           Value="True">
+                                <Setter TargetName="border"
+                              Property="Background" 
+                              Value="#FFE5E5E5"/>
+                                <Setter TargetName="contentPresenter" 
+                              Property="TextElement.Foreground" 
+                              Value="#FF333333"/>
+                                <Setter TargetName="border"
+                              Property="BorderBrush"
+                              Value="#FFCCCCCC"/>
+                                <Setter TargetName="border"
+                              Property="CornerRadius"
+                              Value="1"/>
+                            </Trigger>
+                            <!-- 2. При нажатии -->
+                            <Trigger Property="IsPressed"
+                           Value="True">
+                                <Setter TargetName="border"
+                              Property="Background"
+                              Value="#FFD5D5D5"/>
+                                <Setter TargetName="contentPresenter"
+                              Property="TextElement.Foreground"
+                              Value="#FF000000"/>
+                            </Trigger>
+                            <!-- 3. Для отключённой кнопки -->
+                            <Trigger Property="IsEnabled"
+                           Value="False">
+                                <Setter TargetName="border"
+                              Property="Background"
+                              Value="#FFF5F5F5"/>
+                                <Setter TargetName="contentPresenter" 
+                              Property="TextElement.Foreground"
+                              Value="#FF999999"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#80DDDDDD"/>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Background"
+                            Value="#80DDDDDD"/>
                 </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#CCDDDDDD"/>
+                <Trigger Property="IsPressed"
+                         Value="True">
+                    <Setter Property="Background"
+                            Value="#CCDDDDDD"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="59*"/>
+            <RowDefinition Height="20*"  />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" 
              Text="Выберите пользователя для удаления:"
              FontWeight="Bold"
              FontSize="14"
-             HorizontalAlignment="Center"/>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
+             HorizontalAlignment="Center" Width="268" />
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal">
             <TextBox x:Name="userIdTextBox"
                 Width="200"
+                    KeyDown="UserIdTextBox_KeyDown" 
                 Margin="5"
                 Text="Введите ID"
                 Foreground="DarkSlateGray"
                 GotFocus="UserIdTextBox_GotFocus"
-                LostFocus="UserIdTextBox_LostFocus"/>
+                LostFocus="UserIdTextBox_LostFocus" />
             <Button x:Name="searchButton" 
                 Content="Найти" 
+                    Margin="5"
                 Click="SearchUser_Click" 
-                Margin="5"/>
-            <TextBlock x:Name="statusTextBlock"
-                Margin="10,0,0,0"
-                Foreground="DarkGreen"
-                Opacity="0" 
-                VerticalAlignment="Center">
-                <TextBlock.Effect>
-                    <DropShadowEffect
-                        Color="Gray"
-                        BlurRadius="2"
-                        ShadowDepth="1"
-                        Opacity="0.3"/>
-                </TextBlock.Effect>
-            </TextBlock>
+                 Background="#4CDDDDDD"/>
         </StackPanel>
-        <ListBox x:Name="userListBox" 
-            Grid.Row="2"
-                  
-            DisplayMemberPath="DisplayInfo"
-            SelectedValuePath="Id"
-            Margin="5"
-            SelectionChanged="UserListBox_SelectionChanged"                 
-            Height="100" Background="Transparent">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Setter Property="FontWeight" Value="Normal"/>
-                    <Style.Triggers>
-                        <Trigger Property="Tag" Value="Found">
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="Foreground" Value="Black"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-        <StackPanel Grid.Row="3" 
+        <Border Grid.Row="2"               
+        BorderThickness="0.3"
+        BorderBrush="Black"
+        CornerRadius="1"  Background="#7FFFFFFF"  Margin="5" >
+           
+
+            <ListBox x:Name="userListBox"
+             DisplayMemberPath="DisplayInfo"
+             SelectedValuePath="Id"
+             SelectionChanged="UserListBox_SelectionChanged"
+            Background="#00000000" 
+             BorderThickness="0">
+                
+
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ScrollViewer}">
+                        <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
+                    </Style>
+                </ListBox.Resources>
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="FontWeight" Value="Normal"/>
+                        <Style.Triggers>
+                            <Trigger Property="Tag" Value="Found">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Border>
+
+        <StackPanel
+            Grid.Row="3" 
             Orientation="Horizontal"
-            HorizontalAlignment="Right">
-            <Button x:Name="yesButton" 
+            HorizontalAlignment="Left" Margin="104,0,0,0" Width="214" >
+            <Button
+                x:Name="yesButton" 
                 Content="Удалить" 
                 Click="YesButton_Click" 
                 Margin="5"
-                IsEnabled="{Binding CanDelete}"/>
-            <Button x:Name="noButton" 
+                IsEnabled="{Binding CanDelete}" Background="#4CDDDDDD"/>
+            <Button 
+                x:Name="noButton" 
                 Content="Отмена" 
                 Click="NoButton_Click" 
-                Margin="5"/>
+                Margin="5" Background="#4CDDDDDD"/>
         </StackPanel>
     </Grid>
 </Window>

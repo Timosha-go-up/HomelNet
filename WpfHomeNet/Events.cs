@@ -58,7 +58,7 @@ namespace WpfHomeNet
         {
             if (DataContext is MainViewModel vm)
             {
-                if (vm.ScrollViewerVisibility == Visibility.Visible)
+                if (vm.UsersTableVisibility == Visibility.Visible)
                 {
                     vm.HideScrollViewer();
                     ShowButton.Content = "Показать юзеров";
@@ -178,13 +178,13 @@ namespace WpfHomeNet
             catch (DuplicateEmailException ex)
             {
 
-                var message = new MessageWindow
+                var messageBox = new MessageWindow
                 {
                     Owner = this,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
-                message.Show();
-                message.MessageText.Text = ex.GetUserMessage();              
+                messageBox.Show();
+                messageBox.MessageText.Text = ex.GetUserMessage();              
             }
 
             catch (Exception ex)

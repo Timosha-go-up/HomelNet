@@ -12,7 +12,7 @@
          BorderThickness="1"
          BorderBrush="Black"
          WindowStartupLocation="CenterOwner"
-         Background="#FF9CB486">
+        Background="#FFB8BE9B">
     <Window.Resources>
         <Storyboard x:Key="ShowAnimation">
             <DoubleAnimation Storyboard.TargetProperty="Opacity"
@@ -85,45 +85,41 @@
             </Setter>
         </Style>
     </Window.Resources>
-    
-
     <Grid>
-       
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
 
-
-        <StackPanel  >
-
-            <StackPanel Orientation="Horizontal"                       
-                        HorizontalAlignment="Right"                         
-                        Margin="10"
-                        >
+        </Grid.ColumnDefinitions>
+        <StackPanel  Grid.Row="1" Grid.ColumnSpan="2">
+            <StackPanel
+                Orientation="Horizontal"                       
+                HorizontalAlignment="Right"                         
+                Margin="10">
                 <Button 
-    Content="ОК" 
-    Click="OkButton_Click"                  
-    Width="70" IsDefault="True" Background="#7FDDDDDD"/>
+                   
+                   Click="OkButton_Click"                  
+                   Width="70" IsDefault="True"
+                    Background="Transparent"/>    
 
-
-
-
-
-
-            </StackPanel >
-            
-
+                <Button 
+                   Content="ОК" 
+                   Click="OkButton_Click"                  
+                   Width="70" IsDefault="True"
+                    Background="#7FDDDDDD"/>
+            </StackPanel  >
             <Border 
-    Margin="10,0,10,0"
-    
-    BorderBrush="Black"
-    Background="#7FE2DBDB"
-    CornerRadius="1">
-                <!-- Здесь задаётся радиус скругления -->
+                Margin="10,0,10,0"    
+                BorderBrush="Black"
+                Background="#7FE2DBDB"
+                CornerRadius="1">                   
                 <TextBlock
-        Margin="12,10,10,10"
-        Name="MessageText"
-        TextWrapping="Wrap"
-        FontSize="14"
-        Width="Auto"
-        Height="90" />
+                    Margin="12,10,10,10"
+                    Name="MessageText"
+                    TextWrapping="Wrap"
+                    FontSize="14"
+                    Width="Auto"
+                    Height="90" />  
             </Border>
 
 

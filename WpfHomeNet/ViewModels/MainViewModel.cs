@@ -34,13 +34,13 @@ namespace WpfHomeNet.ViewModels
             }
         }
 
-        public Visibility ScrollViewerVisibility
+        public Visibility UsersTableVisibility
         {
             get => _scrollViewerVisibility;
             set
             {
                 _scrollViewerVisibility = value;
-                OnPropertyChanged(nameof(ScrollViewerVisibility));
+                OnPropertyChanged(nameof(UsersTableVisibility));
             }
         } 
         
@@ -58,8 +58,8 @@ namespace WpfHomeNet.ViewModels
 
 
         // Методы управления видимостью ScrollViewer
-        public void ShowScrollViewer() => ScrollViewerVisibility = Visibility.Visible;
-        public void HideScrollViewer() => ScrollViewerVisibility = Visibility.Collapsed;
+        public void ShowScrollViewer() => UsersTableVisibility = Visibility.Visible;
+        public void HideScrollViewer() => UsersTableVisibility = Visibility.Collapsed;
 
 
 
