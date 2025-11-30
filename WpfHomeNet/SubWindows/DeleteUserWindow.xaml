@@ -9,7 +9,7 @@
         BorderThickness="1"
         BorderBrush="Black"
         WindowStartupLocation="CenterOwner"
-        Background="#FFB8BE9B">
+        Background="#26ABC8AB">
     <Window.Resources>
         <!-- Стиль для TextBox -->
         <Style TargetType="TextBox">

@@ -23,10 +23,12 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ContentControl">
-                        <Border BorderThickness="0.1"
-                    BorderBrush="Black"
-                    Padding="2"
-                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
+                        <Border BorderThickness="0.15"
+                                Margin="1,1,1,0"
+                                BorderBrush="Black"
+                                Padding="2"
+                                CornerRadius="3"
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
                             <TextBlock Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}{0}}"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Left"

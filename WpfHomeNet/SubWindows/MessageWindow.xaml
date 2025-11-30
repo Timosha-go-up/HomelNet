@@ -12,7 +12,7 @@
          BorderThickness="1"
          BorderBrush="Black"
          WindowStartupLocation="CenterOwner"
-        Background="#FFB8BE9B">
+        Background="#3FABC8AB">
     <Window.Resources>
         <Storyboard x:Key="ShowAnimation">
             <DoubleAnimation Storyboard.TargetProperty="Opacity"
@@ -91,7 +91,7 @@
             <ColumnDefinition Width="*"/>
 
         </Grid.ColumnDefinitions>
-        <StackPanel  Grid.Row="1" Grid.ColumnSpan="2">
+        <StackPanel  Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent">
             <StackPanel
                 Orientation="Horizontal"                       
                 HorizontalAlignment="Right"                         

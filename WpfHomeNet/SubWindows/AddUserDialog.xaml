@@ -5,23 +5,17 @@
         Height="250" Width="410"
         WindowStyle="None" AllowsTransparency="True"
         BorderThickness="1" BorderBrush="Black"
-        WindowStartupLocation="CenterOwner" Background="#FFB8BE9B">
+        WindowStartupLocation="CenterOwner" Background="#26ABC8AB">
 
     <Window.Resources>
-        <!-- Стили (оставлены без изменений) -->
+        <!-- Базовый стиль для TextBox -->
         <Style TargetType="TextBox">
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Background" Value="#7FFFFFFF"/>
-           
-            
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="1"/>
 
             <Style.Triggers>
                 <MultiTrigger>
@@ -42,6 +36,7 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Стиль для Button -->
         <Style TargetType="Button">
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Width" Value="96"/>
@@ -52,97 +47,75 @@
             <Setter Property="BorderThickness" Value="0.4"/>
             <Setter Property="Background" Value="#00DDDDDD"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <!-- Добавлено -->
+
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border
-                   x:Name="border"
-                   Background="{TemplateBinding Background}"
-                   BorderBrush="{TemplateBinding BorderBrush}"
-                   BorderThickness="{TemplateBinding BorderThickness}"
-                   CornerRadius="1">
+                        x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="1">
                             <ContentPresenter
-                   x:Name="contentPresenter" 
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   TextElement.FontWeight="{TemplateBinding FontWeight}"
-                   TextElement.Foreground="{TemplateBinding Foreground}"
-                   Margin="10,5"/>
+                            x:Name="contentPresenter"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            Margin="10,5"/>
                         </Border>
 
-                        <!-- Триггеры для визуальной реакции -->
                         <ControlTemplate.Triggers>
-                            <!-- 1. При наведении курсора -->
-                            <Trigger Property="IsMouseOver"
-                    Value="True">
-                                <Setter TargetName="border"
-                       Property="Background" 
-                       Value="#FFE5E5E5"/>
-                                <Setter TargetName="contentPresenter" 
-                       Property="TextElement.Foreground" 
-                       Value="#FF333333"/>
-                                <Setter TargetName="border"
-                       Property="BorderBrush"
-                       Value="#FFCCCCCC"/>
-                                <Setter TargetName="border"
-                       Property="CornerRadius"
-                       Value="1"/>
+                            <!-- При наведении -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE5E5E5"/>
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF333333"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FFCCCCCC"/>
                             </Trigger>
-                            <!-- 2. При нажатии -->
-                            <Trigger Property="IsPressed"
-                    Value="True">
-                                <Setter TargetName="border"
-                       Property="Background"
-                       Value="#FFD5D5D5"/>
-                                <Setter TargetName="contentPresenter"
-                       Property="TextElement.Foreground"
-                       Value="#FF000000"/>
+
+                            <!-- При нажатии -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFD5D5D5"/>
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF000000"/>
                             </Trigger>
-                            <!-- 3. Для отключённой кнопки -->
-                            <Trigger Property="IsEnabled"
-                    Value="False">
-                                <Setter TargetName="border"
-                       Property="Background"
-                       Value="#FFF5F5F5"/>
-                                <Setter TargetName="contentPresenter" 
-                       Property="TextElement.Foreground"
-                       Value="#FF999999"/>
+
+                            <!-- Для отключённой кнопки -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#FFF5F5F5"/>
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF999999"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver"
-                  Value="True">
-                    <Setter Property="Background"
-                     Value="#80DDDDDD"/>
-                </Trigger>
-                <Trigger Property="IsPressed"
-                  Value="True">
-                    <Setter Property="Background"
-                     Value="#CCDDDDDD"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
 
+        <!-- Стиль для TextBox с закруглёнными углами -->
         <Style x:Key="RoundedTextBoxStyle" TargetType="TextBox">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border Name="border"
-                            CornerRadius="2"
-                            BorderThickness="0.6"
-                            BorderBrush="Black"
-                            Background="#4CFFFFFF"
-                            Padding="2">
-                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false"/>
+                        <Border
+                        Name="border"
+                        CornerRadius="2"
+                        BorderThickness="0.6"
+                        BorderBrush="Black"
+                        Background="#4CFFFFFF"
+                        Padding="{TemplateBinding Padding}">
+                            <ScrollViewer
+                            x:Name="PART_ContentHost"
+                            Focusable="false"/>
                         </Border>
+
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="#808080"/>
                             </Trigger>
+
                             <Trigger Property="IsFocused" Value="True">
                                 <Setter TargetName="border" Property="BorderBrush" Value="DarkGray"/>
                                 <Setter TargetName="border" Property="BorderThickness" Value="1"/>
@@ -152,8 +125,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
+
 
     <Grid Margin="15,15,15,20">
         <Grid.RowDefinitions>
@@ -218,13 +191,13 @@
                 </Grid.RowDefinitions>
 
                 <TextBox x:Name="FirstNameTextBox"
-                 Grid.Row="0"   VerticalContentAlignment="Center"
+                 Grid.Row="0"  
                  ToolTip="Обязательное поле"
                  Style="{StaticResource RoundedTextBoxStyle}"
                  Background="#4CFFFFFF"/>
 
                 <TextBox x:Name="LastNameTextBox"
-                 Grid.Row="1"  VerticalContentAlignment="Center"
+                 Grid.Row="1" 
                  ToolTip="Можно не указывать"
                  Style="{StaticResource RoundedTextBoxStyle}"
                  Background="#4CFFFFFF"/>
@@ -236,7 +209,7 @@
                  Background="#4CFFFFFF"/>
 
                 <TextBox x:Name="EmailTextBox"
-                 Grid.Row="3"  VerticalContentAlignment="Center"
+                 Grid.Row="3"  
                  ToolTip="Обязательное поле, уникальный адрес"
                  Style="{StaticResource RoundedTextBoxStyle}"
                  Background="#4CFFFFFF"/>
@@ -245,14 +218,13 @@
                    Padding="0"
                     BorderBrush="Black"
                     BorderThickness="0.6"
-                    Width="Auto"  
-                    >
+                    Width="Auto">                      
                     <PasswordBox
-                        x:Name="PasswordBox"
-                       VerticalContentAlignment="Center"
+                        x:Name="PasswordBox"                       
                         BorderThickness="0"                       
                         ToolTip="Обязательное поле, минимум 6 символов"                    
-                     Background="#4CFFFFFF" Password=""/>
+                        Background="#4CFFFFFF"
+                        Password=""/>
 
                 </Border>
 

@@ -4,12 +4,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             d:DesignHeight="450" Width="990">
+             d:DesignHeight="450" Width="Auto"  Margin="3"    >
 
     <!-- Внешний контейнер с управляемой видимостью -->
-    <Border Visibility="{Binding UsersTableVisibility, FallbackValue=Visible}"
+    <Border CornerRadius="5"  Visibility="{Binding UsersTableVisibility, FallbackValue=Visible}"
               Padding="0"
-              BorderThickness="0">
+              BorderThickness="0.6" BorderBrush="Black" Background="#26ABC8AB" ClipToBounds="True">
+        
         <Grid>
             <!-- Две строки: заголовки и данные -->
             <Grid.RowDefinitions>
@@ -18,9 +19,12 @@
                 <RowDefinition Height="*"/>
                 <!-- Данные с прокруткой -->
             </Grid.RowDefinitions>
+            
+            
+
 
             <!-- 1. Заголовки (не прокручиваются) -->
-            <Grid Grid.Row="0" Margin="1">
+            <Grid Grid.Row="0" Margin="3">
                 <Grid.Resources>
                     <Style TargetType="TextBlock">
                         <Setter Property="FontWeight" Value="Bold"/>
@@ -38,7 +42,7 @@
                     <ColumnDefinition Width="150"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="ID" />
+                <TextBlock Grid.Column="0" Text=" ID" />
                 <TextBlock Grid.Column="1" Text="Имя" />
                 <TextBlock Grid.Column="2" Text="Фамилия" />
                 <TextBlock Grid.Column="3" Text="Телефон"/>
@@ -46,20 +50,30 @@
                 <TextBlock Grid.Column="5" Text="Пароль" />
                 <TextBlock Grid.Column="6" Text="Дата создания" />
             </Grid>
+            
+            
+            
+            
+            
+            
+            <Border Grid.Row="5"
+                    CornerRadius="3" 
+                    BorderThickness="0.3" BorderBrush="Black" Margin="2,2,2,3"
+                    Background="Transparent">
 
-            <!-- 2. Прокручиваемые данные -->
+                <!-- 2. Прокручиваемые данные -->
             <ScrollViewer Grid.Row="1"
                           x:Name="UserPanel"                         
                           
                           HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Hidden"
-                          Focusable="False">
+                          Focusable="False" Background="Transparent">
                 <ItemsControl ItemsSource="{Binding Users}"
                               VerticalAlignment="Top"
                               HorizontalAlignment="Stretch">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="1">
+                            <Grid Margin="2">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="50"/>
                                     <ColumnDefinition Width="130"/>
@@ -103,7 +117,9 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
+          </Border>
         </Grid>
+          
     </Border>
 </UserControl>
 
