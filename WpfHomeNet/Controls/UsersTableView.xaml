@@ -1,16 +1,17 @@
-﻿<UserControl x:Class="HomeSocialNetwork.Controls.UsersTableView"
+﻿<UserControl x:Class="WpfHomeNet.Controls.UsersTableView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             d:DesignHeight="450" Width="Auto"  Margin="3"    >
+             mc:Ignorable="d"  
+             d:DesignHeight="450" Width="Auto"  >
 
     <!-- Внешний контейнер с управляемой видимостью -->
-    <Border CornerRadius="5"  Visibility="{Binding UsersTableVisibility, FallbackValue=Visible}"
+    <Border CornerRadius="5" Margin="4"  
               Padding="0"
-              BorderThickness="0.6" BorderBrush="Black" Background="#26ABC8AB" ClipToBounds="True">
-        
+              BorderThickness="1" BorderBrush="Silver" Background="#26ABC8AB" ClipToBounds="True">
+       
+
         <Grid>
             <!-- Две строки: заголовки и данные -->
             <Grid.RowDefinitions>
@@ -24,7 +25,7 @@
 
 
             <!-- 1. Заголовки (не прокручиваются) -->
-            <Grid Grid.Row="0" Margin="3">
+            <Grid Grid.Row="0" >
                 <Grid.Resources>
                     <Style TargetType="TextBlock">
                         <Setter Property="FontWeight" Value="Bold"/>
@@ -33,16 +34,16 @@
                     </Style>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="55"/>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition MinWidth="80" MaxWidth="170"/>
+                    <ColumnDefinition MinWidth="100" MaxWidth="170"/>
+                    <ColumnDefinition MinWidth="120" MaxWidth="180"/>
+                    <ColumnDefinition MinWidth="220"/>
+                    <ColumnDefinition MinWidth="90"/>
+                    <ColumnDefinition MinWidth="160"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text=" ID" />
+                <TextBlock Grid.Column="0" Text="  ID" />
                 <TextBlock Grid.Column="1" Text="Имя" />
                 <TextBlock Grid.Column="2" Text="Фамилия" />
                 <TextBlock Grid.Column="3" Text="Телефон"/>
@@ -52,37 +53,33 @@
             </Grid>
             
             
-            
-            
-            
-            
+                 
             <Border Grid.Row="5"
                     CornerRadius="3" 
-                    BorderThickness="0.3" BorderBrush="Black" Margin="2,2,2,3"
+                    BorderThickness="1" BorderBrush="Silver" Margin="3,3,3,4"
                     Background="Transparent">
 
                 <!-- 2. Прокручиваемые данные -->
             <ScrollViewer Grid.Row="1"
-                          x:Name="UserPanel"                         
-                          
+                          x:Name="UserPanel"                                                   
                           HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Hidden"
                           Focusable="False" Background="Transparent">
-                <ItemsControl ItemsSource="{Binding Users}"
+                <ItemsControl ItemsSource="{Binding Users}"  
                               VerticalAlignment="Top"
                               HorizontalAlignment="Stretch">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="2">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition Width="130"/>
-                                    <ColumnDefinition Width="130"/>
-                                    <ColumnDefinition Width="130"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="150"/>
-                                </Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50"/>
+                                        <ColumnDefinition MinWidth="80" MaxWidth="170"/>
+                                        <ColumnDefinition MinWidth="100" MaxWidth="170"/>
+                                        <ColumnDefinition MinWidth="120" MaxWidth="180"/>
+                                        <ColumnDefinition MinWidth="220"/>
+                                        <ColumnDefinition MinWidth="90"/>
+                                        <ColumnDefinition MinWidth="160"/>
+                                    </Grid.ColumnDefinitions>
 
                                 <ContentControl Grid.Column="0"
                                         Content="{Binding Id}"

@@ -18,7 +18,7 @@ namespace WpfHomeNet.ViewModels
         // Свойства для хранения данных
         private ObservableCollection<UserEntity> _users = []; // Коллекция пользователей
 
-        private Visibility _scrollViewerVisibility = Visibility.Collapsed; // Видимость ScrollViewer
+        private Visibility _tableVisibility = Visibility.Collapsed; // Видимость ScrollViewer
 
         private string _statusText = string.Empty; // Текстовое сообщение статуса
 
@@ -36,10 +36,10 @@ namespace WpfHomeNet.ViewModels
 
         public Visibility UsersTableVisibility
         {
-            get => _scrollViewerVisibility;
+            get => _tableVisibility;
             set
             {
-                _scrollViewerVisibility = value;
+                _tableVisibility = value;
                 OnPropertyChanged(nameof(UsersTableVisibility));
             }
         } 
@@ -58,8 +58,8 @@ namespace WpfHomeNet.ViewModels
 
 
         // Методы управления видимостью ScrollViewer
-        public void ShowScrollViewer() => UsersTableVisibility = Visibility.Visible;
-        public void HideScrollViewer() => UsersTableVisibility = Visibility.Collapsed;
+        public void ShowTableViewer() => UsersTableVisibility = Visibility.Visible;
+        public void HideTableViewer() => UsersTableVisibility = Visibility.Collapsed;
 
 
 

@@ -2,8 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-namespace HomeSocialNetwork.Controls
+namespace WpfHomeNet.Controls
 {
     /// <summary>
     /// Interaction logic for UsersTableView.xaml

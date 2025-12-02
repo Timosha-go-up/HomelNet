@@ -3,128 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Удаление пользователя" 
         Height="250"
-        Width="350"
+        Width="400"
         WindowStyle="None"
         AllowsTransparency="True"
         BorderThickness="1"
         BorderBrush="Black"
         WindowStartupLocation="CenterOwner"
         Background="#26ABC8AB">
-    <Window.Resources>
-        <!-- Стиль для TextBox -->
-        <Style TargetType="TextBox">
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="#7FFFFFFF"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BorderThickness" Value="0.2"/>
-            <Setter Property="BorderBrush" Value="DarkGray"/>
-            <!-- Триггеры для эффектов -->
-            <Style.Triggers>
-                <MultiTrigger>
-                    <MultiTrigger.Conditions>
-                        <Condition Property="IsFocused" Value="True"/>
-                    </MultiTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="Black"/>
-                    <Setter Property="Background" Value="White"/>
-                </MultiTrigger>
-                <MultiTrigger>
-                    <MultiTrigger.Conditions>
-                        <Condition Property="IsMouseOver" Value="True"/>
-                        <Condition Property="IsFocused" Value="False"/>
-                    </MultiTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="LightBlue"/>
-                    <Setter Property="Background" Value="LightBlue"/>
-                </MultiTrigger>
-            </Style.Triggers>
-        </Style>
-        <!-- НОВЫЙ СТИЛЬ ДЛЯ КНОПОК -->
-        <Style TargetType="Button">
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Width" Value="97"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="Margin" Value="2,5,0,0"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="0.2"/>
-            <Setter Property="Background" Value="#00DDDDDD"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                       <Border
-                          x:Name="border"
-                          Background="{TemplateBinding Background}"
-                          BorderBrush="{TemplateBinding BorderBrush}"
-                          BorderThickness="{TemplateBinding BorderThickness}"
-                          CornerRadius="1">
-                            <ContentPresenter
-                          x:Name="contentPresenter" 
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          TextElement.FontWeight="{TemplateBinding FontWeight}"
-                          TextElement.Foreground="{TemplateBinding Foreground}"
-                          Margin="10,5"/>
-                      </Border>
-
-                        <!-- Триггеры для визуальной реакции -->
-                        <ControlTemplate.Triggers>
-                            <!-- 1. При наведении курсора -->
-                            <Trigger Property="IsMouseOver"
-                           Value="True">
-                                <Setter TargetName="border"
-                              Property="Background" 
-                              Value="#FFE5E5E5"/>
-                                <Setter TargetName="contentPresenter" 
-                              Property="TextElement.Foreground" 
-                              Value="#FF333333"/>
-                                <Setter TargetName="border"
-                              Property="BorderBrush"
-                              Value="#FFCCCCCC"/>
-                                <Setter TargetName="border"
-                              Property="CornerRadius"
-                              Value="1"/>
-                            </Trigger>
-                            <!-- 2. При нажатии -->
-                            <Trigger Property="IsPressed"
-                           Value="True">
-                                <Setter TargetName="border"
-                              Property="Background"
-                              Value="#FFD5D5D5"/>
-                                <Setter TargetName="contentPresenter"
-                              Property="TextElement.Foreground"
-                              Value="#FF000000"/>
-                            </Trigger>
-                            <!-- 3. Для отключённой кнопки -->
-                            <Trigger Property="IsEnabled"
-                           Value="False">
-                                <Setter TargetName="border"
-                              Property="Background"
-                              Value="#FFF5F5F5"/>
-                                <Setter TargetName="contentPresenter" 
-                              Property="TextElement.Foreground"
-                              Value="#FF999999"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="#80DDDDDD"/>
-                </Trigger>
-                <Trigger Property="IsPressed"
-                         Value="True">
-                    <Setter Property="Background"
-                            Value="#CCDDDDDD"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
+  
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -136,10 +22,10 @@
              Text="Выберите пользователя для удаления:"
              FontWeight="Bold"
              FontSize="14"
-             HorizontalAlignment="Center" Width="268" />
+             HorizontalAlignment="Center"  />
         <StackPanel Grid.Row="1"
-                    Orientation="Horizontal">
-            <TextBox x:Name="userIdTextBox"
+                    Orientation="Horizontal" Margin="0,0,5,0">
+            <TextBox x:Name="userIdTextBox" Height="30"
                 Width="200"
                     KeyDown="UserIdTextBox_KeyDown" 
                 Margin="5"
@@ -149,7 +35,7 @@
                 LostFocus="UserIdTextBox_LostFocus" />
             <Button x:Name="searchButton" 
                 Content="Найти" 
-                    Margin="5"
+                    Margin="5" Height="30" Width="80"
                 Click="SearchUser_Click" 
                  Background="#4CDDDDDD"/>
         </StackPanel>
@@ -161,7 +47,7 @@
 
             <ListBox x:Name="userListBox"
              DisplayMemberPath="DisplayInfo"
-             SelectedValuePath="Id"
+             SelectedValuePath="Id"  
              SelectionChanged="UserListBox_SelectionChanged"
             Background="#00000000" 
              BorderThickness="0">
@@ -193,15 +79,15 @@
         <StackPanel
             Grid.Row="3" 
             Orientation="Horizontal"
-            HorizontalAlignment="Left" Margin="104,0,0,0" Width="214" >
+            HorizontalAlignment="Left" Margin="104,0,0,0" Width="259" >
             <Button
-                x:Name="yesButton" 
+                x:Name="yesButton" Height="30" Width="80"
                 Content="Удалить" 
                 Click="YesButton_Click" 
                 Margin="5"
                 IsEnabled="{Binding CanDelete}" Background="#4CDDDDDD"/>
             <Button 
-                x:Name="noButton" 
+                x:Name="noButton" Height="30" Width="80"
                 Content="Отмена" 
                 Click="NoButton_Click" 
                 Margin="5" Background="#4CDDDDDD"/>

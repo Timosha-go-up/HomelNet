@@ -1,13 +1,13 @@
-﻿using HomeSocialNetwork;
-using WpfHomeNet.ViewModels;
+﻿using HomeNetCore.Helpers.Exceptions;
+using HomeNetCore.Models;
+using HomeSocialNetwork;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using HomeNetCore.Models;
-using HomeNetCore.Helpers.Exceptions;
-
+using System.Windows.Media.Animation;
 using WpfHomeNet.SubWindows;
+using WpfHomeNet.ViewModels;
 
 
 namespace WpfHomeNet
@@ -28,9 +28,13 @@ namespace WpfHomeNet
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
-              
+
+                this.Width = 850; this.MaxWidth = 850;
+                this.MaxHeight = 600;
+
+
                 LogWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-                LogWindow.Left = Application.Current.MainWindow.Left + 1005;
+                LogWindow.Left = Application.Current.MainWindow.Left + 855;
                 LogWindow.Top = Application.Current.MainWindow.Top + 0;
             }
         }
@@ -56,16 +60,19 @@ namespace WpfHomeNet
 
         private void ShowUsers_Click(object sender, RoutedEventArgs e)
         {
+            
             if (DataContext is MainViewModel vm)
-            {
+
+            {    
                 if (vm.UsersTableVisibility == Visibility.Visible)
                 {
-                    vm.HideScrollViewer();
+                    HideUsersTable();
+                    vm.HideTableViewer();
                     ShowButton.Content = "Показать юзеров";
                 }
                 else
-                {
-                    vm.ShowScrollViewer();
+                {    ShowUsersTable();
+                    vm.ShowTableViewer();
                     ShowButton.Content = "Скрыть юзеров";
                 }
             }
@@ -74,6 +81,22 @@ namespace WpfHomeNet
                 Debug.WriteLine("DataContext не является MainViewModel!");
             }
         }
+
+
+
+
+        // Где‑то в логике главного окна
+        private void ShowUsersTable()
+        {
+            userTableView.Visibility = Visibility.Visible;
+        }
+
+        private void HideUsersTable()
+        {
+            userTableView.Visibility = Visibility.Collapsed;
+        }
+
+
 
         private void ShowWindowLogs_Click(object sender, RoutedEventArgs e)
         {                          
@@ -88,11 +111,47 @@ namespace WpfHomeNet
             }
         }
 
+
+        private async void AddUsersList_Click(object sender, RoutedEventArgs e)
+        {
+            var testData =  TestUserList.Users;
        
-      
+            try
+            {
+                foreach (var user in testData)
+                {
+                    await UserService.AddUserAsync(user);
+                }
+            }
+            catch (DuplicateEmailException ex)
+            {
+                if (DataContext is MainViewModel vm)
+                {
+                    vm.HideTableViewer(); ShowButton.Content = "Показать юзеров";
+                }
+
+                var messageBox = new MessageWindow
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                messageBox.Show();
+                messageBox.MessageText.Text = ex.GetUserMessage();              
+            }
+
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+        }     
+
 
         private async void AddUser_Click(object sender, RoutedEventArgs e)
         {
+            if (DataContext is MainViewModel vm)
+            {
+                vm.HideTableViewer(); ShowButton.Content = "Показать юзеров";
+            }
             // Проверка диалога
             var dialog = new AddUserDialog { Owner = this };
             if (dialog.ShowDialog() != true) return;
@@ -129,6 +188,9 @@ namespace WpfHomeNet
         {
             var mainVm = (MainViewModel)DataContext;
 
+            mainVm.HideTableViewer(); ShowButton.Content = "Показать юзеров";
+
+
             var deleteWindow = new DeleteUserDialog(mainVm.Users, UserService, Logger)
             {
                 Owner = this,OnStatusUpdated = (message) =>                               
@@ -141,12 +203,7 @@ namespace WpfHomeNet
         }
 
 
-
-
-
-
-
-        private async void Refresh_Click(object sender, RoutedEventArgs e)
+        private async void RefreshStatus_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -158,121 +215,9 @@ namespace WpfHomeNet
             }
         }
 
-        #region методы логики обработки пользователей добавление удаление обновление
-        
-      
-
-
-
-        private async void AddUsersList_Click(object sender, RoutedEventArgs e)
-        {
-            var testData =  TestUserList.Users;
        
-            try
-            {
-                foreach (var user in testData)
-                {
-                    await UserService.AddUserAsync(user);
-                }
-            }
-            catch (DuplicateEmailException ex)
-            {
-
-                var messageBox = new MessageWindow
-                {
-                    Owner = this,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner
-                };
-                messageBox.Show();
-                messageBox.MessageText.Text = ex.GetUserMessage();              
-            }
-
-            catch (Exception ex)
-            {
-                HandleException(ex);
-            }
-        }
-
-
-
-        private async Task ExecuteAddUserOperation(UserEntity newUser, Button button)
-        {
-            ArgumentNullException.ThrowIfNull(newUser.Email);
-            
-            try
-            {                                               
-                if (await UserService.EmailExistsAsync(newUser.Email))
-                {
-                    throw new DuplicateEmailException(newUser.Email);
-                }
-
-                await UserService.AddUserAsync(newUser);
-
-                Logger.LogInformation($"Пользователь {newUser?.FirstName} добавлен"); 
-
-                Status.SetStatus("Пользователь добавлен"); await Task.Delay(1000);
-
-                await RefreshDataAsync();
-                                              
-                Status.SetStatus($"Загружено {MainVm.Users.Count}");
-            }
-            catch (DuplicateEmailException ex)
-            {
-                Logger?.LogWarning("Существующий имейл ");
-
-                MessageBox.Show(ex.GetUserMessage(),string.Empty,
-                MessageBoxButton.OK, MessageBoxImage.Information);
         
-            }
-            catch (Exception ex)
-            {
-                HandleException(ex);
-            }
-        }
-
-
-
-        private async Task RefreshDataAsync()
-        {
-            try
-            {
-                Status.SetStatus("Обновление...");
-                await Task.Delay(1000);
-                await MainVm.LoadUsersAsync();
-                Status.SetStatus("Список обновлён");
-                await Task.Delay(1000);
-                Status.SetStatus($"Загружено {MainVm.Users.Count}");
-            }
-            catch (Exception ex)
-            {
-                Status.SetStatus($"Ошибка обновления: {ex.Message}");
-
-                _logger?.LogError($"Ошибка обновления: {ex.Message}");
-            }
-        }
-
-        private void HandleException(Exception ex)
-        {
-            if (ex is ArgumentNullException)
-            {
-                MessageBox.Show(
-                    $"Критическая ошибка: {ex.Message}",
-                    "Ошибка инициализации",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-
-
-                var message = new MessageWindow($"Критическая ошибка: {ex.Message}")
-                {
-                    Owner = this,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner
-                };
-                message.Show();
-               
-            }          
-        }
-
-        #endregion
+       
     }
 }
 
