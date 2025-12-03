@@ -111,27 +111,7 @@ namespace WpfHomeNet
 
 
 
-
-
-
-
-        private void WindowDrag_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragMove(); // Перемещаем главное окно
-
-            }
-        }
-
-
-
-
-
-
-
-
-
+       
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             

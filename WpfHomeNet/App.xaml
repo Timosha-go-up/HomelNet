@@ -10,7 +10,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
        
 
-        <!-- Стиль кнопки, доступный во всём приложении -->
+      
         <Style TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="AntiqueWhite"/>
@@ -25,18 +25,18 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border"
-        Background="{TemplateBinding Background}"
-        BorderBrush="{TemplateBinding BorderBrush}"
-        BorderThickness="{TemplateBinding BorderThickness}"
-        CornerRadius="{Binding ActualHeight,
-            RelativeSource={RelativeSource TemplatedParent},
-            Converter={StaticResource RadiusConverter}}"
-        Padding="{TemplateBinding Padding}">
+                             Background="{TemplateBinding Background}"
+                             BorderBrush="{TemplateBinding BorderBrush}"
+                             BorderThickness="{TemplateBinding BorderThickness}"
+                             CornerRadius="{Binding ActualHeight,
+                             RelativeSource={RelativeSource TemplatedParent},
+                             Converter={StaticResource RadiusConverter}}"
+                             Padding="{TemplateBinding Padding}">    
                             <ContentPresenter x:Name="contentPresenter"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                TextElement.FontWeight="{TemplateBinding FontWeight}"
-                                TextElement.Foreground="{TemplateBinding Foreground}"/>
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             TextElement.FontWeight="{TemplateBinding FontWeight}"
+                             TextElement.Foreground="{TemplateBinding Foreground}"/>
                         </Border>
                         <!-- Триггеры визуальных состояний -->
                         <ControlTemplate.Triggers>
@@ -45,9 +45,7 @@
                                 <Setter TargetName="border" Property="Background" Value="#66ABC8AB"/>
                                 <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="Black"/>
                                 <Setter TargetName="border" Property="BorderBrush" Value="LightBlue"/>
-                                
                                 <Setter TargetName="border" Property="BorderThickness" Value="0.6"/>
-                                <Setter TargetName="border" Property="Padding" Value="9.4"/>
                             </Trigger>
                             <!-- Нажатие -->
                             <Trigger Property="IsPressed" Value="True">
@@ -192,24 +190,22 @@
 
         
         <Style x:Key="RoundedListBox" TargetType="ListBox">
-    <Setter Property="Template">
-        <Setter.Value>
-            <ControlTemplate TargetType="ListBox">
-                <Border CornerRadius="5"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
-                    <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="false">
-                        <ItemsPresenter />
-                    </ScrollViewer>
-                </Border>
-            </ControlTemplate>
-        </Setter.Value>
-    </Setter>
-</Style>
-
-
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border CornerRadius="5"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                                <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="false">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="InnerBorderTitleStyle" TargetType="ContentControl">
             <Setter Property="Template">
@@ -229,13 +225,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-
-
-
-
-
-
 
     </Application.Resources>
 </Application>

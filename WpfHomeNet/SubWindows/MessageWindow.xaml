@@ -5,55 +5,57 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfHomeNet.SubWindows"
          Title="Удаление пользователя" 
-         Height="200"
-         Width="450"
+         Height="200"        
+         Width="300"
          WindowStyle="None"
          AllowsTransparency="True"
-         BorderThickness="1"
-         BorderBrush="Black"
+         BorderThickness="1"        
          WindowStartupLocation="CenterOwner"
-        Background="#3FABC8AB">
-    
-    <Grid>
+        Background="Transparent">
+    <ContentControl Style="{StaticResource TripleBorderStyle}"  >
+        <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
 
         </Grid.ColumnDefinitions>
-        <StackPanel  Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent">
-            <StackPanel
+            <StackPanel  Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent">
+                <StackPanel.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Padding" Value="5"/>
+                        <Setter Property="BorderThickness" Value="0.6"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                    </Style>
+                </StackPanel.Resources>
+                <StackPanel
                 Orientation="Horizontal"                       
                 HorizontalAlignment="Right"                         
                 Margin="10">
-                <Button 
-                   
-                   Click="OkButton_Click"                  
-                   Width="70" IsDefault="True"
-                    Background="Transparent"/>    
-
-                <Button 
+                    <Label 
+                        Foreground="#FF95740E"
+                       FontWeight="Bold"
+                        Width="Auto" MinWidth="100"
+                        Content=" ⚠️  Ошибка" FontSize="16" 
+                        HorizontalContentAlignment="Center"
+                        />
+                    <Button Margin="110,0,0,0"
                    Content="ОК" 
                    Click="OkButton_Click"                  
-                   Width="70" Height="25" IsDefault="True"
-                    Background="#7FDDDDDD"/>
-            </StackPanel  >
-            <Border 
-                Margin="10,0,10,0"    
-                BorderBrush="Black"
-                Background="#7FE2DBDB"
-                CornerRadius="1">                   
-                <TextBlock
+                   Width="60" 
+                    Height="30" FontSize="10"
+                    IsDefault="True"
+                    Background="Transparent"/>
+                </StackPanel  >
+                <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}" Margin="10"  >
+                    <TextBlock  
                     Margin="12,10,10,10"
                     Name="MessageText"
                     TextWrapping="Wrap"
                     FontSize="14"
                     Width="Auto"
-                    Height="90" />  
-            </Border>
-
-
-        </StackPanel>
-         
-  
-    </Grid>
+                    Height="90" />
+                </ContentControl>
+            </StackPanel>
+        </Grid>
+   </ContentControl>
 </Window>

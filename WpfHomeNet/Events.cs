@@ -4,6 +4,7 @@ using HomeSocialNetwork;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using WpfHomeNet.SubWindows;
 using WpfHomeNet.ViewModels;
 
@@ -21,7 +22,15 @@ namespace WpfHomeNet
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <exception cref="InvalidOperationException"></exception>
-       
+
+        private void WindowDrag_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove(); // Перемещаем главное окно
+
+            }
+        }
 
 
 
@@ -42,21 +51,65 @@ namespace WpfHomeNet
 
 
 
+
+
+
+        private void ShowWindowLogs_Click(object sender, RoutedEventArgs e)
+        {
+            if (LogWindow.IsVisible)
+            {
+                // 1. Отписываемся от событий (даже если подписка была двойной)
+                this.LocationChanged -= SyncLogWindowPosition;
+                this.SizeChanged -= SyncLogWindowPosition;
+
+
+                LogWindow.Hide();
+                btnLogs.Content = "Показать логи";
+            }
+            else
+            {
+                LogWindow.Owner = this;
+
+                // 2. Проверяем загрузку лог‑окна
+                if (!LogWindow.IsLoaded)
+                {
+                    LogWindow.Loaded += (s, ev) =>
+                    {
+                        PositionLogWindowRelativeToMain(); // Позиционируем после загрузки
+                        EnableSync(); // Включаем синхронизацию
+                    };
+                }
+
+                // 3. Показываем окно (это запустит Loaded, если ещё не загружено)
+                LogWindow.Show();
+
+
+                // 4. Если окно уже загружено — сразу позиционируем и подписываемся
+                if (LogWindow.IsLoaded)
+                {
+                    PositionLogWindowRelativeToMain();
+                    EnableSync();
+                }
+
+                btnLogs.Content = "Скрыть логи";
+            }
+        }
+
         private void ShowUsers_Click(object sender, RoutedEventArgs e)
         {
             
             if (DataContext is MainViewModel vm)
 
             {    
-                if (vm.UsersTableVisibility == Visibility.Visible)
+                if (userTableView.Visibility == Visibility.Visible)
                 {
                     HideUsersTable();
-                    vm.HideTableViewer();
+                  
                     ShowButton.Content = "Показать юзеров";
                 }
                 else
                 {    ShowUsersTable();
-                    vm.ShowTableViewer();
+                   
                     ShowButton.Content = "Скрыть юзеров";
                 }
             }
@@ -100,7 +153,7 @@ namespace WpfHomeNet
             {
                 if (DataContext is MainViewModel vm)
                 {
-                    vm.HideTableViewer(); ShowButton.Content = "Показать юзеров";
+                   HideUsersTable(); ShowButton.Content = "Показать юзеров";
                 }
 
                 var messageBox = new MessageWindow
@@ -123,7 +176,7 @@ namespace WpfHomeNet
         {
             if (DataContext is MainViewModel vm)
             {
-                vm.HideTableViewer(); ShowButton.Content = "Показать юзеров";
+               HideUsersTable(); ShowButton.Content = "Показать юзеров";
             }
             // Проверка диалога
             var dialog = new AddUserDialog { Owner = this };
@@ -161,7 +214,7 @@ namespace WpfHomeNet
         {
             var mainVm = (MainViewModel)DataContext;
 
-            mainVm.HideTableViewer(); ShowButton.Content = "Показать юзеров";
+           HideUsersTable(); ShowButton.Content = "Показать юзеров";
 
 
             var deleteWindow = new DeleteUserDialog(mainVm.Users, UserService, Logger)

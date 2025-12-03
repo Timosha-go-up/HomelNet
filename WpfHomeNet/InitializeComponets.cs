@@ -12,25 +12,7 @@ using WpfHomeNet.ViewModels;
 namespace WpfHomeNet
 {
     public partial class MainWindow
-    {
-        
-
-
-
-
-
-
-
-
-
-
-     
-
-
-
-       
-
-
+    {       
 
         private async Task InitializeAsync(DatabaseType databaseType)
         {

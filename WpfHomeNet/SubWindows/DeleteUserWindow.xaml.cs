@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using WpfHomeNet.SubWindows;
 
 namespace WpfHomeNet
 {
@@ -93,7 +94,15 @@ namespace WpfHomeNet
                 }
                 else
                 {
-                    MessageBox.Show("Пользователь не найден");
+                    
+
+                    var messageBox = new MessageWindow
+                    {
+                        Owner = this,
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner
+                    };
+                    messageBox.Show();
+                    messageBox.MessageText.Text = "Пользователь не найден";
                     // Блокируем кнопку — пользователя нет
                     yesButton.IsEnabled = false;
                 }
@@ -144,7 +153,15 @@ namespace WpfHomeNet
             {
                 if (userListBox.SelectedItem is not UserEntity selectedUser)
                 {
-                    MessageBox.Show("Выберите пользователя для удаления");
+                   
+
+                    var messageBox = new MessageWindow
+                    {
+                        Owner = this,
+                        WindowStartupLocation = WindowStartupLocation.CenterOwner
+                    };
+                    messageBox.Show();
+                    messageBox.MessageText.Text ="Выберите пользователя для удаления" ;
                     return;
                 }
 

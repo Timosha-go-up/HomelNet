@@ -8,107 +8,24 @@
         WindowStartupLocation="CenterOwner" Background="Transparent">
 
     <Window.Resources>
-        <!-- Базовый стиль для TextBox -->
-        <Style TargetType="TextBox">
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Background" Value="#7FFFFFFF"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-
-            <Style.Triggers>
-                <MultiTrigger>
-                    <MultiTrigger.Conditions>
-                        <Condition Property="IsFocused" Value="True"/>
-                    </MultiTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="Black"/>
-                    <Setter Property="Background" Value="White"/>
-                </MultiTrigger>
-                <MultiTrigger>
-                    <MultiTrigger.Conditions>
-                        <Condition Property="IsMouseOver" Value="True"/>
-                        <Condition Property="IsFocused" Value="False"/>
-                    </MultiTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="LightBlue"/>
-                    <Setter Property="Background" Value="LightBlue"/>
-                </MultiTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- Стиль для Button -->
-        <Style TargetType="Button">
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Width" Value="96"/>
-            <Setter Property="Height" Value="22"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="2,2,2,2"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="0.4"/>
-            <Setter Property="Background" Value="#00DDDDDD"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <!-- Добавлено -->
-
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                        x:Name="border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="1">
-                            <ContentPresenter
-                            x:Name="contentPresenter"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            TextElement.FontWeight="{TemplateBinding FontWeight}"
-                            TextElement.Foreground="{TemplateBinding Foreground}"
-                            Margin="10,5"/>
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <!-- При наведении -->
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFE5E5E5"/>
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF333333"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="#FFCCCCCC"/>
-                            </Trigger>
-
-                            <!-- При нажатии -->
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFD5D5D5"/>
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF000000"/>
-                            </Trigger>
-
-                            <!-- Для отключённой кнопки -->
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="#FFF5F5F5"/>
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF999999"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
+       
         <!-- Стиль для TextBox с закруглёнными углами -->
         <Style x:Key="RoundedTextBoxStyle" TargetType="TextBox">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
                         <Border
-                        Name="border"
-                        CornerRadius="2"
-                        BorderThickness="0.6"
-                        BorderBrush="Black"
-                        Background="#4CFFFFFF"
-                        Padding="{TemplateBinding Padding}">
+                    Name="border"
+                    CornerRadius="2"
+                    BorderThickness="0.6"
+                    BorderBrush="Black"
+                    Background="#4CFFFFFF"
+                    Padding="{TemplateBinding Padding}">
+                            <!-- Добавляем VerticalContentAlignment к ScrollViewer -->
                             <ScrollViewer
-                            x:Name="PART_ContentHost"
-                            Focusable="false"/>
+                        x:Name="PART_ContentHost"
+                        Focusable="false"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
 
                         <ControlTemplate.Triggers>
@@ -125,6 +42,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
     <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}" >
@@ -162,13 +80,13 @@
             Orientation="Horizontal"
             HorizontalAlignment="Center" Width="200"
             >
-            <Button 
+            <Button Padding="1" 
                 Content="ОК" 
-                Click="OkButton_Click" Background="#4CDDDDDD" Height="22" FontSize="10" />
-            <Button
-                Content="Отмена"
+                Click="OkButton_Click" Width="98" />
+            <Button  Padding="1"
+                Content="Отмена" Width="98" 
                 Click="CancelButton_Click" 
-                IsCancel="True" Background="#4CDDDDDD" Height="22" FontSize="10" />
+                IsCancel="True"/>
         </StackPanel>
 
         <Border
@@ -200,25 +118,25 @@
                  Grid.Row="1" 
                  ToolTip="Можно не указывать"
                  Style="{StaticResource RoundedTextBoxStyle}"
-                 Background="#4CFFFFFF"/>
+                />
 
                 <TextBox x:Name="PhoneNumberTextBox"
                  Grid.Row="2" 
                  ToolTip="Формат: +7 XXX XXX-XX-XX" 
                  Style="{StaticResource RoundedTextBoxStyle}"
-                 Background="#4CFFFFFF"/>
+                 />
 
                 <TextBox x:Name="EmailTextBox"
                  Grid.Row="3"  
                  ToolTip="Обязательное поле, уникальный адрес"
                  Style="{StaticResource RoundedTextBoxStyle}"
-                 Background="#4CFFFFFF"/>
+                />
 
                 <Border Grid.Row="4" CornerRadius="2"
                    Padding="0"
                     BorderBrush="Black"
                     BorderThickness="0.6"
-                    Width="Auto">                      
+                   >                      
                     <PasswordBox
                         x:Name="PasswordBox"                       
                         BorderThickness="0"                       

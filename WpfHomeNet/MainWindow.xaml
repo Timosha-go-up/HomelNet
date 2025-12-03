@@ -15,6 +15,7 @@
                         
         Background="Transparent"
         Loaded="Window_Loaded">
+  
 
     <!-- Основной контейнер с тройным бордером -->
     <ContentControl Style="{StaticResource TripleBorderStyle}"
@@ -45,8 +46,15 @@
             </Border >
 
             <StackPanel x:Name="Menu" Grid.Row="1"  Grid.Column="0" 
-                        Orientation="Vertical">
-                <Button Content="Test list Users" Click="AddUsersList_Click"/>
+                       >
+                <StackPanel.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Padding" Value="9.4"/>
+                        <Setter Property="BorderThickness" Value="0.6"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                    </Style>
+                </StackPanel.Resources>
+                <Button Content="Test list Users" Click="AddUsersList_Click"  />
                 <Button Content="Добавить юзера" Click="AddUser_Click"/>
                 <Button x:Name="DeleteButton" Click="RemoveUser_Click"
                         Content="Удалить юзера"/>
@@ -58,7 +66,14 @@
             </StackPanel>
 
             <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
-                <Button Content="Регистрация" Width="150"/>
+                <StackPanel.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Padding" Value="9.4"/>
+                        <Setter Property="BorderThickness" Value="0.6"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                    </Style>
+                </StackPanel.Resources>
+                    <Button Content="Регистрация" Width="150"/>
                 <Button Content="Вход в профиль" Width="150"/>
                 <Button Grid.Column="4" Click="CloseButton_Click"
                         Content="×" Width="40"/>

@@ -41,8 +41,13 @@ namespace WpfHomeNet
             {
                 Logger?.LogWarning("Существующий имейл ");
 
-                MessageBox.Show(ex.GetUserMessage(), string.Empty,
-                MessageBoxButton.OK, MessageBoxImage.Information);
+                var messageBox = new MessageWindow
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                messageBox.Show();
+                messageBox.MessageText.Text = ex.GetUserMessage();
 
             }
             catch (Exception ex)
@@ -149,46 +154,6 @@ namespace WpfHomeNet
 
 
 
-        private void ShowWindowLogs_Click(object sender, RoutedEventArgs e)
-        {
-            if (LogWindow.IsVisible)
-            {
-                // 1. Отписываемся от событий (даже если подписка была двойной)
-                this.LocationChanged -= SyncLogWindowPosition;
-                this.SizeChanged -= SyncLogWindowPosition;
-
-
-                LogWindow.Hide();
-                btnLogs.Content = "Показать логи";
-            }
-            else
-            {
-                LogWindow.Owner = this;
-
-                // 2. Проверяем загрузку лог‑окна
-                if (!LogWindow.IsLoaded)
-                {
-                    LogWindow.Loaded += (s, ev) =>
-                    {
-                        PositionLogWindowRelativeToMain(); // Позиционируем после загрузки
-                        EnableSync(); // Включаем синхронизацию
-                    };
-                }
-
-                // 3. Показываем окно (это запустит Loaded, если ещё не загружено)
-                LogWindow.Show();
-
-
-                // 4. Если окно уже загружено — сразу позиционируем и подписываемся
-                if (LogWindow.IsLoaded)
-                {
-                    PositionLogWindowRelativeToMain();
-                    EnableSync();
-                }
-
-                btnLogs.Content = "Скрыть логи";
-            }
-        }
 
         // Метод включения синхронизации (чтобы не дублировать код)
         private void EnableSync()
@@ -215,7 +180,7 @@ namespace WpfHomeNet
         
         
         
-        private bool _isAnimating = false;
+       
     }
 
 
