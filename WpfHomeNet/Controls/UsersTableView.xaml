@@ -37,10 +37,10 @@
                         <ColumnDefinition MinWidth="90" MaxWidth="170"/>
                         <ColumnDefinition MinWidth="90" MaxWidth="170"/>
                         <ColumnDefinition MinWidth="120" MaxWidth="180"/>
-                        <ColumnDefinition MinWidth="220"/>
+                        <ColumnDefinition MinWidth="200"/>
                         <ColumnDefinition MinWidth="90"/>
-                        <ColumnDefinition MinWidth="150"/>
-                        <!-- ... остальные колонки ... -->
+                        <ColumnDefinition MinWidth="140"/>
+                       
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Text="  ID" />
@@ -75,9 +75,9 @@
                                     <ColumnDefinition MinWidth="80" MaxWidth="170"/>
                                     <ColumnDefinition MinWidth="90" MaxWidth="170"/>
                                     <ColumnDefinition MinWidth="120" MaxWidth="180"/>
-                                    <ColumnDefinition MinWidth="220"/>
+                                    <ColumnDefinition MinWidth="200"/>
                                     <ColumnDefinition MinWidth="90"/>
-                                    <ColumnDefinition MinWidth="150"/>
+                                    <ColumnDefinition MinWidth="140"/>
                                 </Grid.ColumnDefinitions>
 
                                 <ContentControl Grid.Column="0"

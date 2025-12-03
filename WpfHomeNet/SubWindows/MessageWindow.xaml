@@ -9,7 +9,7 @@
          Width="300"
          WindowStyle="None"
          AllowsTransparency="True"
-         BorderThickness="1"        
+         
          WindowStartupLocation="CenterOwner"
         Background="Transparent">
     <ContentControl Style="{StaticResource TripleBorderStyle}"  >

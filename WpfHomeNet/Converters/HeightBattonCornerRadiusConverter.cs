@@ -20,13 +20,13 @@ namespace WpfHomeNet.Converters
             if (height <= 60)
             {
                 double radius = height * percent;
-                return Math.Max(radius, 6.0); // минимум 4 px
+                return Math.Max(radius, 4.0); // минимум 4 px
             }
 
             // Зона 2: высота > 60 px → фиксированный максимум 12 px
             else
             {
-                return 10.0;
+                return 8.0;
             }
         }
 

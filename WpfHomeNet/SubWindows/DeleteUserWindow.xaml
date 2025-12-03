@@ -9,7 +9,8 @@
         WindowStartupLocation="CenterOwner"
         Background="Transparent">
 
-    <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}" >
+    <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}"
+                    Background="#FFA4B291" >
 
         <Grid Margin="15">
             <Grid.RowDefinitions>
@@ -48,7 +49,7 @@
 
                 <Button x:Name="searchButton" 
                      Content="Найти" Margin="5,0,0,0"
-                     Width="90" Height="35"
+                     Width="90" Height="40"
                      Click="SearchUser_Click" 
                      Background="Transparent"/>
             </StackPanel>
@@ -56,7 +57,7 @@
                 Grid.Row="2"               
                 BorderThickness="0.3"
                 BorderBrush="Black"
-                CornerRadius="8"
+                CornerRadius="5"
                 Background="#7FFFFFFF"
                 Margin="5" >
                 <ListBox  Style="{StaticResource RoundedListBox}" x:Name="userListBox"  

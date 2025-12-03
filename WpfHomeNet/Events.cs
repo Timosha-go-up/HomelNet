@@ -41,6 +41,7 @@ namespace WpfHomeNet
             if (LoginIn.Visibility == Visibility.Collapsed)
             {
               LoginIn.Visibility = Visibility.Visible;
+                Menu.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -48,7 +49,9 @@ namespace WpfHomeNet
 
         private void LoginInButtonOk_Click(object sender, RoutedEventArgs e)
         {         
-                LoginIn.Visibility = Visibility.Collapsed;           
+                LoginIn.Visibility = Visibility.Collapsed;
+            Menu.Visibility = Visibility.Visible;
+
         }
 
 

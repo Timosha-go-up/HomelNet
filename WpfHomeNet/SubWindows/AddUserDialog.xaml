@@ -45,7 +45,7 @@
 
     </Window.Resources>
 
-    <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}" >
+    <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}"   Background="#FFA4B291">
         <Grid Margin="15,15,15,20">
         <Grid.RowDefinitions>
             <RowDefinition/>
