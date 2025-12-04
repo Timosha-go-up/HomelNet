@@ -21,23 +21,6 @@ namespace WpfHomeNet
     {
 
 
-      
-
-[DllImport("user32.dll")]
-    private static extern bool SetWindowPos(
-    IntPtr hWnd,
-    IntPtr hWndInsertAfter,
-    int X,
-    int Y,
-    int cx,
-    int cy,
-    uint uFlags);
-
-    private const uint SWP_NOZORDER = 0x0004;
-    private const uint SWP_NOACTIVATE = 0x0010;
-
-
-
     #region Поля и переменные
     private static readonly string dbPath = DatabasePathHelper.GetDatabasePath("home_net.db");
         private readonly string _connectionString = $"Data Source={dbPath}";

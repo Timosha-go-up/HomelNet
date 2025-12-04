@@ -6,55 +6,71 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"        
-        WindowStyle="None"
-        ResizeMode="CanResize"           
-        Width="800"
-        Height="600"
-        AllowsTransparency="True"
-        FontFamily="Calibri"
-        FontSize="14"                             
-        Background="Transparent"
-        Loaded="Window_Loaded">
-        
+     WindowStyle="None"
+     ResizeMode="CanResize"           
+     Width="800"
+     Height="600"
+     AllowsTransparency="True"
+     FontFamily="Calibri"
+     FontSize="14"                             
+     Background="Transparent"
+     Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="9.4"/>
+            <Setter Property="BorderThickness" Value="0.6"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+    </Window.Resources>
+
 
 
     <!-- Основной контейнер с тройным бордером -->
-    <ContentControl Style="{StaticResource TripleBorderStyle}"
-                    Width="800"  MouseDown="WindowDrag_MouseDown"
-                    Height="600" MinWidth="800"
-        MinHeight="600"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
+    <ContentControl 
+        Style="{StaticResource TripleBorderStyle}"                    
+        Width="800" 
+        MouseDown="WindowDrag_MouseDown"                  
+        Height="600"
+        MinWidth="800"                     
+        MinHeight="600"                    
+        HorizontalAlignment="Center"                    
+        VerticalAlignment="Center">
+        
+        
         <Grid Margin="4">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"  />
-                <RowDefinition Height="245"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="140"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Row="0" Grid.Column="0">
-                <Label HorizontalAlignment="Center" 
-                       FontWeight="Bold"
-                       Content="HomeNet"
-                       FontSize="20"
-                       Foreground="Black"/>
+            <!--  шапка  -->
+            <Border
+                Grid.Row="0" 
+                Grid.Column="0">
+                <Label
+                    HorizontalAlignment="Center" 
+                    FontWeight="Bold"
+                    Content="HomeNet"
+                    FontSize="20"
+                    Foreground="Black"/>
             </Border >
 
-            <StackPanel x:Name="Menu" Grid.Row="1"  Grid.Column="0" 
-                       >
-                <StackPanel.Resources>
-                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                        <Setter Property="Padding" Value="9.4"/>
-                        <Setter Property="BorderThickness" Value="0.6"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                    </Style>
-                </StackPanel.Resources>
+            <!--  контейнер меню  -->
+            <StackPanel x:Name="Menu"
+                 Grid.Column="0"
+                 Grid.Row="1"
+                 Grid.RowSpan="4"  >
                 <Button Content="Test list Users"
                         Click="AddUsersList_Click"  />
                 <Button Content="Добавить юзера"
@@ -71,96 +87,115 @@
                         Click="ShowWindowLogs_Click"
                         Content="Показать логи"/>
             </StackPanel>
-
-            <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                        <Setter Property="Padding" Value="9.4"/>
-                        <Setter Property="BorderThickness" Value="0.6"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                    </Style>
-                </StackPanel.Resources>
-                <Button Content="Регистрация"
-                        Width="150"/>
-                <Button Content="Вход в профиль" 
-                        Width="150" Click="LoginInButton_Click"/>
-                <Button Grid.Column="4"
-                        Click="CloseButton_Click"
-                        Content="×" Width="40"/>
+            
+            <!--  контейнер верхнее меню -->
+            <StackPanel 
+                Grid.Row="0"
+                Grid.Column="2"                        
+                Orientation="Horizontal"                        
+                Grid.ColumnSpan="2">
+                <Button
+                    Content="Регистрация"
+                    Width="150"/>
+                <Button 
+                    Content="Вход в профиль" 
+                    Width="150"
+                    Click="LoginInButton_Click"/>
+                <Button
+                    Grid.Column="4"
+                    Click="CloseButton_Click"
+                    Content="×" Width="40"/>
             </StackPanel>
-
+            
+              <!--  контейнер для входа   -->
+            <ContentControl  x:Name ="LoginIn"
+                 Height="Auto"
+                 Style="{StaticResource InnerBorderSolidColorStyle}"
+                 Visibility="Collapsed"                             
+                 Grid.Column="2"
+                 Grid.RowSpan="2" d:Visibility="Visible"
+                 Background="#FFA4B291"                                             
+                 Width="Auto" Grid.ColumnSpan="2">
+                <StackPanel 
+                    Margin="20" >
+                    <Label HorizontalAlignment="Center"
+           FontWeight="Bold"
+           Margin="0,0,0,5"
+           Content="Адрес электронной почты"
+           FontSize="20" />
+                  <!-- Поле ввода --> 
+                        <TextBox x:Name="InputDataAuthenficate"
+              Height="35"
+              Foreground="Black"
+              VerticalContentAlignment="Center"
+              Padding="5"
+              >
+                            <TextBox.Template>
+                                <ControlTemplate TargetType="TextBox">
+                                    <Border CornerRadius="5"
+                        BorderBrush="DarkSlateGray"
+                        BorderThickness="0.5"
+                        Background="{TemplateBinding Background}">
+                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </TextBox.Template>
+                        </TextBox>
+                    <!-- Динамическая подсказка под полем -->
+                    <Label x:Name="InputHelper"
+            HorizontalAlignment="Left"
+            FontWeight="UltraLight"
+            FontSize="11"
+            Margin="5,3,0,0"
+            Foreground="Gray"
+            Content="Введите корректный email (например: user@example.com)" />
+                    <StackPanel
+                        HorizontalAlignment="Right"                                
+                        Margin="0,10,0,0"
+                        Orientation="Horizontal" >
+                        <Button                         
+                            Height="35"
+                            MinWidth="100"
+                            Content="Выход" 
+                            Click="LoginInPanelButtonExit_Click"
+                            Margin="0,0,10,0" />
+                        <Button 
+                            Margin="0"
+                            Height="35"
+                            MinWidth="100"
+                            Content="OK" 
+                            Click="LoginInPanelButtonOk_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </ContentControl>
+            
+            
+            <!--  контейнер таблицас пользователями  -->
             <controls:UsersTableView x:Name="userTableView"
-                         Grid.Row="2"
-                         Grid.ColumnSpan="5"
-                         Margin="2,0,2,0"
-                         Visibility="Collapsed"/>
-            <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}" 
+                         Grid.Row="3"
+                         Grid.ColumnSpan="4"
+                         Margin="0,3,0,3"  Grid.RowSpan="2"
+                         Visibility="Collapsed"
+                         d:Visibility="Visible"/>
+            
+                      
+            <!--  контейнер статус бар  -->
+            <ContentControl
+               Style="{StaticResource InnerBorderSolidColorStyle}" 
                Padding="4"  
-                            Background="#FFA4B291"
-               Grid.Row="3"
+               Background="#FFA4B291"
+               Grid.Row="5"
                Grid.Column="0"
-               Grid.ColumnSpan="5"
-               Margin="3">
+               Grid.ColumnSpan="4">
                 <StatusBar x:Name="StatusUsers"
-                           Background="#00A3C091">
-                    <TextBlock Name="StatusText"
+                   Background="#00A3C091">
+                   <TextBlock Name="StatusText"
                    Margin="3"
                    Text="{Binding StatusText}"
                    FontWeight="Bold"/>
                 </StatusBar>
             </ContentControl>
-
-            <!--  контейнер для входа -->
-            <ContentControl  x:Name ="LoginIn"
-                 Style="{StaticResource InnerBorderSolidColorStyle}"
-                 Visibility="Collapsed" 
-                 Margin="3"
-                 HorizontalAlignment="Left"                  
-                 Grid.Column="2" Grid.Row="0"
-                 Grid.RowSpan="2" Grid.ColumnSpan="2"
-                 Background="#FFA4B291"
-                 d:Visibility="Visible" 
-                 Width="342">
-                <StackPanel  Margin="20" >
-                    <Label HorizontalAlignment="Center"                        
-                        FontWeight="Bold"  Margin="5"                    
-                        Content="Адрес электронной почты"
-                        FontSize="20" />
-                    <TextBox  Height="35"
-                              VerticalContentAlignment="Center"
-                              Padding="5">
-                        <TextBox.Template>
-                            <ControlTemplate TargetType="TextBox">
-                                <Border CornerRadius="5"
-                               BorderBrush="DarkSlateGray"
-                                BorderThickness="0.5" Background="{TemplateBinding Background}">
-                                    <ScrollViewer x:Name="PART_ContentHost" />
-                                </Border>
-                            </ControlTemplate>
-                        </TextBox.Template>
-                    </TextBox>
-                    <Label HorizontalAlignment="Center"                        
-                           FontWeight="UltraLight"                     
-                            Content="адрес должен содержать '@'"
-                            FontSize="14" />
-                    <StackPanel 
-                          Orientation="Horizontal"
-                          Margin="0,60,0,0">
-                        <Button                         
-                            Height="35"
-                            Width="120"
-                            Content="Выход" 
-                            Click="LoginInButtonOk_Click"
-                            Margin="0,0,30,0" />
-                        <Button 
-                            Margin="10"
-                            Height="35"
-                            Width="120"
-                            Content="OK" 
-                            Click="LoginInButtonOk_Click"/>
-                    </StackPanel>
-                </StackPanel>
-            </ContentControl>
+                     
         </Grid>
     </ContentControl>
 </Window>

@@ -8,9 +8,9 @@
         <converters:HeightBattonCornerRadiusConverter x:Key="RadiusConverter"/>
         <converters:BorderCornerRadiusConverter x:Key="BorderRadiusConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-       
 
-      
+
+
         <Style TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="AntiqueWhite"/>
@@ -21,22 +21,23 @@
             <Setter Property="Margin" Value="1"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Foreground" Value="Black"/>
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border"
-                             Background="{TemplateBinding Background}"
-                             BorderBrush="{TemplateBinding BorderBrush}"
-                             BorderThickness="{TemplateBinding BorderThickness}"
-                             CornerRadius="6"
-                             Padding="{TemplateBinding Padding}">    
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="6"
+                        Padding="{TemplateBinding Padding}">
                             <ContentPresenter x:Name="contentPresenter"
-                             HorizontalAlignment="Center"
-                             VerticalAlignment="Center"
-                             TextElement.FontWeight="{TemplateBinding FontWeight}"
-                             TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     TextElement.FontWeight="{TemplateBinding FontWeight}"
+                                     TextElement.Foreground="{TemplateBinding Foreground}"/>
                         </Border>
-                        <!-- Триггеры визуальных состояний -->
+
                         <ControlTemplate.Triggers>
                             <!-- Наведение курсора -->
                             <Trigger Property="IsMouseOver" Value="True">
@@ -45,21 +46,25 @@
                                 <Setter TargetName="border" Property="BorderBrush" Value="LightBlue"/>
                                 <Setter TargetName="border" Property="BorderThickness" Value="0.6"/>
                             </Trigger>
+
                             <!-- Нажатие -->
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#FFD5D5D5"/>
                                 <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF000000"/>
                             </Trigger>
-                            <!-- Отключённое состояние -->
+
+                            <!-- Отключённое состояние (ИЗМЕНЕНО) -->
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="#FFF5F5F5"/>
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF999999"/>
+                                <Setter TargetName="border" Property="Background" Value="Transparent"/>
+                                <!-- Новый цвет -->
+                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="#FF615959"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
 
         <Style x:Key="BorderedContentStyle" TargetType="ContentControl">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>

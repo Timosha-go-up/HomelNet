@@ -2,12 +2,13 @@
 using HomeNetCore.Models;
 using HomeSocialNetwork;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using WpfHomeNet.SubWindows;
 using WpfHomeNet.ViewModels;
-
 
 namespace WpfHomeNet
 {
@@ -33,7 +34,7 @@ namespace WpfHomeNet
         }
 
 
-
+       
 
         private void LoginInButton_Click(object sender, RoutedEventArgs e)
         {
@@ -41,19 +42,84 @@ namespace WpfHomeNet
             if (LoginIn.Visibility == Visibility.Collapsed)
             {
               LoginIn.Visibility = Visibility.Visible;
-                Menu.Visibility = Visibility.Collapsed;
+                Menu.IsEnabled=false;
+                ShowButton.Content = "Показать юзеров";
+
+            }
+        }
+
+        private async void LoginInPanelButtonOk_Click(object sender, RoutedEventArgs e)
+        {
+            string email = InputDataAuthenficate.Text.Trim();
+
+            // Базовые проверки (как раньше)
+            if (string.IsNullOrEmpty(email))
+            {
+                InputHelper.Content = "Ошибка: поле не может быть пустым";
+                InputHelper.Foreground = Brushes.Red;
+                return;
+            }
+
+            if (!IsValidEmailFormat(email)) // ваша функция проверки формата
+            {
+                InputHelper.Content = "Ошибка: некорректный формат email";
+                InputHelper.Foreground = Brushes.Red;
+                return;
+            }
+
+            try
+            {
+                // Проверяем, существует ли email в БД
+                bool emailExists = await _userService.EmailExistsAsync(email);
+
+                if (!emailExists)
+                {
+                    InputHelper.Content = "Ошибка: аккаунт с таким email не найден";
+                    InputHelper.Foreground = Brushes.Red;
+                    return;
+                }
+
+                // Если email существует — можно переходить к проверке пароля
+                // (здесь ваша логика проверки пароля)
+                InputHelper.Content = "Email найден. Введите пароль для входа";
+                InputHelper.Foreground = Brushes.DarkGreen;
+
+                // Здесь: показать поле ввода пароля / перейти к следующему шагу
+            }
+            catch (Exception ex)
+            {
+                // Ловим ошибки сервиса (нет соединения с БД, таймаут и т.п.)
+                InputHelper.Content = $"Ошибка системы: {ex.Message}";
+                InputHelper.Foreground = Brushes.Crimson;
             }
         }
 
 
+        // Вспомогательный метод для проверки формата email
+        private bool IsValidEmailFormat(string email)
+        {
+            return Regex.IsMatch(email,
+                @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+        }
 
-        private void LoginInButtonOk_Click(object sender, RoutedEventArgs e)
-        {         
+
+      
+
+
+        private void LoginInPanelButtonExit_Click(object sender, RoutedEventArgs e)
+        {
+           
+            
+            
                 LoginIn.Visibility = Visibility.Collapsed;
-            Menu.Visibility = Visibility.Visible;
+                Menu.IsEnabled = true;
+               
 
         }
 
+
+
+       
 
 
         /// <summary>

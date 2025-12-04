@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"  
-             d:DesignHeight="460" Width="Auto">
+             Height="Auto" Width="Auto">
 
     <!-- Внешний контейнер: ContentControl с новым стилем -->
     <ContentControl Style="{StaticResource InnerBorderSolidColorStyle}" Padding="4" >
@@ -16,7 +16,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <!-- Заголовки -->
-                <RowDefinition Height="*"/>
+                <RowDefinition MinHeight="100" Height="*"/>
                 <!-- Данные с прокруткой -->
             </Grid.RowDefinitions>
 
