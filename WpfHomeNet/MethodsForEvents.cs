@@ -1,12 +1,8 @@
-﻿using HomeNetCore.Helpers;
-using HomeNetCore.Helpers.Exceptions;
+﻿using HomeNetCore.Helpers.Exceptions;
 using HomeNetCore.Models;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using WpfHomeNet.SubWindows;
-using WpfHomeNet.UiHelpers;
 
 namespace WpfHomeNet
 {
@@ -18,7 +14,7 @@ namespace WpfHomeNet
 
             try
             {
-                if (await UserService.EmailExistsAsync(newUser.Email))
+                if (await UserService.CheckEmailExistsAsync(newUser.Email))
                 {
                     throw new DuplicateEmailException(newUser.Email);
                 }
@@ -94,29 +90,6 @@ namespace WpfHomeNet
             }
         }
 
-
-        /// <summary>
-        /// перестают работать привязки к окну логов если использовать анимацию для смешения главного окна к левому краю экрана
-        /// </summary>
-        /// <param name="logWindow"></param>
-
-        private void WindowLogsAnimation(LogWindow logWindow)
-        {
-            // Целевая позиция главного окна (левый край экрана)
-            double targetMainLeft = SystemParameters.WorkArea.Left;
-
-            // Анимация сдвига главного окна
-            var mainAnim = new DoubleAnimation
-            {
-                To = targetMainLeft,
-                Duration = TimeSpan.FromSeconds(0.9),
-                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-            };
-
-
-            // Запускаем анимацию главного окна
-            this.BeginAnimation(Window.LeftProperty, mainAnim);
-        }
 
 
         private void PositionLogWindowRelativeToMain()

@@ -11,6 +11,7 @@ namespace HomeNetCore.Services
         private readonly UserRepository _repo = repo
             ?? throw new ArgumentNullException(nameof(repo), "Repository не может быть null");
 
+
         public Task<List<UserEntity>> GetAllUsersAsync()
         {
             try
@@ -30,6 +31,57 @@ namespace HomeNetCore.Services
                 throw;                
             }
         }
+
+
+
+
+
+
+
+
+        public async Task<(bool success, string userName)> ValidateCredentialsAsync(string email, string password)
+        {
+            try
+            {
+                // Базовая валидация входных данных
+                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+                {
+                    _logger.LogWarning("Попытка авторизации с пустыми учетными данными");
+                    return (false, string.Empty);
+                }
+
+                var user = await _repo.GetByEmailAsync(email);
+
+                if (user == null)
+                {
+                    _logger.LogInformation($"Попытка входа с несуществующим email: {email}");
+                    return (false, string.Empty);
+                }
+
+                // Сравнение паролей
+                bool isValid = user.Password == password;
+
+                if (isValid)
+                {
+                    _logger.LogInformation($"Успешная авторизация пользователя: {user.FullName}");
+                    return (true, user.FullName);
+                }
+                else
+                {
+                    _logger.LogInformation($"Неудачная попытка входа для пользователя: {user.FullName}");
+
+                    return (false, string.Empty);
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Критическая ошибка при проверке учетных данных: {ex.Message}");
+                throw;
+            }
+        }
+
 
 
         public async Task AddUserAsync(UserEntity user)
@@ -66,7 +118,7 @@ namespace HomeNetCore.Services
 
 
 
-        public async Task<bool> EmailExistsAsync(string? email)
+        public async Task<bool> CheckEmailExistsAsync(string? email)
         {
             try
             {
@@ -106,6 +158,22 @@ namespace HomeNetCore.Services
             catch (Exception ex)
             {
                 _logger.LogError( "Ошибка при получении пользователя с ID {UserId}", userId.ToString(),ex.Message);
+                throw;
+            }
+        }
+
+
+
+
+        public async Task<UserEntity?> GetUserByEmailAsync(string userEmail)
+        {
+            try
+            {
+                return await _repo.GetByEmailAsync(userEmail);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Ошибка при получении пользователя с ID {UserEmail}", userEmail.ToString(), ex.Message);
                 throw;
             }
         }

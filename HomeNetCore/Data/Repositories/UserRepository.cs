@@ -8,26 +8,19 @@ using System.Data.Common;
 
 namespace HomeNetCore.Data.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(DbConnection connection, ISchemaUserSqlGenerator queryGenerator) : IUserRepository
     {
-        private readonly DbConnection _connection;
-        ISchemaUserSqlGenerator _userSqlGenerator;
-        
-
-        public UserRepository(DbConnection connection, ISchemaUserSqlGenerator queryGenerator)
-        {
-            _connection = connection ??
+        private readonly DbConnection _connection = connection ??
                 throw new ArgumentNullException(nameof(connection));
-           
-            _userSqlGenerator = queryGenerator;
-        }
-
+        private readonly ISchemaUserSqlGenerator _userSqlGenerator = queryGenerator ??
+                throw new ArgumentNullException(nameof(queryGenerator));
 
         public async Task<bool> EmailExistsAsync(string? email)
         {
             var sql = _userSqlGenerator.GenerateEmailExists();
             return await _connection.ExecuteScalarAsync<bool>(sql, new { email });
         }
+
 
         public async Task<UserEntity> InsertUserAsync(UserEntity user)
         {
@@ -91,7 +84,7 @@ namespace HomeNetCore.Data.Repositories
         public async Task<UserEntity?> GetByEmailAsync(string email)
         {
             return await _connection.QueryFirstOrDefaultAsync<UserEntity>
-           (_userSqlGenerator.GenerateSelectByEmail(), new { Email = email });
+           (_userSqlGenerator.GenerateSelectByEmail(), new { email = email });
         }
 
 

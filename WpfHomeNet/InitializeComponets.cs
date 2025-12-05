@@ -45,6 +45,10 @@ namespace WpfHomeNet
 
                 _userService = new UserService(_userRepository, Logger);
 
+
+                // Добавляем создание AuthManager
+                _authManager = new AuthManager(_userService);
+
                 // Создание ViewModel
                 _mainVm = new MainViewModel(UserService, Logger);
             }

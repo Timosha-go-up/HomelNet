@@ -43,6 +43,7 @@ namespace WpfHomeNet
         private ISchemaAdapter? _schemaAdapter;
         private LogQueueManager? _logQueueManager;
         private UserRepository? _userRepository;
+        private  AuthManager _authManager;
         #endregion
 
 

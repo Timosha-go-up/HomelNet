@@ -6,15 +6,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"        
-     WindowStyle="None"
-     ResizeMode="CanResize"           
-     Width="800"
-     Height="600"
-     AllowsTransparency="True"
-     FontFamily="Calibri"
-     FontSize="14"                             
-     Background="Transparent"
-     Loaded="Window_Loaded">
+    WindowStyle="None"
+    ResizeMode="CanResize"           
+    Width="800"
+    Height="600"
+         MinWidth="800"                     
+ MinHeight="600"  
+    AllowsTransparency="True"
+    FontFamily="Calibri"
+    FontSize="14"                             
+    Background="Transparent"
+    Loaded="Window_Loaded">
     <Window.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Padding" Value="9.4"/>
@@ -23,20 +25,18 @@
         </Style>
     </Window.Resources>
 
-
-
     <!-- Основной контейнер с тройным бордером -->
     <ContentControl 
         Style="{StaticResource TripleBorderStyle}"                    
-        Width="800" 
-        MouseDown="WindowDrag_MouseDown"                  
+        Width="800"                         
         Height="600"
         MinWidth="800"                     
         MinHeight="600"                    
         HorizontalAlignment="Center"                    
-        VerticalAlignment="Center">
-        
-        
+        VerticalAlignment="Center"
+        MouseDown="WindowDrag_MouseDown"  >
+
+
         <Grid Margin="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -48,8 +48,10 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="40"/>
 
             </Grid.ColumnDefinitions>
@@ -67,10 +69,10 @@
             </Border >
 
             <!--  контейнер меню  -->
-            <StackPanel x:Name="Menu"
-                 Grid.Column="0"
-                 Grid.Row="1"
-                 Grid.RowSpan="4"  >
+            <StackPanel x:Name="Menu" Visibility="Collapsed"
+                        d:Visibility="Visible"
+                 Grid.Column="0" Grid.Row="1"
+                 Grid.RowSpan="3" Margin="0,0,0,0"  >
                 <Button Content="Test list Users"
                         Click="AddUsersList_Click"  />
                 <Button Content="Добавить юзера"
@@ -87,71 +89,80 @@
                         Click="ShowWindowLogs_Click"
                         Content="Показать логи"/>
             </StackPanel>
-            
+
+            <Button x:Name="ButtonExit" Grid.Column="4"
+                    Content="Выйти из аккаунта"
+                    Visibility="Collapsed">
+                
+            </Button>
+
             <!--  контейнер верхнее меню -->
-            <StackPanel 
-                Grid.Row="0"
-                Grid.Column="2"                        
+            <StackPanel x:Name="UpperMenu" Visibility="Visible"
+                        HorizontalAlignment="Right"
+                Grid.Row="0"               
+                Grid.Column="3"                        
                 Orientation="Horizontal"                        
-                Grid.ColumnSpan="2">
-                <Button
+                Grid.ColumnSpan="2" >
+                <Button MinWidth="120"
                     Content="Регистрация"
-                    Width="150"/>
-                <Button 
+                     />
+                <Button Width="Auto"
                     Content="Вход в профиль" 
-                    Width="150"
+                    MinWidth="120"
                     Click="LoginInButton_Click"/>
-                <Button
-                    Grid.Column="4"
-                    Click="CloseButton_Click"
-                    Content="×" Width="40"/>
             </StackPanel>
+             <Button  Grid.Column="5"              
+                    Click="CloseButton_Click"
+                    Content="×" Width="Auto"/>
             
-              <!--  контейнер для входа   -->
-            <ContentControl  x:Name ="LoginIn"
-                 Height="Auto"
+
+            <!--  контейнер для входа   -->
+            <ContentControl x:Name ="LoginIn" Grid.Column="2" 
+                 Grid.RowSpan="2" Grid.Row="2" 
+                 Height="Auto" Width="Auto"                 
                  Style="{StaticResource InnerBorderSolidColorStyle}"
-                 Visibility="Collapsed"                             
-                 Grid.Column="2"
-                 Grid.RowSpan="2" d:Visibility="Visible"
-                 Background="#FFA4B291"                                             
-                 Width="Auto" Grid.ColumnSpan="2">
-                <StackPanel 
-                    Margin="20" >
-                    <Label HorizontalAlignment="Center"
-           FontWeight="Bold"
-           Margin="0,0,0,5"
-           Content="Адрес электронной почты"
-           FontSize="20" />
-                  <!-- Поле ввода --> 
-                        <TextBox x:Name="InputDataAuthenficate"
-              Height="35"
-              Foreground="Black"
-              VerticalContentAlignment="Center"
-              Padding="5"
-              >
-                            <TextBox.Template>
-                                <ControlTemplate TargetType="TextBox">
-                                    <Border CornerRadius="5"
-                        BorderBrush="DarkSlateGray"
-                        BorderThickness="0.5"
-                        Background="{TemplateBinding Background}">
-                                        <ScrollViewer x:Name="PART_ContentHost"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </TextBox.Template>
-                        </TextBox>
+                 Visibility="Collapsed"                                              
+                 d:Visibility="Visible"
+                 Background="#FFA4B291" Grid.ColumnSpan="2" Margin="0,0,0,0" >
+
+                <StackPanel Margin="20,40,20,40" >
+                    <Label x:Name="InputInfoTitle" 
+       HorizontalAlignment="Center"
+       Content="Введите ваш email"
+       FontWeight="Bold" 
+       Margin="0,0,0,20"
+       FontSize="20"
+      
+                        Foreground="Black"/><!-- Для визуального отслеживания -->
+                        <!-- Поле ввода -->
+                    <TextBox x:Name="InputDataAuthenficate"
+                          Height="35"
+                          Foreground="Black"
+                          VerticalContentAlignment="Center"
+                          Padding="5" >
+
+                        <TextBox.Template>
+                            <ControlTemplate TargetType="TextBox">
+                                <Border CornerRadius="5"
+                                    BorderBrush="DarkSlateGray"
+                                    BorderThickness="0.5"
+                                    Background="{TemplateBinding Background}">
+                                    <ScrollViewer x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </TextBox.Template>
+                    </TextBox>
                     <!-- Динамическая подсказка под полем -->
                     <Label x:Name="InputHelper"
-            HorizontalAlignment="Left"
-            FontWeight="UltraLight"
-            FontSize="11"
-            Margin="5,3,0,0"
-            Foreground="Gray"
-            Content="Введите корректный email (например: user@example.com)" />
+                        HorizontalAlignment="Center"
+                        FontWeight="UltraLight"
+                        FontSize="11"
+                        Margin="5,3,0,0"
+                        Foreground="#FF615959"
+                        Content="Введите корректный email (например: user@example.com)" />
                     <StackPanel
                         HorizontalAlignment="Right"                                
-                        Margin="0,10,0,0"
+                        Margin="0,40,0,0"
                         Orientation="Horizontal" >
                         <Button                         
                             Height="35"
@@ -168,34 +179,32 @@
                     </StackPanel>
                 </StackPanel>
             </ContentControl>
-            
-            
+
+
             <!--  контейнер таблицас пользователями  -->
             <controls:UsersTableView x:Name="userTableView"
                          Grid.Row="3"
-                         Grid.ColumnSpan="4"
+                         Grid.ColumnSpan="6"
                          Margin="0,3,0,3"  Grid.RowSpan="2"
                          Visibility="Collapsed"
                          d:Visibility="Visible"/>
-            
-                      
             <!--  контейнер статус бар  -->
             <ContentControl
                Style="{StaticResource InnerBorderSolidColorStyle}" 
                Padding="4"  
                Background="#FFA4B291"
-               Grid.Row="5"
+               Grid.Row="4"
                Grid.Column="0"
-               Grid.ColumnSpan="4">
+               Grid.ColumnSpan="6" Margin="0,137,0,0" Grid.RowSpan="2">
                 <StatusBar x:Name="StatusUsers"
                    Background="#00A3C091">
-                   <TextBlock Name="StatusText"
+                    <TextBlock Name="StatusText"
                    Margin="3"
                    Text="{Binding StatusText}"
                    FontWeight="Bold"/>
                 </StatusBar>
             </ContentControl>
-                     
+
         </Grid>
     </ContentControl>
 </Window>
