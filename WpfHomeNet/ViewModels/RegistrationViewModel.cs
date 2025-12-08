@@ -15,15 +15,7 @@ namespace WpfHomeNet.ViewModels
         public ICommand RegisterCommand => _registerCommand;
 
 
-        public string EmailError
-        {
-            get => _emailError;
-            set
-            {
-                _emailError = value;
-                OnPropertyChanged(nameof(EmailError));
-            }
-        }
+       
 
 
 
@@ -77,15 +69,11 @@ namespace WpfHomeNet.ViewModels
         }
 
         // Свойства для отображения результата
-        private ValidationState _validationState = ValidationState.Error;
+        private ValidationState _validationState = ValidationState.None;
         public ValidationState ValidationState
         {
             get => _validationState;
-            set
-            {
-                _validationState = value;
-                SetField(ref _validationState, value);
-            }
+            set => SetField(ref _validationState, value); // Однострочный сеттер
         }
 
         private string _errorMessage = string.Empty;
@@ -108,23 +96,16 @@ namespace WpfHomeNet.ViewModels
 
             _registerService = registerService;
 
-            // Инициализация команды
             _registerCommand = new RelayCommand(
                 execute: async (obj) => await ExecuteRegisterCommand(),
-                canExecute: (obj) =>
-                {
-                    bool canExecute =
-                        !string.IsNullOrEmpty(Email) &&
-                        !string.IsNullOrEmpty(Password) &&
-                        !string.IsNullOrEmpty(UserName) &&
-                        !string.IsNullOrEmpty(Phone)
-                   ;
-
-                    return canExecute;
-                
-                }
+                canExecute: (obj) => true // Кнопка всегда активна
             );
         }
+
+
+
+        
+        
 
         private async Task ExecuteRegisterCommand()
         {
@@ -143,9 +124,12 @@ namespace WpfHomeNet.ViewModels
                 {
                     ValidationState = ValidationState.Error;
                     ErrorMessage = result.Message; 
-                    EmailError=ErrorMessage;
+                   
+                   
                     return;
                 }
+
+                ValidationState = ValidationState.Success;
 
                 ErrorMessage = result.Message;
 

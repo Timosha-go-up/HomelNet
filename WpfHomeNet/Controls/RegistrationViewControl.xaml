@@ -10,16 +10,15 @@
              mc:Ignorable="d"  Background="Transparent" BorderThickness="0"   
              Height="Auto" Width="Auto" Margin="10"
             >
+    <UserControl.Resources>
+        <converter:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
 
+       
+    </UserControl.Resources>
 
     <ContentControl Style="{StaticResource TripleBorderStyle}" Padding="4" Background="#00000000">
-         <ContentControl.Resources>
-        <ResourceDictionary>
-            <converter:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
-        </ResourceDictionary>
-    </ContentControl.Resources>
         
-        
+
         <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -32,68 +31,139 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-
+               
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Email:" VerticalAlignment="Center"/>
-            <!-- Email -->
-            <StackPanel Grid.Row="0" Grid.Column="1">
-                
-           
-            
-            <TextBox  
-                 Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                 Margin="5" Padding="5"/>
-            <Label Grid.Row="0" Grid.Column="1" 
-               Content="{Binding EmailError}"
-               Foreground="Red"
-               Margin="5"
-               HorizontalAlignment="Right"
-               Visibility="{Binding EmailError, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+            <!-- EMAIL -->
+
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+                <Label Content="Email:" VerticalAlignment="Center"/>
+                <TextBox
+        Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+        Margin="0,0,0,5"
+        Padding="5">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <!-- Базовый стиль (нормальное состояние)-->
+                            <Setter Property="BorderBrush" Value="Gray"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <!-- Триггеры для разных состояний -->
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ValidationState}" Value="Error">
+                                    <Setter Property="BorderBrush" Value="Red"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                </DataTrigger>
+                                <!-- Можно добавить другие состояния -->
+                                <DataTrigger Binding="{Binding ValidationState}" Value="Success">
+                                    <Setter Property="BorderBrush" Value="Green"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <Label
+        Content="{Binding EmailError}"
+        Foreground="Red"
+        FontSize="11"
+        HorizontalAlignment="Left"
+        Visibility="{Binding EmailError, Converter={StaticResource StringToVisibilityConverter}}"/>
             </StackPanel>
 
-            <!-- Password -->
-            <Label Grid.Row="1" Grid.Column="0" Content="Пароль:" VerticalAlignment="Center"/>
-            <TextBox x:Name="passwordTextBox" Grid.Column="1" Grid.Row="1"
-                 Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
-                 Style="{StaticResource PasswordTextBoxStyle}"/>
-            <Label Grid.Row="1" Grid.Column="1" 
-               Content="{Binding PasswordError}"
-               Foreground="Red"
-               Margin="5"
-               HorizontalAlignment="Right"
-               Visibility="{Binding PasswordError, Converter={StaticResource StringToVisibilityConverter}}"/>
 
-            <!-- User Name -->
-            <Label Grid.Row="2" Grid.Column="0" Content="Имя пользователя:" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="2" Grid.Column="1" 
-                 Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
-                 Margin="5" Padding="5"/>
-            <Label Grid.Row="2" Grid.Column="1" 
-               Content="{Binding UserNameError}"
-               Foreground="Red"
-               Margin="5"
-               HorizontalAlignment="Right"
-               Visibility="{Binding UserNameError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            <!-- PASSWORD -->
+            
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+                <Label  Content="Пароль:" VerticalAlignment="Center"/>
+                <TextBox
+                x:Name="passwordTextBox"
+                Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                Style="{StaticResource ValidatedTextBoxStyle}"
+                Margin="0,0,0,5"
+                Padding="5"/>
+                <Label
+                Content="{Binding PasswordError}"
+                
+                FontSize="11"
+                HorizontalAlignment="Left"
+                Visibility="{Binding PasswordError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </StackPanel>
 
-            <!-- Phone -->
-            <Label Grid.Row="3" Grid.Column="0" Content="Телефон:" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="3" Grid.Column="1" 
-                 Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
-                 Margin="5" Padding="5"/>
-            <Label Grid.Row="3" Grid.Column="1" 
-               Content="{Binding PhoneError}"
-               Foreground="Red"
-               Margin="5"
-               HorizontalAlignment="Right"
-               Visibility="{Binding PhoneError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            <!-- USER NAME -->
+            
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+                <Label  Content="Имя пользователя:" VerticalAlignment="Center"/>
+                <TextBox
+                Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
+                Margin="0,0,0,5"
+                Padding="5"/>
+                
+                <Label
+                Content="{Binding UserNameError}"
+                
+                FontSize="11"
+                HorizontalAlignment="Left"
+                Visibility="{Binding UserNameError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </StackPanel>
 
-            <!-- Register Button -->
-            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Зарегистрировать"
+            <!-- PHONE -->
+           
+            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+                <Label  Content="Телефон:" VerticalAlignment="Center"/>
+                <TextBox
+                Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
+                Margin="0,0,0,5"
+                Padding="5">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <!-- Базовый стиль (нормальное состояние)-->
+                            <Setter Property="BorderBrush" Value="Gray"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <!-- Триггеры для разных состояний -->
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ValidationState}" Value="Error">
+                                    <Setter Property="BorderBrush" Value="Red"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                </DataTrigger>
+                                <!-- Можно добавить другие состояния -->
+                                <DataTrigger Binding="{Binding ValidationState}" Value="Success">
+                                    <Setter Property="BorderBrush" Value="Green"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                    <Label
+                Content="{Binding PhoneError}"
+               
+                FontSize="11"
+                HorizontalAlignment="Left"
+                Visibility="{Binding PhoneError, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </StackPanel>
+
+            <!-- BUTTONS -->
+            <StackPanel
+                Grid.Row="4"
+                Grid.ColumnSpan="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,15,0,0">
+                <Button
+                Content="Отмена"
+                Command="{Binding CancelCommand}"
+                Margin="0,0,10,0"
+                Width="100"/>
+                <Button
+                Content="Зарегистрировать"
                 Command="{Binding RegisterCommand}"
-                IsEnabled="{Binding RegisterCommand.CanExecute}"/>
+                IsEnabled="{Binding RegisterCommand.CanExecute}"
+                Width="120"
+                />
+            </StackPanel>
         </Grid>
     </ContentControl>
+
 
 
 </UserControl>

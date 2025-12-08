@@ -6,11 +6,7 @@ using HomeNetCore.Data.Schemes;
 using HomeNetCore.Helpers;
 using HomeNetCore.Services.UsersServices;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
 using WpfHomeNet.Controls;
 using WpfHomeNet.Interfaces;
 using WpfHomeNet.UiHelpers;
@@ -37,13 +33,16 @@ namespace WpfHomeNet
         private ILogger Logger => _logger ?? throw new InvalidOperationException("_logger не инициализирован"); 
         private ILogger? _logger;
         private IStatusUpdater Status =>  _status ?? throw new InvalidOperationException("_status не инициализирован");
-        private IStatusUpdater? _status;       
-        
-        /// <summary>
-        ///  авторизация ввода для проверки существования  email 
-        /// </summary>
-            
-       
+        private IStatusUpdater? _status;
+
+        private LogQueueManager LogQueueManager=> _logQueueManager ?? throw new InvalidOperationException("_logQueueManager не инициализирован");
+        private LogQueueManager? _logQueueManager;
+
+        private UserRepository UserRepository =>_userRepository ?? throw new InvalidOperationException("_userRepository? не инициализирован");
+        private UserRepository? _userRepository;
+
+
+
 
         private DbConnection? _connection;
         private DBInitializer? _databaseInitializer;
@@ -52,8 +51,8 @@ namespace WpfHomeNet
         private TableSchema? _tableSchema;
         private ISchemaUserSqlGenerator? _userSqlGen;
         private ISchemaAdapter? _schemaAdapter;
-        private LogQueueManager? _logQueueManager;
-        private UserRepository? _userRepository;
+        
+        
         private RegisterService _registerService;
         private RegistrationViewModel _registrationViewModel;
         bool pause;

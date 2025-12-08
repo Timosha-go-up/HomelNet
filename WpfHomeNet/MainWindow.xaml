@@ -27,8 +27,6 @@
         </Style>
     </Window.Resources>
 
-
-
     <ContentControl 
         Style="{StaticResource TripleBorderStyle}"                    
         Width="800"                         
@@ -118,8 +116,9 @@
 
             <controls:RegistrationViewControl x:Name="RegistrationPanel"
                 Grid.Column="1" Grid.ColumnSpan="4"
-                Grid.Row="1" Grid.RowSpan="3" 
-                Visibility="Collapsed">
+                Grid.Row="1" Grid.RowSpan="4" 
+                Visibility="Collapsed"
+                d:Visibility="Visible">
             </controls:RegistrationViewControl>
 
             

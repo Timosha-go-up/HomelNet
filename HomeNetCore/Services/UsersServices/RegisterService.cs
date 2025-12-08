@@ -9,11 +9,19 @@ namespace HomeNetCore.Services.UsersServices
 
         public enum ValidationState
         {
+            None,
             Success,
             Error
         }
 
-        public record ValidationResult(ValidationState State, string Message);
+        // Расширенный результат: теперь включает поле и код ошибки
+        public record ValidationResult
+        (
+            ValidationState State,
+            string Message,
+            string Field,           // Поле, в котором ошибка (например, "email")
+            string ErrorCode         // Код ошибки для локализации/логирования
+        );
 
         public async Task<ValidationResult> RegisterUserAsync(
             string email,
@@ -21,23 +29,85 @@ namespace HomeNetCore.Services.UsersServices
             string userName,
             string phone)
         {
-            // Проверяем email
-            if (!await ValidateEmailAsync(email))
-                return new ValidationResult(ValidationState.Error, "Неверный email или он уже существует");
+            // 1. Проверка на пустые/null
+            if (string.IsNullOrWhiteSpace(email))
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    "Email не может быть пустым",
+                    "email",
+                    "empty"
+                );
 
-            // Проверяем пароль
+            if (string.IsNullOrWhiteSpace(password))
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    "Пароль не может быть пустым",
+                    "password",
+                    "empty"
+                );
+
+            if (string.IsNullOrWhiteSpace(userName))
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    "Имя пользователя не может быть пустым",
+                    "userName",
+                    "empty"
+                );
+
+            if (string.IsNullOrWhiteSpace(phone))
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    "Номер телефона не может быть пустым",
+                    "phone",
+                    "empty"
+                );
+
+            // 2. Валидация email (разделяем ошибки)
+            var emailValidation = await ValidateEmailAsync(email);
+            if (!emailValidation.IsValid)
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    emailValidation.Message,
+                    "email",
+                    emailValidation.ErrorCode
+                );
+
+            // 3. Валидация пароля
             if (!ValidatePassword(password))
-                return new ValidationResult(ValidationState.Error, "Пароль не соответствует требованиям");
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    "Пароль должен содержать минимум 8 символов, буквы и цифры",
+                    "password",
+                    "invalid_format"
+                );
 
-            // Проверяем имя
+            // 4. Валидация имени
             if (!ValidateUserName(userName))
-                return new ValidationResult(ValidationState.Error, "Некорректное имя пользователя");
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    "Имя может содержать только буквы и пробелы",
+                    "userName",
+                    "invalid_format"
+                );
 
-            // Проверяем телефон
+            // 5. Валидация телефона
             if (!ValidatePhone(phone))
-                return new ValidationResult(ValidationState.Error, "Некорректный формат телефона");
+                return new ValidationResult
+                (
+                    ValidationState.Error,
+                    "Некорректный формат телефона (допустимо: +79991234567)",
+                    "phone",
+                    "invalid_format"
+                );
 
-            // Сохраняем пользователя
+            // 6. Сохраняем пользователя
             await _userRepository.InsertUserAsync(new UserEntity
             {
                 Email = email,
@@ -46,38 +116,44 @@ namespace HomeNetCore.Services.UsersServices
                 PhoneNumber = phone
             });
 
-            return new ValidationResult(ValidationState.Success, "Регистрация успешно завершена");
+            return new ValidationResult
+            (
+                ValidationState.Success,
+                "Регистрация успешно завершена",
+                "",
+                ""
+            );
         }
 
-        private async Task<bool> ValidateEmailAsync(string email)
+
+
+
+        // Возвращает детальный результат валидации email
+        private async Task<(bool IsValid, string Message, string ErrorCode)> ValidateEmailAsync(string email)
         {
             if (!IsValidEmailFormat(email))
-                return false;
+                return (false, "Некорректный формат email", "invalid_format");
 
-            return !(await _userRepository.EmailExistsAsync(email));
+            if (await _userRepository.EmailExistsAsync(email))
+                return (false, "Email уже зарегистрирован", "already_exists");
+
+            return (true, "", "");
         }
 
-        private bool IsValidEmailFormat(string email)
-        {
-            return new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").IsMatch(email);
-        }
+        private bool IsValidEmailFormat(string email) =>
+            new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").IsMatch(email);
 
-        private bool ValidatePassword(string password)
-        {
-            return new Regex(@"^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{8,}$").IsMatch(password);
-        }
+        private bool ValidatePassword(string password) =>
+            new Regex(@"^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{8,}$").IsMatch(password);
 
-        private bool ValidateUserName(string userName)
-        {
-            return !string.IsNullOrEmpty(userName) &&
-                   new Regex(@"^[a-zA-Z\s]+$").IsMatch(userName);
-        }
+        private bool ValidateUserName(string userName) =>
+            !string.IsNullOrEmpty(userName) &&
+            new Regex(@"^[a-zA-Z\s]+$").IsMatch(userName);
 
-        private bool ValidatePhone(string phone)
-        {
-            return new Regex(@"^\+?\d{10,15}$").IsMatch(phone);
-        }
+        private bool ValidatePhone(string phone) =>
+            new Regex(@"^\+?\d{10,15}$").IsMatch(phone);
     }
+
 
 
 

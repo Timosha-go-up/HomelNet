@@ -66,7 +66,7 @@ namespace WpfHomeNet
             if (_registrationViewModel == null)
             {
                 _registrationViewModel = new RegistrationViewModel(
-                    new RegisterService(_userRepository)
+                    new RegisterService(UserRepository)
                 );
             }
 
@@ -123,7 +123,7 @@ namespace WpfHomeNet
                     PositionLogWindowRelativeToMain();
                     EnableSync();
 
-                    _logQueueManager.SetReady();
+                    LogQueueManager.SetReady();
                    
                 }
 

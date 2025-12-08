@@ -1,8 +1,4 @@
-﻿using HomeNetCore.Data.Repositories;
-using HomeNetCore.Services.UsersServices;
-using System.Windows.Controls;
-using WpfHomeNet.ViewModels;
-
+﻿using System.Windows.Controls;
 namespace WpfHomeNet.Controls
 {
     public partial class RegistrationViewControl : UserControl
