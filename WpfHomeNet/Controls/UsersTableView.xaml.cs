@@ -4,9 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 namespace WpfHomeNet.Controls
 {
-    /// <summary>
-    /// Interaction logic for UsersTableView.xaml
-    /// </summary>
+    
     public partial class UsersTableView : UserControl
     {
         private MainViewModel? _viewModel;
@@ -16,7 +14,7 @@ namespace WpfHomeNet.Controls
             InitializeComponent();
 
             // 1. Проверяем DataContext сразу
-            if (DataContext is MainViewModel vm)
+             if (DataContext is MainViewModel vm)
             {
                 _viewModel = vm;
             }

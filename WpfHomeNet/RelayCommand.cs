@@ -1,45 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
-namespace WpfHomeNet
+namespace WpfHomeNet.ViewModels
 {
-    public class RelayCommand : ICommand
+    using System.Diagnostics;
+    using System.Windows.Input;
+
+    namespace WpfHomeNet
     {
-        private readonly Action<object> _executeMethod;
-        private readonly Func<object, bool> _canExecuteMethod;
-
-        public event EventHandler? CanExecuteChanged;
-
-        public RelayCommand(Action<object> executeMethod)
-            : this(executeMethod, _ => true)
+        public class RelayCommand : ICommand
         {
-        }
+            private readonly Action<object> _execute;
+            private readonly Predicate<object> _canExecute;
 
-        public RelayCommand(Action<object> executeMethod, Func<object, bool> canExecuteMethod)
-        {
-            _executeMethod = executeMethod ?? throw new ArgumentNullException(nameof(executeMethod));
-            _canExecuteMethod = canExecuteMethod ?? throw new ArgumentNullException(nameof(canExecuteMethod));
-        }
+            public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
+            {
+                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+                _canExecute = canExecute;
+            }
 
-        public bool CanExecute(object parameter)
-        {
-            return _canExecuteMethod?.Invoke(parameter) ?? true;
-        }
+            public event EventHandler CanExecuteChanged
+            {
+                add => CommandManager.RequerySuggested += value;
+                remove => CommandManager.RequerySuggested -= value;
+            }
 
-        public void Execute(object parameter)
-        {
-            _executeMethod?.Invoke(parameter);
-        }
+            public bool CanExecute(object parameter)
+            {
+                Debug.WriteLine($"CanExecute проверка: {(_canExecute == null || _canExecute(parameter))}");
+                return _canExecute == null || _canExecute(parameter);
+            }
 
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+
+            public void Execute(object parameter)
+            {
+                _execute(parameter);
+            }
+
+            public void RaiseCanExecuteChanged()
+            {
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
     }
+
+
+
 
 
 }

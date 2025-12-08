@@ -4,8 +4,11 @@ using HomeNetCore.Data.Repositories;
 using HomeNetCore.Helpers;
 using HomeNetCore.Models;
 using HomeNetCore.Services;
+using HomeNetCore.Services.UsersServices;
 using System.Diagnostics;
 using System.Windows;
+using WpfHomeNet.Controls;
+using WpfHomeNet.Interfaces;
 using WpfHomeNet.UiHelpers;
 using WpfHomeNet.ViewModels;
 
@@ -42,12 +45,17 @@ namespace WpfHomeNet
                 await _databaseInitializer.InitializeAsync();
 
                 _userRepository = new UserRepository(_connection, _userSqlGen);
-
+                
                 _userService = new UserService(_userRepository, Logger);
 
+                _registrationViewModel = new RegistrationViewModel(new RegisterService(_userRepository));
 
-                // Добавляем создание AuthManager
-                _authManager = new AuthManager(_userService);
+               
+
+
+
+
+
 
                 // Создание ViewModel
                 _mainVm = new MainViewModel(UserService, Logger);

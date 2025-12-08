@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using WpfHomeNet.Controls;
+using WpfHomeNet.Interfaces;
 using WpfHomeNet.UiHelpers;
 using WpfHomeNet.ViewModels;
 
@@ -28,6 +30,8 @@ namespace WpfHomeNet
         public LogWindow? _logWindow;
         private UserService UserService => _userService  ?? throw new InvalidOperationException("_userService не инициализирован");
         private UserService? _userService;
+        private RegistrationViewControl _registrationControl;
+
         private MainViewModel MainVm => _mainVm?? throw new InvalidOperationException("_mainVm не инициализирован");      
         private MainViewModel? _mainVm;
         private ILogger Logger => _logger ?? throw new InvalidOperationException("_logger не инициализирован"); 
@@ -38,11 +42,8 @@ namespace WpfHomeNet
         /// <summary>
         ///  авторизация ввода для проверки существования  email 
         /// </summary>
-        private string SavedEmail => _savedEmail ?? throw new InvalidOperationException("_savedEmail; не инициализирован");
-
-        private string? _savedEmail;        
-        private AuthManager AuthManager => _authManager ?? throw new InvalidOperationException("AuthManager? _authManager; не инициализирован");
-        private  AuthManager? _authManager;
+            
+       
 
         private DbConnection? _connection;
         private DBInitializer? _databaseInitializer;
@@ -53,6 +54,8 @@ namespace WpfHomeNet
         private ISchemaAdapter? _schemaAdapter;
         private LogQueueManager? _logQueueManager;
         private UserRepository? _userRepository;
+        private RegisterService _registerService;
+        private RegistrationViewModel _registrationViewModel;
         bool pause;
         
         #endregion

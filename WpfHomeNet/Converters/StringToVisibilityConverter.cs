@@ -1,18 +1,15 @@
-﻿using System.Globalization;
+﻿
+using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace WpfHomeNet.Converters
 {
-    public class ValidationToColorConverter : IValueConverter
+    public class StringToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is bool isValid)
-            {
-                return isValid ? Brushes.Green : Brushes.Red;
-            }
-            return Brushes.Gray;
+            return !string.IsNullOrEmpty(value as string) ? Visibility.Visible : Visibility.Hidden;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -20,14 +17,8 @@ namespace WpfHomeNet.Converters
             throw new NotImplementedException();
         }
     }
-
-
-
-
-
-
-
 }
+
 
 
 

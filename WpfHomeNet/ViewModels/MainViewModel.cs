@@ -3,26 +3,20 @@ using HomeNetCore.Models;
 using HomeNetCore.Services.UsersServices;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
+using WpfHomeNet.Interfaces;
 
 namespace WpfHomeNet.ViewModels
 {
-
-    // ViewModel для главного окна
     public class MainViewModel(UserService userService, ILogger logger) : INotifyPropertyChanged, IStatusUpdater
     {
+        
+      
 
-        // Событие для уведомления об изменении свойств
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Свойства для хранения данных
-        private ObservableCollection<UserEntity> _users = []; // Коллекция пользователей
+        private ObservableCollection<UserEntity> _users = new();
+        private string _statusText = string.Empty;
 
-       
-
-        private string _statusText = string.Empty; // Текстовое сообщение статуса
-
-        // Свойства с уведомлениями об изменении
         public ObservableCollection<UserEntity> Users
         {
             get => _users;
@@ -30,13 +24,10 @@ namespace WpfHomeNet.ViewModels
             {
                 if (_users == value) return;
                 _users = value;
-                OnPropertyChanged(nameof(Users)); 
+                OnPropertyChanged(nameof(Users));
             }
         }
 
-      
-        
-        
         public string StatusText
         {
             get => _statusText;
@@ -48,31 +39,20 @@ namespace WpfHomeNet.ViewModels
             }
         }
 
-            
-
-        // Методы для работы со статусом
         public void SetStatus(string message) => StatusText = message;
 
-
-       
-
-        // Метод уведомления об изменении свойства
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
-
-
-        // Основной метод загрузки пользователей
         public async Task LoadUsersAsync()
         {
-            StatusText = "Загрузка..."; // Устанавливаем статус загрузки
+            StatusText = "Загрузка...";
 
             try
             {
-                var users = await userService.GetAllUsersAsync(); // Получаем пользователей
+                var users = await userService.GetAllUsersAsync();
 
                 if (users == null)
                 {
@@ -80,8 +60,8 @@ namespace WpfHomeNet.ViewModels
                     return;
                 }
 
-                Users.Clear(); // Очищаем старую коллекцию
-                Users = new ObservableCollection<UserEntity>(users); // Заполняем новую
+                Users.Clear();
+                Users = new ObservableCollection<UserEntity>(users);
 
                 var userCount = users.Count;
 
@@ -100,9 +80,6 @@ namespace WpfHomeNet.ViewModels
             }
         }
 
-
-
-        // Вспомогательные методы для обработки результатов
         private void HandleSuccess(string message)
         {
             logger?.LogInformation(message);
@@ -115,6 +92,5 @@ namespace WpfHomeNet.ViewModels
             StatusText = message;
         }
     }
-
-
 }
+

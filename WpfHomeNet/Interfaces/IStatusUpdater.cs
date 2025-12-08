@@ -1,4 +1,4 @@
-﻿namespace WpfHomeNet.ViewModels
+﻿namespace WpfHomeNet.Interfaces
 {
     public interface IStatusUpdater
         {

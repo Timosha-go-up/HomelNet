@@ -1,5 +1,6 @@
 ﻿using HomeNetCore.Helpers.Exceptions;
 using HomeNetCore.Models;
+using HomeNetCore.Services.UsersServices;
 using HomeSocialNetwork;
 using System.Diagnostics;
 using System.Windows;
@@ -48,152 +49,41 @@ namespace WpfHomeNet
         }
 
 
-      #endregion     
+        #endregion
 
 
-        private void LoginInButton_Click(object sender, RoutedEventArgs e)
+
+
+
+
+
+        private void Register_Click(object sender, RoutedEventArgs e)
         {
-            UpperMenu.IsEnabled = false;
-            HideUsersTable();
-            if (LoginIn.Visibility == Visibility.Collapsed)
+            // 1. Делаем панель видимой
+            RegistrationPanel.Visibility = Visibility.Visible;
+
+            // 2. Создаём ViewModel (если ещё не создана)
+            if (_registrationViewModel == null)
             {
-                LoginIn.Visibility = Visibility.Visible;               
-                ShowButton.Content = "Показать юзеров";
-            }
-        }
-
-
-        private async void LoginInPanelButtonOk_Click(object sender, RoutedEventArgs e)
-        {
-            IInputHelper? inputHelper = null; 
-            try
-            {
-                string inputText = InputDataAuthenficate.Text;
-
-                inputHelper = new LoginInputHelper(
-                    InputInfoTitle,
-                    InputHelper,
-                    InputDataAuthenficate,
-                    Menu,
-                    LoginIn,
-                    UpperMenu
+                _registrationViewModel = new RegistrationViewModel(
+                    new RegisterService(_userRepository)
                 );
-
-                if (inputHelper.IsEmailStep())
-                {
-                    await HandleEmailValidation(inputText, inputHelper);
-                }
-                else if (inputHelper.IsPasswordStep())
-                {
-                    await HandlePasswordValidation(inputText, inputHelper);
-                }
             }
-            catch (Exception ex)
-            {
-                // Теперь inputHelper доступен здесь
-                if (inputHelper != null)
-                {
-                    inputHelper.ShowError($"Ошибка системы: {ex.Message}");
-                }
-                else
-                {
-                    // Если inputHelper не был создан, можно показать сообщение другим способом
-                    MessageBox.Show($"Произошла ошибка: {ex.Message}");
-                }
-            }
-        }
 
-
-        private async Task HandleEmailValidation(string email, IInputHelper inputHelper)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(email))
-                {
-                    inputHelper.ShowError("Ошибка: поле не может быть пустым");
-                    return;
-                }
-
-                if (!AuthManager.IsValidEmailFormat(email))
-                {
-                    inputHelper.ShowError("Ошибка: некорректный формат email");
-                    return;
-                }
-
-                bool emailExists = await AuthManager.ValidateEmailAsync(email);
-                if (!emailExists)
-                {
-                    inputHelper.ShowError("Ошибка: аккаунт с таким email не найден");
-                    return;
-                }
-
-                _savedEmail = email;
-                inputHelper.SwitchToPasswordStep();
-            }
-            catch (Exception ex)
-            {
-                inputHelper.ShowError($"Произошла ошибка при проверке email: {ex.Message}");
-            }
-        }
-
-
-        private async Task HandlePasswordValidation(string password, IInputHelper inputHelper)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(password))
-                {
-                    inputHelper.ShowError("Ошибка: поле не может быть пустым");
-                    return;
-                }
-
-                var (success, userName) = await AuthManager.ValidatePasswordAsync(SavedEmail, password);
-
-                if (!success)
-                {
-                    inputHelper.ShowError("Ошибка: неверный пароль");
-                    inputHelper.SetPasswordCheckMode();
-                    return;
-                }
-
-                inputHelper.ShowSuccess();
-
-
-
-                if (string.IsNullOrEmpty(userName))
-                {
-                    inputHelper.ShowError("Ошибка: не удалось определить пользователя");
-                    Status.SetStatus("Ошибка: не удалось определить пользователя");
-                    return;
-                }
-               
-                    Status.SetStatus($"Пользователь {userName} вошел в систему");              
-                    OnSuccessfulLogin();
-            }
-            catch (Exception ex)
-            {
-                inputHelper.ShowError($"Произошла ошибка при проверке пароля: {ex.Message}");
-            }
-        }
-
-
-        private void OnSuccessfulLogin()
-        {           
-            // Действия после успешной авторизации
-            Menu.Visibility = Visibility.Visible;
-            ButtonExit.Visibility = Visibility.Visible;
-            LoginIn.Visibility = Visibility.Collapsed;            
-            UpperMenu.Visibility = Visibility.Collapsed;
-            
+            // 3. Устанавливаем DataContext для панели
+            RegistrationPanel.DataContext = _registrationViewModel;
         }
 
 
 
-        private void LoginInPanelButtonExit_Click(object sender, RoutedEventArgs e)
-        {
-            LoginIn.Visibility = Visibility.Collapsed;           
-            UpperMenu.IsEnabled = true;
-        }
+
+
+
+
+
+
+
+
 
 
 
@@ -201,8 +91,9 @@ namespace WpfHomeNet
         {
             if (LogWindow.IsVisible)
             {
-               
                 
+
+
                 this.LocationChanged -= SyncLogWindowPosition;                
                 this.SizeChanged -= SyncLogWindowPosition;
                 LogWindow.Hide();
@@ -244,7 +135,7 @@ namespace WpfHomeNet
 
         private void ShowUsers_Click(object sender, RoutedEventArgs e)
         {
-            LoginIn.Visibility = Visibility.Collapsed;
+            
 
             if (DataContext is MainViewModel vm)
 
