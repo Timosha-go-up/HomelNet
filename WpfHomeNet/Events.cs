@@ -1,5 +1,6 @@
 ﻿using HomeNetCore.Helpers.Exceptions;
 using HomeNetCore.Models;
+using HomeNetCore.Services;
 using HomeNetCore.Services.UsersServices;
 using HomeSocialNetwork;
 using System.Diagnostics;
@@ -65,9 +66,7 @@ namespace WpfHomeNet
             // 2. Создаём ViewModel (если ещё не создана)
             if (_registrationViewModel == null)
             {
-                _registrationViewModel = new RegistrationViewModel(
-                    new RegisterService(UserRepository)
-                );
+                _registrationViewModel = new RegistrationViewModel(UserRepository);                                    
             }
 
             // 3. Устанавливаем DataContext для панели

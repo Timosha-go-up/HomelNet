@@ -1,148 +1,109 @@
-﻿
+﻿using HomeNetCore.Data.Interfaces;
+using HomeNetCore.Services;
 using HomeNetCore.Services.UsersServices;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WpfHomeNet.ViewModels.WpfHomeNet;
-using static HomeNetCore.Services.UsersServices.RegisterService;
 
 namespace WpfHomeNet.ViewModels
 {
     public class RegistrationViewModel : INotifyPropertyChanged
     {
         private readonly RegisterService _registerService;
-        private RelayCommand _registerCommand; 
+        private readonly IUserRepository _userRepository;
+
+        // Свойство с полной моделью (как обсуждали)
+        public CreateUserInput UserData { get; } = new CreateUserInput();
+
+        private RelayCommand _registerCommand;
         public ICommand RegisterCommand => _registerCommand;
 
-
-       
-
-
-
-        // Свойства для данных пользователя
-        private string _email = string.Empty;
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                _email = value;
-                SetField(ref _email, value);
-                _registerCommand?.RaiseCanExecuteChanged();
-            }
-        }
-
-        private string _password = string.Empty;
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                _password = value;
-                SetField(ref _password, value);
-                _registerCommand?.RaiseCanExecuteChanged();
-            }
-        }
-
-        private string _userName = string.Empty;
-        public string UserName
-        {
-            get => _userName;
-            set
-            {
-                _userName = value;
-                SetField(ref _userName, value);
-                _registerCommand?.RaiseCanExecuteChanged();
-            }
-        }
-
-        private string _phone = string.Empty;
-        public string Phone
-        {
-            get => _phone;
-            set
-            {
-                _phone = value;
-                SetField(ref _phone, value);
-                _registerCommand?.RaiseCanExecuteChanged();
-            }
-        }
-
-        // Свойства для отображения результата
-        private ValidationState _validationState = ValidationState.None;
-        public ValidationState ValidationState
-        {
-            get => _validationState;
-            set => SetField(ref _validationState, value); // Однострочный сеттер
-        }
-
-        private string _errorMessage = string.Empty;
+        // Свойства для отображения ошибок в UI
         private string _emailError;
-
-        public string ErrorMessage
+        public string EmailError
         {
-            get => _errorMessage;
-            set
-            {
-                _errorMessage = value;
-                SetField(ref _errorMessage, value);
-            }
+            get => _emailError;
+             set => SetField(ref _emailError, value);
         }
 
-        public RegistrationViewModel(RegisterService registerService)
+        private string _passwordError;
+        public string PasswordError
         {
-            if (registerService is null)
-                throw new ArgumentNullException(nameof(registerService));
+            get => _passwordError;
+             set => SetField(ref _passwordError, value);
+        }
 
-            _registerService = registerService;
+        private string _nameError;
+        public string NameError
+        {
+            get => _nameError;
+            set => SetField(ref _nameError, value);
+        }
+
+        private string _phoneError;
+        public string PhoneError
+        {
+            get => _phoneError;
+             set => SetField(ref _phoneError, value);
+        }
+
+        public RegistrationViewModel(IUserRepository userRepository)
+        {
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _registerService = new RegisterService(_userRepository);
 
             _registerCommand = new RelayCommand(
                 execute: async (obj) => await ExecuteRegisterCommand(),
-                canExecute: (obj) => true // Кнопка всегда активна
+                canExecute: (obj) => true
             );
         }
-
-
-
-        
-        
 
         private async Task ExecuteRegisterCommand()
         {
             try
             {
-                ValidationState = ValidationState.Success;
-                ErrorMessage = string.Empty;
+                // Очищаем предыдущие ошибки
+                EmailError = string.Empty;
+                PasswordError = string.Empty;
+                NameError = string.Empty;
+                PhoneError = string.Empty;
 
-                var result = await _registerService.RegisterUserAsync(
-                    Email,
-                    Password,
-                    UserName,
-                    Phone);
+                var (isSuccess, errors) = await _registerService.RegisterUserAsync(UserData);
 
-                if (result.State == ValidationState.Error)
+                if (!isSuccess)
                 {
-                    ValidationState = ValidationState.Error;
-                    ErrorMessage = result.Message; 
-                   
-                   
-                    return;
+                    foreach (var result in errors)
+                    {
+                        switch (result.Field)
+                        {
+                            case TypeField.EmailType:
+                                EmailError = result.Message;
+                                break;
+
+                            case TypeField.PasswordType:
+                                PasswordError = result.Message;
+                                break;
+
+                            case TypeField.NameType:
+                                NameError = result.Message;
+                                break;
+
+                            case TypeField.PhoneType:
+                                PhoneError = result.Message;
+                                break;
+                        }
+                    }
                 }
-
-                ValidationState = ValidationState.Success;
-
-                ErrorMessage = result.Message;
-
-                // Очистка полей после успешной регистрации
-                Email = string.Empty;
-                Password = string.Empty;
-                UserName = string.Empty;
-                Phone = string.Empty;
+                else
+                {
+                    // Успешная регистрация — можно закрыть форму или показать сообщение
+                }
             }
             catch (Exception ex)
             {
-                ValidationState = ValidationState.Error;
-                ErrorMessage = $"Произошла ошибка: {ex.Message}";
+                // Обработка критических ошибок (например, потеря соединения)
+                EmailError = "Произошла ошибка при регистрации. Попробуйте ещё раз.";
             }
         }
 
@@ -157,12 +118,12 @@ namespace WpfHomeNet.ViewModels
             }
         }
 
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
+
 
 

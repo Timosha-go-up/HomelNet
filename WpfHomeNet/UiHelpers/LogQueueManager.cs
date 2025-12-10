@@ -44,13 +44,11 @@ namespace WpfHomeNet.UiHelpers
                 .Trim('\r', '\n');
 
             LogLevel level = logEntry.Color switch
-            {
-                LogColor.Critical => LogLevel.Critical,
+            {              
                 LogColor.Error => LogLevel.Error,
                 LogColor.Warning => LogLevel.Warning,
                 LogColor.Information => LogLevel.Information,
-                LogColor.Debug => LogLevel.Debug,
-                LogColor.Trace => LogLevel.Trace,
+                LogColor.Debug => LogLevel.Debug,               
                 _ => LogLevel.Information
             };
 

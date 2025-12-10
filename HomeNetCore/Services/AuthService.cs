@@ -1,5 +1,5 @@
 ﻿using HomeNetCore.Data.Interfaces;
-namespace HomeNetCore.Services.UsersServices
+namespace HomeNetCore.Services
 {
     public class AuthService : IAuthService
     {

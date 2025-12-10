@@ -48,7 +48,7 @@ namespace WpfHomeNet
                 
                 _userService = new UserService(_userRepository, Logger);
 
-                _registrationViewModel = new RegistrationViewModel(new RegisterService(_userRepository));
+                _registrationViewModel = new RegistrationViewModel(_userRepository);
 
                
 

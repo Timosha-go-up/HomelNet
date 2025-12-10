@@ -37,9 +37,29 @@
             <!-- EMAIL -->
 
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
-                <Label Content="Email:" VerticalAlignment="Center"/>
-                <TextBox
-        Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                <!-- Подпись "Email:" — теперь с динамическим цветом -->
+                <Label Content="Email:" VerticalAlignment="Center">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <!-- Базовый цвет (нормальное состояние)-->
+                            <Setter Property="Foreground" Value="Black"/>
+
+                            <!-- Триггеры по ValidationState -->
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ValidationState}" Value="Error">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ValidationState}" Value="Success">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+
+                <!-- Поле ввода Email -->
+                <TextBox Text="{Binding UserData.Email, UpdateSourceTrigger=PropertyChanged}"
+        
         Margin="0,0,0,5"
         Padding="5">
                     <TextBox.Style>
@@ -47,13 +67,13 @@
                             <!-- Базовый стиль (нормальное состояние)-->
                             <Setter Property="BorderBrush" Value="Gray"/>
                             <Setter Property="BorderThickness" Value="1"/>
+
                             <!-- Триггеры для разных состояний -->
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ValidationState}" Value="Error">
                                     <Setter Property="BorderBrush" Value="Red"/>
                                     <Setter Property="BorderThickness" Value="2"/>
                                 </DataTrigger>
-                                <!-- Можно добавить другие состояния -->
                                 <DataTrigger Binding="{Binding ValidationState}" Value="Success">
                                     <Setter Property="BorderBrush" Value="Green"/>
                                     <Setter Property="BorderThickness" Value="2"/>
@@ -62,13 +82,17 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
+
+                <!-- Сообщение об ошибке -->
                 <Label
         Content="{Binding EmailError}"
-        Foreground="Red"
         FontSize="11"
         HorizontalAlignment="Left"
-        Visibility="{Binding EmailError, Converter={StaticResource StringToVisibilityConverter}}"/>
+        Visibility="{Binding EmailError, Converter={StaticResource StringToVisibilityConverter}}">
+                    <!-- Можно добавить стиль для сообщения об ошибке, если нужно -->
+                </Label>
             </StackPanel>
+
 
 
             <!-- PASSWORD -->
@@ -77,7 +101,7 @@
                 <Label  Content="Пароль:" VerticalAlignment="Center"/>
                 <TextBox
                 x:Name="passwordTextBox"
-                Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                Text="{Binding UserData.Password, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource ValidatedTextBoxStyle}"
                 Margin="0,0,0,5"
                 Padding="5"/>
@@ -86,24 +110,24 @@
                 
                 FontSize="11"
                 HorizontalAlignment="Left"
-                Visibility="{Binding PasswordError, Converter={StaticResource StringToVisibilityConverter}}"/>
+               />
             </StackPanel>
 
             <!-- USER NAME -->
             
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
                 <Label  Content="Имя пользователя:" VerticalAlignment="Center"/>
-                <TextBox
-                Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Text="{Binding UserData.UserName, UpdateSourceTrigger=PropertyChanged}"
+               
                 Margin="0,0,0,5"
                 Padding="5"/>
                 
                 <Label
-                Content="{Binding UserNameError}"
+                Content="{Binding NameError}"
                 
                 FontSize="11"
                 HorizontalAlignment="Left"
-                Visibility="{Binding UserNameError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                />
             </StackPanel>
 
             <!-- PHONE -->
@@ -111,7 +135,7 @@
             <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
                 <Label  Content="Телефон:" VerticalAlignment="Center"/>
                 <TextBox
-                Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
+                Text="{Binding UserData.PhoneNumber, UpdateSourceTrigger=PropertyChanged}"
                 Margin="0,0,0,5"
                 Padding="5">
                     <TextBox.Style>
@@ -139,7 +163,7 @@
                
                 FontSize="11"
                 HorizontalAlignment="Left"
-                Visibility="{Binding PhoneError, Converter={StaticResource StringToVisibilityConverter}}"/>
+                />
             </StackPanel>
 
             <!-- BUTTONS -->

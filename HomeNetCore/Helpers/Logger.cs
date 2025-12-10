@@ -11,13 +11,11 @@ namespace HomeNetCore.Helpers
 
         // Обновляем словарь маппинга
         private static readonly Dictionary<LogLevel, LogColor> LevelToColorMap = new()
-    {
-        { LogLevel.Trace, LogColor.Trace },
+    {       
         { LogLevel.Debug, LogColor.Debug },
         { LogLevel.Information, LogColor.Information },
         { LogLevel.Warning, LogColor.Warning },
-        { LogLevel.Error, LogColor.Error },
-        { LogLevel.Critical, LogColor.Critical }
+        { LogLevel.Error, LogColor.Error }       
     };
 
         // Добавляем конструктор без параметров

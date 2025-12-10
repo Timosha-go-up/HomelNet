@@ -2,7 +2,7 @@
 using HomeNetCore.Data.Repositories;
 using HomeNetCore.Helpers.Exceptions;
 using HomeNetCore.Models;
-namespace HomeNetCore.Services.UsersServices
+namespace HomeNetCore.Services
 {
     public class UserService(UserRepository repo, ILogger logger)
     {
@@ -10,7 +10,6 @@ namespace HomeNetCore.Services.UsersServices
 
         private readonly UserRepository _repo = repo
             ?? throw new ArgumentNullException(nameof(repo), "Repository не может быть null");
-
 
         public Task<List<UserEntity>> GetAllUsersAsync()
         {
@@ -30,51 +29,7 @@ namespace HomeNetCore.Services.UsersServices
                  _logger.LogError("Ошибка при получении пользователей из БД", ex.Message);
                 throw;                
             }
-        }
-
-
-       public async Task<(bool success, string userName)> ValidateCredentialsAsync(string email, string password)
-        {
-            try
-            {            
-                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-                {
-                    _logger.LogWarning("Попытка авторизации с пустыми учетными данными");
-                    return (false, string.Empty);
-                }
-
-                var user = await _repo.GetByEmailAsync(email);
-
-                if (user == null)
-                {
-                    _logger.LogInformation($"Попытка входа с несуществующим email: {email}");
-                    return (false, string.Empty);
-                }
-                               
-                bool isValid = user.Password == password;
-
-                if (isValid)
-                {                   
-                    _logger.LogInformation($"Успешная авторизация пользователя: {user.FullName}");
-
-                    return (true, user.FullName??"Null impossible");
-                }
-                else
-                {
-                    _logger.LogInformation($"Неудачная попытка входа для пользователя: {user.FullName}");
-
-                    return (false, string.Empty);
-                }
-               
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Критическая ошибка при проверке учетных данных: {ex.Message}");
-                throw;
-            }
-        }
-
-
+        }      
 
         public async Task AddUserAsync(UserEntity user)
         {            
@@ -107,7 +62,6 @@ namespace HomeNetCore.Services.UsersServices
                 ? throw new ArgumentException("Email обязателен") 
                 : await _repo.GetByEmailAsync(email);
         }
-
 
 
         public async Task<bool> CheckEmailExistsAsync(string? email)
@@ -169,10 +123,4 @@ namespace HomeNetCore.Services.UsersServices
         }
 
     }
-
-
-
-
-
-
 }

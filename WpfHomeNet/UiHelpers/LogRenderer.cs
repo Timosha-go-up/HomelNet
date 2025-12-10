@@ -14,12 +14,12 @@ namespace WpfHomeNet.UiHelpers
         private readonly RichTextBox _logTextBox;
         private readonly Dictionary<LogColor, Brush> _colorMap = new()
     {
-        { LogColor.Critical, Brushes.Red },
+        
         { LogColor.Error, Brushes.OrangeRed },
         { LogColor.Warning, Brushes.Orange },
         { LogColor.Information, Brushes.Green },
-        { LogColor.Debug, Brushes.Tan },
-        { LogColor.Trace, Brushes.Gray }
+        { LogColor.Debug, Brushes.Tan }
+        
     };
 
         public LogRenderer(RichTextBox logTextBox)

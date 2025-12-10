@@ -4,7 +4,7 @@ using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Data.Repositories;
 using HomeNetCore.Data.Schemes;
 using HomeNetCore.Helpers;
-using HomeNetCore.Services.UsersServices;
+using HomeNetCore.Services;
 using System.Data.Common;
 using System.Windows;
 using WpfHomeNet.Controls;
@@ -25,8 +25,7 @@ namespace WpfHomeNet
         public LogWindow LogWindow => _logWindow ?? throw new InvalidOperationException("_logWindow не инициализирован");
         public LogWindow? _logWindow;
         private UserService UserService => _userService  ?? throw new InvalidOperationException("_userService не инициализирован");
-        private UserService? _userService;
-        private RegistrationViewControl _registrationControl;
+        private UserService? _userService;       
 
         private MainViewModel MainVm => _mainVm?? throw new InvalidOperationException("_mainVm не инициализирован");      
         private MainViewModel? _mainVm;
@@ -38,7 +37,7 @@ namespace WpfHomeNet
         private LogQueueManager LogQueueManager=> _logQueueManager ?? throw new InvalidOperationException("_logQueueManager не инициализирован");
         private LogQueueManager? _logQueueManager;
 
-        private UserRepository UserRepository =>_userRepository ?? throw new InvalidOperationException("_userRepository? не инициализирован");
+        private IUserRepository UserRepository =>_userRepository ?? throw new InvalidOperationException("_userRepository? не инициализирован");
         private UserRepository? _userRepository;
 
 
@@ -53,9 +52,8 @@ namespace WpfHomeNet
         private ISchemaAdapter? _schemaAdapter;
         
         
-        private RegisterService _registerService;
         private RegistrationViewModel _registrationViewModel;
-        bool pause;
+       
         
         #endregion
 

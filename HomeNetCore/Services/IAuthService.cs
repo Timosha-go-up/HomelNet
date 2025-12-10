@@ -1,4 +1,4 @@
-﻿namespace HomeNetCore.Services.UsersServices
+﻿namespace HomeNetCore.Services
 {
     public interface IAuthService
     {
