@@ -40,7 +40,7 @@ namespace WpfHomeNet
         private IUserRepository UserRepository =>_userRepository ?? throw new InvalidOperationException("_userRepository? не инициализирован");
         private UserRepository? _userRepository;
 
-
+        private RegistrationViewControl _registrationControl;
 
 
         private DbConnection? _connection;
@@ -66,6 +66,8 @@ namespace WpfHomeNet
             InitializeLogging();
 
             CenterMainAndHideLogs();
+
+
         }
 
         
@@ -76,6 +78,8 @@ namespace WpfHomeNet
             {
                
                 await InitializeAsync(DatabaseType.SQLite);
+
+                await  InitializeRegistrationControlAsync();
 
                 await PostInitializeAsync();
 

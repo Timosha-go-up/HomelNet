@@ -3,19 +3,50 @@ using HomeNetCore.Models;
 using HomeNetCore.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Input;
 using WpfHomeNet.Interfaces;
+using WpfHomeNet.ViewModels;
+using WpfHomeNet.ViewModels.WpfHomeNet;
 
 namespace WpfHomeNet.ViewModels
 {
-    public class MainViewModel(UserService userService, ILogger logger) : INotifyPropertyChanged, IStatusUpdater
+    public class MainViewModel : INotifyPropertyChanged, IStatusUpdater
     {
-        
-      
+
+
+       
+
+        public RegistrationViewModel RegistrationViewModel { get; private set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private ObservableCollection<UserEntity> _users = new();
         private string _statusText = string.Empty;
+        private readonly UserService userService;
+        private readonly ILogger logger;
+
+        public MainViewModel(UserService userService, ILogger logger,RegistrationViewModel registrationVm)
+
+        {
+            this.userService = userService;
+            this.logger = logger;
+            RegistrationViewModel = registrationVm;
+        }
+
+
+
+
+        public ICommand ShowRegistrationCommand => new RelayCommand((parameter) =>
+        {
+            if (RegistrationViewModel != null)
+            {
+                RegistrationViewModel.ControlVisibility =
+    RegistrationViewModel.ControlVisibility == Visibility.Collapsed
+        ? Visibility.Visible
+        : Visibility.Collapsed;
+            }
+        });
 
         public ObservableCollection<UserEntity> Users
         {

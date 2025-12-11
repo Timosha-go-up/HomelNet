@@ -17,7 +17,7 @@ namespace WpfHomeNet.Converters
             return value is ValidationState state ? state switch
             {
                 ValidationState.None => Brushes.DarkGray,
-                ValidationState.Success => Brushes.Green,             
+                ValidationState.Success => Brushes.DarkGreen,             
                 ValidationState.Error => Brushes.Red,
                 _ => Brushes.Gray
             } : Brushes.Transparent;

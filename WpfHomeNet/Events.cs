@@ -58,19 +58,13 @@ namespace WpfHomeNet
 
 
 
-        private void Register_Click(object sender, RoutedEventArgs e)
+        private void ShowOrHideControl()
         {
-            // 1. Делаем панель видимой
-            RegistrationPanel.Visibility = Visibility.Visible;
 
-            // 2. Создаём ViewModel (если ещё не создана)
-            if (_registrationViewModel == null)
-            {
-                _registrationViewModel = new RegistrationViewModel(UserRepository);                                    
-            }
-
-            // 3. Устанавливаем DataContext для панели
-            RegistrationPanel.DataContext = _registrationViewModel;
+            _registrationControl.Visibility =
+          _registrationControl.Visibility == Visibility.Visible
+          ? Visibility.Collapsed
+          : Visibility.Visible;
         }
 
 

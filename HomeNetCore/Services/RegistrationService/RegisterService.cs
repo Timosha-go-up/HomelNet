@@ -7,54 +7,34 @@ namespace HomeNetCore.Services
 {
    
 
-    public partial class RegisterService(IUserRepository userRepository)
+    public partial class RegisterService
     {
-        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ValidationFormat _validateField = new();
 
-
-        /// <summary>
-        /// Регистрирует пользователя: валидирует данные и сохраняет в БД.
-        /// </summary>
-        /// <param name="userInput">Данные регистрации.</param>
-        /// <returns>
-        /// Tuple: (пользователь, список ошибок).  
-        /// Если ошибки есть — пользователь null.
-        /// </returns>
-        public async Task<(bool IsSuccess, List<ValidationResult> Errors)> RegisterUserAsync(CreateUserInput userInput)
+        public RegisterService(IUserRepository userRepository)
         {
-            var validationResults = new List<ValidationResult>();
-            
-            validationResults.Add(ValidatePassword(userInput.Password));
-            validationResults.Add(ValidateUserName(userInput.UserName));
-            validationResults.Add(ValidatePhone(userInput.PhoneNumber));
-            var emailResult = await ValidateEmailAsync(userInput.Email);
-            validationResults.Add(emailResult);
+            _userRepository = userRepository;
+        }
 
-            // 2. Если есть ошибки — возвращаем их
+        public async Task<(bool IsSuccess, List<ValidationResult> Messages)> RegisterUserAsync(CreateUserInput userInput)
+        {
+            // 1. Валидация
+            var validationResults = await ValidateInputAsync(userInput);
             if (validationResults.Any(r => r.State == ValidationState.Error))
-            {
                 return (false, validationResults);
-            }
 
+            // 2. Создание модели
+            var user = CreateUserEntity(userInput);
 
-            var user = new UserEntity
-            {
-                FirstName = userInput.UserName,
-                Email = userInput.Email,
-                PhoneNumber = userInput.PhoneNumber,
-                Password = userInput.Password
-            };
-
+            // 3. Сохранение
             try
             {
-                //await _userRepository.InsertUserAsync(user);
-
-                return (true, new List<ValidationResult>());  
+                await _userRepository.InsertUserAsync(user);
+                return (true, validationResults);
             }
             catch (Exception ex)
             {
-                
                 var errorResult = new ValidationResult
                 {
                     State = ValidationState.Error,
@@ -63,7 +43,38 @@ namespace HomeNetCore.Services
                 return (false, new List<ValidationResult> { errorResult });
             }
         }
-       
+
+
+
+
+
+
+        private async Task<List<ValidationResult>> ValidateInputAsync(CreateUserInput input)
+        {
+            var results = new List<ValidationResult>();
+
+            results.Add(ValidatePassword(input.Password));
+            results.Add(ValidateUserName(input.UserName));
+            results.Add(ValidatePhone(input.PhoneNumber));
+
+            var emailResult = await ValidateEmailAsync(input.Email);
+            results.Add(emailResult);
+
+            return results;
+        }
+
+
+        private UserEntity CreateUserEntity(CreateUserInput input)
+        {
+            return new UserEntity
+            {
+                FirstName = input.UserName,
+                Email = input.Email,
+                PhoneNumber = input.PhoneNumber,
+                Password = input.Password
+            };
+        }
+
 
         private ValidationResult ValidatePassword(string password)
         {

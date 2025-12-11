@@ -7,6 +7,8 @@ using HomeNetCore.Services;
 using HomeNetCore.Services.UsersServices;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using WpfHomeNet.Controls;
 using WpfHomeNet.Interfaces;
 using WpfHomeNet.UiHelpers;
@@ -48,17 +50,12 @@ namespace WpfHomeNet
                 
                 _userService = new UserService(_userRepository, Logger);
 
+
+                // Создаём VM регистрации (ещё без контрола)
                 _registrationViewModel = new RegistrationViewModel(_userRepository);
 
-               
-
-
-
-
-
-
                 // Создание ViewModel
-                _mainVm = new MainViewModel(UserService, Logger);
+                _mainVm = new MainViewModel(UserService, Logger,_registrationViewModel);
             }
 
             catch (Exception ex)
@@ -73,6 +70,42 @@ namespace WpfHomeNet
                 );
             }
         }
+
+
+        
+
+        private async Task InitializeRegistrationControlAsync()
+        {
+            if (_userRepository == null)
+                throw new InvalidOperationException("UserRepository не инициализирован!");
+
+            if (_registrationViewModel == null)
+                throw new InvalidOperationException("RegistrationViewModel не инициализирована!");
+
+            // 1. Создаём контрол
+            _registrationControl = new RegistrationViewControl();
+
+
+            // 2. Добавляем в Grid
+            MainGrid.Children.Add(_registrationControl);
+            Grid.SetColumn(_registrationControl, 1);
+            Grid.SetColumnSpan(_registrationControl, 4);
+            Grid.SetRow(_registrationControl, 1);
+            Grid.SetRowSpan(_registrationControl, 5);
+
+            // 3. Назначаем DataContext
+            _registrationControl.DataContext = _registrationViewModel;
+
+            // 4. Настраиваем привязку Visibility
+            var binding = new Binding("ControlVisibility");
+            binding.Source = _registrationViewModel;
+            _registrationControl.SetBinding(UIElement.VisibilityProperty, binding);
+
+            // 5. Отладка (можно убрать в релизе)
+            Debug.WriteLine($"Контрол зарегистрирован. DataContext: {_registrationControl.DataContext?.GetType().Name}");
+            Debug.WriteLine($"Привязка Visibility установлена. Текущее: {_registrationControl.Visibility}");
+        }
+
 
 
         public async Task PostInitializeAsync()

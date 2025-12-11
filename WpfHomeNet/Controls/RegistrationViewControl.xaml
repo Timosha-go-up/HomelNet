@@ -5,8 +5,9 @@
  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
  xmlns:viewmodels="clr-namespace:WpfHomeNet.ViewModels"             
  xmlns:converter="clr-namespace:WpfHomeNet.Converters"
+             x:Name="RegistrationControl"
 
-
+ Visibility="{Binding ControlVisibility, RelativeSource={RelativeSource AncestorType=UserControl}}"
              mc:Ignorable="d"  Background="Transparent" BorderThickness="0"   
              Height="Auto" Width="Auto" Margin="10"
             >
@@ -43,17 +44,18 @@
                 <Label Content="Email:" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding UserData.Email, UpdateSourceTrigger=PropertyChanged}" 
                          BorderBrush="{Binding Path=EmailValidationState,
-                   Converter={StaticResource StateToBrushConverter}}"
+                   Converter={StaticResource StateToBrushConverter}}" 
+                         IsEnabled="{Binding AreFieldsEnabled}"
                     Margin="0,0,0,5"
                     Padding="5">
                   
                 </TextBox>
                 <Label
-                    Content="{Binding EmailError}"
+                    Content="{Binding EmailMessage}"
                     Foreground="{Binding Path=EmailValidationState,
                    Converter={StaticResource StateToBrushConverter}}"
                     FontSize="11"
-                    HorizontalAlignment="Left"                                              >
+                    HorizontalAlignment="Center"                                              >
                   
                 </Label>
             </StackPanel>
@@ -69,7 +71,7 @@
                 <Label  Content="Пароль:" VerticalAlignment="Center"/>
                
                      <TextBox
-                x:Name="passwordTextBox"
+                x:Name="passwordTextBox"   IsEnabled="{Binding AreFieldsEnabled}"
                 Text="{Binding UserData.Password, UpdateSourceTrigger=PropertyChanged}"
                      BorderBrush="{Binding Path=PasswordValidationState,
                      Converter={StaticResource StateToBrushConverter}}"
@@ -78,11 +80,11 @@
                     
                
                 <Label
-                Content="{Binding PasswordError}"
+                Content="{Binding PasswordMessage}"
                  Foreground="{Binding Path=PasswordValidationState,
                  Converter={StaticResource StateToBrushConverter}}"
                 FontSize="11"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Center"
                />
             </StackPanel>
 
@@ -92,17 +94,17 @@
                
                 <Label  Content="Имя пользователя:" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding UserData.UserName, UpdateSourceTrigger=PropertyChanged}"
-                BorderBrush="{Binding Path=PasswordValidationState,
- Converter={StaticResource StateToBrushConverter}}"
+                BorderBrush="{Binding Path=NameValidationState,
+                           Converter={StaticResource StateToBrushConverter}}"  IsEnabled="{Binding AreFieldsEnabled}"
                 Margin="0,0,0,5"
                 Padding="5"/>
                 
                 <Label
-                Content="{Binding NameError}"
+                Content="{Binding NameMessage}"
                  Foreground="{Binding Path=NameValidationState,
-Converter={StaticResource StateToBrushConverter}}"
+                           Converter={StaticResource StateToBrushConverter}}"
                 FontSize="11"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Center"
                 />
             </StackPanel>
 
@@ -113,37 +115,43 @@ Converter={StaticResource StateToBrushConverter}}"
                 <Label  Content="Телефон:" VerticalAlignment="Center"/>
                 <TextBox
                 Text="{Binding UserData.PhoneNumber, UpdateSourceTrigger=PropertyChanged}"
-                Margin="0,0,0,5"
+                Margin="0,0,0,5" IsEnabled="{Binding AreFieldsEnabled}"
                 Padding="5" BorderBrush="{Binding Path=PhoneValidationState,
                           Converter={StaticResource StateToBrushConverter}}"/>
 
                 <Label
-                Content="{Binding PhoneError}"
+                Content="{Binding PhoneMessage}"
                 Foreground="{Binding Path=PhoneValidationState,
-                        Converter={StaticResource StateToBrushConverter}}"
+                        Converter={StaticResource StateToBrushConverter}}"  
               
                 FontSize="11"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Center"
                 />
             </StackPanel>
+            
+             <Label Grid.Row="4" 
+                    Content="{Binding StatusMessage}" />
 
             <!-- BUTTONS -->
             <StackPanel
-                Grid.Row="4"
+                Grid.Row="5"
                 Grid.ColumnSpan="2"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
                 Margin="0,15,0,0">
+               
                 <Button
                 Content="Отмена"
-                Command="{Binding CancelCommand}"
+                 Command="{Binding CancelCommand}"
                 Margin="0,0,10,0"
                 Width="100"/>
                 <Button
-                Content="Зарегистрировать"
-                Command="{Binding RegisterCommand}"
-                IsEnabled="{Binding RegisterCommand.CanExecute}"
-                Width="120"
+                Content="{Binding RegisterButtonText}"
+                
+                      Command="{Binding ToggleRegistrationCommand}"  
+                    IsEnabled="{Binding ToggleRegistrationCommand.CanExecute}"
+                   
+                Width="140"
                 />
             </StackPanel>
         </Grid>

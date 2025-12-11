@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:WpfHomeNet.ViewModels"
+       
     mc:Ignorable="d"        
     WindowStyle="None"
     ResizeMode="CanResize"           
@@ -37,7 +38,7 @@
         VerticalAlignment="Center"
         MouseDown="WindowDrag_MouseDown">
 
-        <Grid Margin="4">
+        <Grid x:Name="MainGrid" Margin="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="100"/>
@@ -94,7 +95,9 @@
                         Grid.Column="3"                        
                         Orientation="Horizontal"                        
                         Grid.ColumnSpan="2">
-                <Button MinWidth="120" Click="Register_Click"
+                
+                <Button MinWidth="120"   
+                         Command="{Binding ShowRegistrationCommand}" 
                        Content="Регистрация"
                        />
                 <Button Width="Auto"
@@ -114,12 +117,7 @@
 
 
 
-            <controls:RegistrationViewControl x:Name="RegistrationPanel"
-                Grid.Column="1" Grid.ColumnSpan="4"
-                Grid.Row="1" Grid.RowSpan="4" 
-                Visibility="Collapsed"
-                d:Visibility="Visible">
-            </controls:RegistrationViewControl>
+           
 
             
 

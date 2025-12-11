@@ -4,6 +4,7 @@ using HomeNetCore.Services;
 using HomeNetCore.Services.UsersServices;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using WpfHomeNet.ViewModels.WpfHomeNet;
 
@@ -15,167 +16,191 @@ namespace WpfHomeNet.ViewModels
         private readonly IUserRepository _userRepository;
 
         // Свойство с полной моделью (как обсуждали)
-        public CreateUserInput UserData { get; } = new CreateUserInput();
+        public CreateUserInput UserData { get; set; } = new CreateUserInput();
 
         private RelayCommand _registerCommand;
         public ICommand RegisterCommand => _registerCommand;
 
-        // Свойства для отображения ошибок в UI
-        private string _emailError;
-        public string EmailError
-        {
-            get => _emailError;
-             set => SetField(ref _emailError, value);
-        }
+        public ICommand ToggleRegistrationCommand { get; private set; }
 
-        private string _passwordError;
-        public string PasswordError
-        {
-            get => _passwordError;
-             set => SetField(ref _passwordError, value);
-        }
 
-        private string _nameError;
-        public string NameError
-        {
-            get => _nameError;
-            set => SetField(ref _nameError, value);
-        }
+        private RelayCommand _cancelCommand;
+        public ICommand CancelCommand => _cancelCommand;
 
-        private string _phoneError;
-        public string PhoneError
+
+
+
+        private bool _isRegistrationComplete;
+        public bool IsRegistrationComplete
         {
-            get => _phoneError;
-             set => SetField(ref _phoneError, value);
+            get => _isRegistrationComplete;
+            private set => SetField(ref _isRegistrationComplete, value);
         }
 
 
-
-
-
-        public ValidationState EmailValidationState
+        private Visibility _controlVisibility = Visibility.Collapsed;
+        public Visibility ControlVisibility
         {
-            get => _emailValidationState;
-            set
-            {
-
-                _emailValidationState = value;
-                OnPropertyChanged(nameof(EmailValidationState));
-
-            }
-
-
+            get => _controlVisibility;
+            set => SetField(ref _controlVisibility, value); 
         }
 
-        public ValidationState PasswordValidationState
+
+        private string _statusMessage;
+        public string StatusMessage
         {
-            get => _passwordValidationState;
-            set
-            {
-
-                _passwordValidationState = value;
-                OnPropertyChanged(nameof(PasswordValidationState));
-
-            }
-
-
+            get => _statusMessage;
+            set => SetField(ref _statusMessage, value);
         }
 
-        public ValidationState NameValidationState
+
+        private string _registerButtonText = "Зарегистрироваться";
+        public string RegisterButtonText
         {
-            get => _nameValidationState;
-            set
-            {
-
-                _nameValidationState = value;
-                OnPropertyChanged(nameof(NameValidationState));
-
-            }
-
+            get => _registerButtonText;
+            private set => SetField(ref _registerButtonText, value);
         }
 
-        public ValidationState PhoneValidationState
+        private void ResetRegistrationForm()
         {
-            get => _phoneValidationState;
-            set
-            {
+            // Очищаем поля ввода
+            UserData = new CreateUserInput(); // или обнуляем свойства вручную
 
-                _phoneValidationState = value;
-                OnPropertyChanged(nameof(PhoneValidationState));
+            // Сбрасываем сообщения и состояния валидации
+            StatusMessage = string.Empty;
+            EmailMessage = string.Empty;
+            PasswordMessage = string.Empty;
+            NameMessage = string.Empty;
+            PhoneMessage = string.Empty;
 
-            }
+            EmailValidationState = ValidationState.None;
+            PasswordValidationState = ValidationState.None;
+            NameValidationState = ValidationState.None;
+            PhoneValidationState = ValidationState.None;
+
+            // Включаем поля
+            AreFieldsEnabled = true;
+
+            // Возвращаем текст кнопки
+            RegisterButtonText = "Зарегистрироваться";
+
+            // Снимаем флаг завершения
+            IsRegistrationComplete = false;
         }
 
-        // Приватные поля
-        private ValidationState _emailValidationState = ValidationState.None;
-        private ValidationState _passwordValidationState = ValidationState.None;
-        private ValidationState _nameValidationState = ValidationState.None;
-        private ValidationState _phoneValidationState = ValidationState.None;
-
-
-      
 
         public RegistrationViewModel(IUserRepository userRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _registerService = new RegisterService(_userRepository);
 
+            // Внутренняя команда (как было)
             _registerCommand = new RelayCommand(
                 execute: async (obj) => await ExecuteRegisterCommand(),
                 canExecute: (obj) => true
             );
+
+
+
+            // В конструкторе:
+            _cancelCommand = new RelayCommand(
+                execute: (obj) =>
+                {
+                    // Сбрасываем все состояния
+                    ResetRegistrationForm();
+
+                    // Скрываем контрол (если нужно)
+                    ControlVisibility = Visibility.Collapsed;
+                },
+                canExecute: (obj) => true
+            );
+
+            ToggleRegistrationCommand = new RelayCommand(
+      execute: async (parameter) =>
+      {
+          if (!IsRegistrationComplete)
+          {
+              // Первый режим: выполняем регистрацию
+              await ExecuteRegisterCommand();
+          }
+          else
+          {
+              // Второй режим: кнопка "Выйти"
+              ResetRegistrationForm(); // Сброс формы
+              ControlVisibility = Visibility.Collapsed; // Скрываем контрол
+          }
+      },
+      canExecute: (parameter) =>
+      {
+          if (!IsRegistrationComplete)
+              return RegisterCommand.CanExecute(null);
+          return true; // После регистрации всегда можно выйти
+      }
+  );
         }
 
 
         private async Task ExecuteRegisterCommand()
         {
+            
             try
             {
-                // Очищаем предыдущие ошибки
-                EmailError = string.Empty;
-                PasswordError = string.Empty;
-                NameError = string.Empty;
-                PhoneError = string.Empty;
+                StatusMessage = string.Empty;
+                EmailMessage = string.Empty;
+                PasswordMessage = string.Empty;
+                NameMessage = string.Empty;
+                PhoneMessage = string.Empty;
 
-                var (isSuccess, errors) = await _registerService.RegisterUserAsync(UserData);
+                var (isSuccess, messages) = await _registerService.RegisterUserAsync(UserData);
 
-                if (!isSuccess)
-                {
-                    foreach (var result in errors)
+                    foreach (var result in messages)
                     {
                         switch (result.Field)
                         {
                             case TypeField.EmailType:
-                                EmailError = result.Message;
+                                EmailMessage = result.Message;
                                 EmailValidationState = result.State;
                                 break;
 
                             case TypeField.PasswordType:
-                                PasswordError = result.Message;
+                                PasswordMessage = result.Message;
                                 PasswordValidationState = result.State;
                                 break;
 
                             case TypeField.NameType:
-                                NameError = result.Message;
+                                NameMessage = result.Message;
                                 NameValidationState = result.State;
                                 break;
 
                             case TypeField.PhoneType:
-                                PhoneError = result.Message;
+                                PhoneMessage = result.Message;
                                 PhoneValidationState = result.State;
                                 break;
                         }
                     }
+
+
+                if (isSuccess)
+                { 
+                    StatusMessage = "Вы успешно зарегистрированы";
+
+                    AreFieldsEnabled = false;
+
+                    RegisterButtonText = "Выйти";
+
+                    IsRegistrationComplete = true;
+
                 }
-                else
-                {
-                    // Успешная регистрация — можно закрыть форму или показать сообщение
-                }
+
+                else StatusMessage = "есть ошибки в полях"; 
+               
             }
             catch (Exception ex)
             {
                 // Обработка критических ошибок (например, потеря соединения)
-                EmailError = "Произошла ошибка при регистрации. Попробуйте ещё раз.";
+                StatusMessage = $"При регистрации произошла ошибка {ex.Message} ";
+
+                AreFieldsEnabled = true;
             }
         }
 
@@ -190,10 +215,79 @@ namespace WpfHomeNet.ViewModels
             }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+
+        #region свойства результов валидации
+
+
+        private bool _areFieldsEnabled = true;
+        public bool AreFieldsEnabled
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get => _areFieldsEnabled;
+            private set => SetField(ref _areFieldsEnabled, value);
         }
+
+
+        // Свойства для отображения ошибок в UI
+        private string _emailMessage;
+        public string EmailMessage
+        {
+            get => _emailMessage;
+            set => SetField(ref _emailMessage, value);
+        }
+
+        private string _passwordMessage;
+        public string PasswordMessage
+        {
+            get => _passwordMessage;
+            set => SetField(ref _passwordMessage, value);
+        }
+
+        private string _nameMessage;
+        public string NameMessage
+        {
+            get => _nameMessage;
+            set => SetField(ref _nameMessage, value);
+        }
+
+        private string _phoneMessage;
+        public string PhoneMessage
+        {
+            get => _phoneMessage;
+            set => SetField(ref _phoneMessage, value);
+        }
+
+
+        private ValidationState _emailValidationState;
+        public ValidationState EmailValidationState
+        {
+            get => _emailValidationState;
+            set => SetField(ref _emailValidationState, value);
+        }
+
+
+        private ValidationState _passwordValidationState;
+        public ValidationState PasswordValidationState
+        {
+            get => _passwordValidationState;
+            set => SetField(ref _passwordValidationState, value);
+        }
+
+        private ValidationState _nameValidationState;
+        public ValidationState NameValidationState
+        {
+            get => _nameValidationState;
+            set => SetField(ref _nameValidationState, value);
+        }
+
+        private ValidationState _phoneValidationState;
+        public ValidationState PhoneValidationState
+        {
+            get => _phoneValidationState;
+            set => SetField(ref _phoneValidationState, value);
+        }
+
+        #endregion
+
     }
 }
 
