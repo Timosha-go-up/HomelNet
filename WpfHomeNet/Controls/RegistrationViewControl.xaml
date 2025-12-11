@@ -11,9 +11,11 @@
              Height="Auto" Width="Auto" Margin="10"
             >
     <UserControl.Resources>
-        <converter:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
 
-       
+        <converter:StateToBrushConverter x:Key="StateToBrushConverter"/>
+
+
+
     </UserControl.Resources>
 
     <ContentControl Style="{StaticResource TripleBorderStyle}" Padding="4" Background="#00000000">
@@ -37,59 +39,22 @@
             <!-- EMAIL -->
 
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
-                <!-- Подпись "Email:" — теперь с динамическим цветом -->
-                <Label Content="Email:" VerticalAlignment="Center">
-                    <Label.Style>
-                        <Style TargetType="Label">
-                            <!-- Базовый цвет (нормальное состояние)-->
-                            <Setter Property="Foreground" Value="Black"/>
-
-                            <!-- Триггеры по ValidationState -->
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ValidationState}" Value="Error">
-                                    <Setter Property="Foreground" Value="Red"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ValidationState}" Value="Success">
-                                    <Setter Property="Foreground" Value="Green"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Label.Style>
-                </Label>
-
-                <!-- Поле ввода Email -->
-                <TextBox Text="{Binding UserData.Email, UpdateSourceTrigger=PropertyChanged}"
-        
-        Margin="0,0,0,5"
-        Padding="5">
-                    <TextBox.Style>
-                        <Style TargetType="TextBox">
-                            <!-- Базовый стиль (нормальное состояние)-->
-                            <Setter Property="BorderBrush" Value="Gray"/>
-                            <Setter Property="BorderThickness" Value="1"/>
-
-                            <!-- Триггеры для разных состояний -->
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ValidationState}" Value="Error">
-                                    <Setter Property="BorderBrush" Value="Red"/>
-                                    <Setter Property="BorderThickness" Value="2"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding ValidationState}" Value="Success">
-                                    <Setter Property="BorderBrush" Value="Green"/>
-                                    <Setter Property="BorderThickness" Value="2"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
+               
+                <Label Content="Email:" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding UserData.Email, UpdateSourceTrigger=PropertyChanged}" 
+                         BorderBrush="{Binding Path=EmailValidationState,
+                   Converter={StaticResource StateToBrushConverter}}"
+                    Margin="0,0,0,5"
+                    Padding="5">
+                  
                 </TextBox>
-
-                <!-- Сообщение об ошибке -->
                 <Label
-        Content="{Binding EmailError}"
-        FontSize="11"
-        HorizontalAlignment="Left"
-        Visibility="{Binding EmailError, Converter={StaticResource StringToVisibilityConverter}}">
-                    <!-- Можно добавить стиль для сообщения об ошибке, если нужно -->
+                    Content="{Binding EmailError}"
+                    Foreground="{Binding Path=EmailValidationState,
+                   Converter={StaticResource StateToBrushConverter}}"
+                    FontSize="11"
+                    HorizontalAlignment="Left"                                              >
+                  
                 </Label>
             </StackPanel>
 
@@ -97,17 +62,25 @@
 
             <!-- PASSWORD -->
             
+            
             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+                
+
                 <Label  Content="Пароль:" VerticalAlignment="Center"/>
-                <TextBox
+               
+                     <TextBox
                 x:Name="passwordTextBox"
                 Text="{Binding UserData.Password, UpdateSourceTrigger=PropertyChanged}"
-                Style="{StaticResource ValidatedTextBoxStyle}"
+                     BorderBrush="{Binding Path=PasswordValidationState,
+                     Converter={StaticResource StateToBrushConverter}}"
                 Margin="0,0,0,5"
                 Padding="5"/>
+                    
+               
                 <Label
                 Content="{Binding PasswordError}"
-                
+                 Foreground="{Binding Path=PasswordValidationState,
+                 Converter={StaticResource StateToBrushConverter}}"
                 FontSize="11"
                 HorizontalAlignment="Left"
                />
@@ -116,15 +89,18 @@
             <!-- USER NAME -->
             
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+               
                 <Label  Content="Имя пользователя:" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding UserData.UserName, UpdateSourceTrigger=PropertyChanged}"
-               
+                BorderBrush="{Binding Path=PasswordValidationState,
+ Converter={StaticResource StateToBrushConverter}}"
                 Margin="0,0,0,5"
                 Padding="5"/>
                 
                 <Label
                 Content="{Binding NameError}"
-                
+                 Foreground="{Binding Path=NameValidationState,
+Converter={StaticResource StateToBrushConverter}}"
                 FontSize="11"
                 HorizontalAlignment="Left"
                 />
@@ -133,34 +109,19 @@
             <!-- PHONE -->
            
             <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical" Margin="0,0,0,10">
+               
                 <Label  Content="Телефон:" VerticalAlignment="Center"/>
                 <TextBox
                 Text="{Binding UserData.PhoneNumber, UpdateSourceTrigger=PropertyChanged}"
                 Margin="0,0,0,5"
-                Padding="5">
-                    <TextBox.Style>
-                        <Style TargetType="TextBox">
-                            <!-- Базовый стиль (нормальное состояние)-->
-                            <Setter Property="BorderBrush" Value="Gray"/>
-                            <Setter Property="BorderThickness" Value="1"/>
-                            <!-- Триггеры для разных состояний -->
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ValidationState}" Value="Error">
-                                    <Setter Property="BorderBrush" Value="Red"/>
-                                    <Setter Property="BorderThickness" Value="2"/>
-                                </DataTrigger>
-                                <!-- Можно добавить другие состояния -->
-                                <DataTrigger Binding="{Binding ValidationState}" Value="Success">
-                                    <Setter Property="BorderBrush" Value="Green"/>
-                                    <Setter Property="BorderThickness" Value="2"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
-                    <Label
+                Padding="5" BorderBrush="{Binding Path=PhoneValidationState,
+                          Converter={StaticResource StateToBrushConverter}}"/>
+
+                <Label
                 Content="{Binding PhoneError}"
-               
+                Foreground="{Binding Path=PhoneValidationState,
+                        Converter={StaticResource StateToBrushConverter}}"
+              
                 FontSize="11"
                 HorizontalAlignment="Left"
                 />

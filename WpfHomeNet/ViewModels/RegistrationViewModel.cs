@@ -1,4 +1,5 @@
-﻿using HomeNetCore.Data.Interfaces;
+﻿using HomeNetCore.Data.Enums;
+using HomeNetCore.Data.Interfaces;
 using HomeNetCore.Services;
 using HomeNetCore.Services.UsersServices;
 using System.ComponentModel;
@@ -48,6 +49,72 @@ namespace WpfHomeNet.ViewModels
              set => SetField(ref _phoneError, value);
         }
 
+
+
+
+
+        public ValidationState EmailValidationState
+        {
+            get => _emailValidationState;
+            set
+            {
+
+                _emailValidationState = value;
+                OnPropertyChanged(nameof(EmailValidationState));
+
+            }
+
+
+        }
+
+        public ValidationState PasswordValidationState
+        {
+            get => _passwordValidationState;
+            set
+            {
+
+                _passwordValidationState = value;
+                OnPropertyChanged(nameof(PasswordValidationState));
+
+            }
+
+
+        }
+
+        public ValidationState NameValidationState
+        {
+            get => _nameValidationState;
+            set
+            {
+
+                _nameValidationState = value;
+                OnPropertyChanged(nameof(NameValidationState));
+
+            }
+
+        }
+
+        public ValidationState PhoneValidationState
+        {
+            get => _phoneValidationState;
+            set
+            {
+
+                _phoneValidationState = value;
+                OnPropertyChanged(nameof(PhoneValidationState));
+
+            }
+        }
+
+        // Приватные поля
+        private ValidationState _emailValidationState = ValidationState.None;
+        private ValidationState _passwordValidationState = ValidationState.None;
+        private ValidationState _nameValidationState = ValidationState.None;
+        private ValidationState _phoneValidationState = ValidationState.None;
+
+
+      
+
         public RegistrationViewModel(IUserRepository userRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -58,6 +125,7 @@ namespace WpfHomeNet.ViewModels
                 canExecute: (obj) => true
             );
         }
+
 
         private async Task ExecuteRegisterCommand()
         {
@@ -79,18 +147,22 @@ namespace WpfHomeNet.ViewModels
                         {
                             case TypeField.EmailType:
                                 EmailError = result.Message;
+                                EmailValidationState = result.State;
                                 break;
 
                             case TypeField.PasswordType:
                                 PasswordError = result.Message;
+                                PasswordValidationState = result.State;
                                 break;
 
                             case TypeField.NameType:
                                 NameError = result.Message;
+                                NameValidationState = result.State;
                                 break;
 
                             case TypeField.PhoneType:
                                 PhoneError = result.Message;
+                                PhoneValidationState = result.State;
                                 break;
                         }
                     }
