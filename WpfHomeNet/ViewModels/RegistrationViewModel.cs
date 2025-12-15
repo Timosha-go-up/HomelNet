@@ -38,6 +38,8 @@ namespace WpfHomeNet.ViewModels
                     ResetRegistrationForm();
                     InitializeInitialHints();
                     ControlVisibility = Visibility.Collapsed;
+                   
+                   
                 },
                 canExecute: (obj) => true
             );

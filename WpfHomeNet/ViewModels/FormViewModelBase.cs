@@ -31,7 +31,7 @@ namespace WpfHomeNet.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private bool _isOpen;
+        private bool _isOpen ;
         public bool IsOpen
         {
             get => _isOpen;

@@ -5,8 +5,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewmodels="clr-namespace:WpfHomeNet.ViewModels"
-       
+    xmlns:viewmodels="clr-namespace:WpfHomeNet.ViewModels"   
     mc:Ignorable="d"        
     WindowStyle="None"
     ResizeMode="CanResize"           
@@ -65,28 +64,9 @@
                        Foreground="Black"/>
             </Border>
 
-            <!-- Контейнер админ меню -->
-            <StackPanel x:Name="Menu" Visibility="Visible"
-                       Grid.Column="0" Grid.Row="1"
-                       Grid.RowSpan="3" Margin="0,0,0,0">
-                <Button Content="Test list Users"
-                        Click="AddUsersList_Click"  />
-                <Button Content="Добавить юзера"
-                        Click="AddUser_Click"/>
-                <Button x:Name="DeleteButton"
-                        Click="RemoveUser_Click"
-                        Content="Удалить юзера"/>
-                <Button x:Name="ShowButton" 
-                        Click="ShowUsers_Click"
-                        Content="Показать юзеров"/>
-                <Button Content="Обновить юзеров"
-                        Click="RefreshStatus_Click"/>
-                <Button x:Name="btnLogs"
-                        Click="ShowWindowLogs_Click"
-                        Content="Показать логи"/>
-            </StackPanel>
-
-           
+            <controls:AdminMenu Grid.Row="1"
+                                Grid.RowSpan="3"
+                                Visibility="Visible"/>
 
             <!-- Верхнее меню -->
             <StackPanel x:Name="UpperMenu" Visibility="Visible" 
@@ -97,10 +77,12 @@
                         Orientation="Horizontal"                        
                         Grid.ColumnSpan="2">
                 <Button MinWidth="120"   
-                         Command="{Binding ShowRegistrationCommand}"                        
+                         Command="{Binding ToggleFormVisibilityCommand}"
+                        CommandParameter="{Binding RegistrationViewModel}"                      
                          Content="Регистрация" />
                 <Button Width="Auto"                       
-                         Command="{Binding ShowLoginCommand}"                       
+                        Command="{Binding ToggleFormVisibilityCommand}"
+                         CommandParameter="{Binding LoginViewModel}"                    
                          Content="Вход в профиль" 
                          MinWidth="120" />
             </StackPanel>

@@ -7,25 +7,30 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="200">
 
-    <ContentControl 
-     Style="{StaticResource TripleBorderStyle}">
 
-        <StackPanel x:Name="Menu" Visibility="Visible">
+
+    <StackPanel x:Name="Menu" Visibility="Visible"  IsEnabled="{Binding IsButtonsPanelEnabled}"> 
+            
+             <Button Content="User Profile"
+               Command="{Binding ToggleFormVisibilityCommand}"
+               CommandParameter="{Binding LoginViewModel}" />
                        
-            <Button Content="Test list Users"/>
+             <Button Content="Test list Users"/>
 
-            <Button Content="Добавить юзера" />
-
-            <Button x:Name="DeleteUsers" Content="Удалить юзера"/>
+             <Button Content="Добавить юзера"
+                Command="{Binding ToggleFormVisibilityCommand}"
+                CommandParameter="{Binding RegistrationViewModel}"  /> 
+        
+             <Button x:Name="DeleteUsers" Content="Удалить юзера"/>
+      
+             <Button x:Name="ShowUsers" Content="Показать юзеров"/>
             
-            <Button x:Name="ShowUsers" Content="Показать юзеров"/>
-            
-            <Button Content="Обновить юзеров" />
+             <Button Content="Обновить юзеров" />
                         
-            <Button x:Name="ShowLogs" Content="Показать логи"/>           
+             <Button x:Name="ShowLogs" Content="Показать логи"/>           
               
         </StackPanel>
 
 
-    </ContentControl>
+    
 </UserControl>

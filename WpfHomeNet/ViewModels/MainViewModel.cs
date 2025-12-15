@@ -39,32 +39,19 @@ namespace WpfHomeNet.ViewModels
 
 
 
-
-
-        public ICommand ShowRegistrationCommand => new RelayCommand(_ =>
+        public ICommand ToggleFormVisibilityCommand => new RelayCommand(parameter =>
         {
-            if (RegistrationViewModel != null)
+            // Приводим параметр к нужному типу
+            var vm = parameter as FormViewModelBase;
+
+            if (vm?.ControlVisibility != null)
             {
-                RegistrationViewModel.ControlVisibility =
-                    RegistrationViewModel.ControlVisibility == Visibility.Collapsed
-                        ? Visibility.Visible
-                        : Visibility.Collapsed;
-               
-                OnPropertyChanged(nameof(IsButtonsPanelEnabled));
+                vm.ControlVisibility = vm.ControlVisibility == Visibility.Collapsed
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
         });
 
-        public ICommand ShowLoginCommand => new RelayCommand(_ =>
-        {
-            if (LoginViewModel != null)
-            {
-                LoginViewModel.ControlVisibility =
-                    LoginViewModel.ControlVisibility == Visibility.Collapsed
-                        ? Visibility.Visible
-                        : Visibility.Collapsed;                
-                OnPropertyChanged(nameof(IsButtonsPanelEnabled));
-            }
-        });
 
 
         public bool IsButtonsPanelEnabled =>
