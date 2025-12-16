@@ -139,12 +139,16 @@ namespace HomeSocialNetwork
 
                 _logger.LogInformation("Инициализация завершена");
 
-               //LogWindow logWindow = new LogWindow(_logger);
+                LogWindow logWindow = new LogWindow(_logger);
 
-               // _logQueueManager = new LogQueueManager(logWindow,20);
+                _logQueueManager = new LogQueueManager(logWindow, 20);Logger.SetOutput(_logQueueManager.WriteLog);
+
+                _logQueueManager.SetReady();
+
+                logWindow.Show();
 
 
-               // logWindow.Show();
+                
             }
             catch (Exception ex)
             {
