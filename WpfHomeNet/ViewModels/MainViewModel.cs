@@ -11,9 +11,10 @@ namespace WpfHomeNet.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged, IStatusUpdater
     {
-        public RegistrationViewModel RegistrationViewModel { get; private set; }
+        public RegistrationViewModel RegistrationViewModel { get;  set; }
+        public LoginViewModel LoginViewModel { get;  set; }
         public LogWindow LogWindow { get;  set; }
-        public LoginViewModel LoginViewModel { get; private set; }
+        
         public event PropertyChangedEventHandler? PropertyChanged;
         private ObservableCollection<UserEntity> _users = [];
         private string _statusText = string.Empty;

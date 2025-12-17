@@ -14,7 +14,7 @@ namespace WpfHomeNet
         private MainViewModel? _mainVm;
 
         public MainWindow()
-        {                             
+        {   InitializeComponent();                            
             var app = (App)Application.Current;
 
             _userService = app.UserService;
@@ -27,7 +27,7 @@ namespace WpfHomeNet
 
             DataContext = _mainVm;   
 
-            InitializeComponent(); 
+           
            
         }
 

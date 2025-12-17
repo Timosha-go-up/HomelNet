@@ -47,8 +47,10 @@ namespace WpfHomeNet.ViewModels
             set => SetField(ref _isOpen, value);
         }
 
+
+
         
-        private bool _isComplete;
+        private bool _isComplete = false;
         public bool IsComplete
         {
             get => _isComplete;

@@ -9,9 +9,11 @@ namespace WpfHomeNet.ViewModels
 {
     public class AdminMenuViewModel : INotifyPropertyChanged
     {
-        private LogWindow _logWindow;
+       
         private Window _mainWindow;
+        private MainViewModel _mainViewModel;
         
+
         private readonly LogQueueManager _logQueueManager;
         private bool _isSubscribedToMainWindowEvents;
         // Команда-переключатель
@@ -29,25 +31,43 @@ namespace WpfHomeNet.ViewModels
             }
         }
 
-        public AdminMenuViewModel(LogWindow logWindow, Window mainWindow, LogQueueManager logQueueManager)
+        public AdminMenuViewModel( Window mainWindow, LogQueueManager logQueueManager
+            )
         {
-            _logWindow = logWindow;
+           
 
             _logQueueManager = logQueueManager;
 
             _mainWindow = mainWindow;
 
-
-
             ToggleLogWindowCommand = new RelayCommand(ExecuteToggleLogWindow);
+
+       
         }
+
+
+        public void ConnectToMainViewModel(MainViewModel mainVm)
+        {
+            if (mainVm == null)
+                throw new ArgumentNullException(nameof(mainVm));
+
+            _mainViewModel = mainVm;
+        }
+
+
+
+
+
+
+
+
 
         private void ExecuteToggleLogWindow(object? parameter)
         {
-            if (_logWindow.Visibility == Visibility.Visible)
+            if (_mainViewModel.LogWindow.Visibility == Visibility.Visible)
             {
                 // Скрываем окно
-                _logWindow.Hide();
+                _mainViewModel.LogWindow.Hide();
                 // Логика при скрытии
                 ToggleButtonText = "Показать лог"; // Меняем текст кнопки
 
@@ -69,7 +89,7 @@ namespace WpfHomeNet.ViewModels
                 }
 
                 PositionLogWindow();
-                _logWindow.Show();
+                _mainViewModel.LogWindow.Show();
                 _logQueueManager.SetReady();
                 ToggleButtonText = "Скрыть лог";
             }
@@ -86,7 +106,7 @@ namespace WpfHomeNet.ViewModels
             _mainWindow.SizeChanged += OnMainWindowResized;
 
             // Если лог-окно уже видно — сразу позиционируем
-            if (_logWindow.Visibility == Visibility.Visible)
+            if (_mainViewModel.LogWindow.Visibility == Visibility.Visible)
                 PositionLogWindow();
         }
 
@@ -104,20 +124,20 @@ namespace WpfHomeNet.ViewModels
 
         private void PositionLogWindow()
         {
-            _logWindow.Left = _mainWindow.Left + _mainWindow.Width +5;
-            _logWindow.Top = _mainWindow.Top;
-            _logWindow.Height = _mainWindow.Height;
-            _logWindow.Width = 600;
+            _mainViewModel.LogWindow.Left = _mainWindow.Left + _mainWindow.Width +5;
+            _mainViewModel.LogWindow.Top = _mainWindow.Top;
+            _mainViewModel.LogWindow.Height = _mainWindow.Height;
+            _mainViewModel.LogWindow.Width = 600;
         }
 
         private void OnMainWindowMoved(object sender, EventArgs e)
         {
-            if (_logWindow.Visibility == Visibility.Visible) PositionLogWindow();
+            if (_mainViewModel.LogWindow.Visibility == Visibility.Visible) PositionLogWindow();
         }
 
         private void OnMainWindowResized(object sender, SizeChangedEventArgs e)
         {
-            if (_logWindow.Visibility == Visibility.Visible) PositionLogWindow();
+            if (_mainViewModel.LogWindow.Visibility == Visibility.Visible) PositionLogWindow();
         }
 
 

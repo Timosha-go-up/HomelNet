@@ -81,11 +81,16 @@ namespace WpfHomeNet.ViewModels
         private void ResetRegistrationForm()
         {
             UserData = new();
+
             OnPropertyChanged(nameof(UserData));
+
             StatusMessage = string.Empty;
-            ValidationResults = new Dictionary<TypeField, ValidationResult>();          
-            SubmitButtonText = "Зарегистрироваться";
-            IsComplete = false;
+
+            ValidationResults = new Dictionary<TypeField, ValidationResult>();       
+            
+            SubmitButtonText = "Зарегистрироваться"; 
+
+            IsComplete = false;           
         }
 
         private async Task ExecuteRegisterCommand()
@@ -102,10 +107,9 @@ namespace WpfHomeNet.ViewModels
 
                 if (IsComplete)
                 {
-                    StatusMessage = "Вы успешно зарегистрированы";
+                    StatusMessage = "Вы успешно зарегистрированы";   
                     
-                    IsComplete = true;
-                    SubmitButtonText = "Завершить";
+                    SubmitButtonText = "Завершить";     
                 }
                 else
                 {

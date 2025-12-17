@@ -145,11 +145,16 @@ namespace HomeSocialNetwork
                 // 7. Создаём VM
                 _registrationViewModel = new RegistrationViewModel(_userService);
 
+
                 _loginViewModel = new LoginViewModel(_userService);
 
-              _adminMenuViewModel  = new AdminMenuViewModel(LogWindow,_mainWindow,_logQueueManager);
+                _adminMenuViewModel  = new AdminMenuViewModel(_mainWindow,_logQueueManager);
 
-               _mainVm = new MainViewModel(UserService, _logger, RegistrationViewModel, LoginViewModel,AdminMenuViewModel,LogWindow);
+                _mainVm = new MainViewModel(UserService, _logger, RegistrationViewModel, LoginViewModel,AdminMenuViewModel,LogWindow);
+
+                _adminMenuViewModel.ConnectToMainViewModel(_mainVm);
+
+               
                 
                 _logger.LogInformation("Инициализация завершена");
                 
