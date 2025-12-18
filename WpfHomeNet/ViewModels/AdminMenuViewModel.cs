@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
-using WpfHomeNet.Controls;
-using WpfHomeNet.UiHelpers;
 
 
 
@@ -11,16 +8,21 @@ namespace WpfHomeNet.ViewModels
     public class AdminMenuViewModel : INotifyPropertyChanged
     {       
         private MainViewModel? _mainVm;
-        public MainViewModel MainVm => _mainVm ?? throw new InvalidOperationException("_mainVm не инициализирован");
-       
-        private readonly LogQueueManager _logQueueManager;
 
-  
+        public MainViewModel MainVm
+        {
+            get => _mainVm ?? throw new InvalidOperationException($"{nameof(_mainVm)} не инициализирован");
+            set => _mainVm = value;
+        }
+
+       
+       
         public ICommand ToggleLogWindowCommand { get; }
 
 
         // Свойство для текста кнопки
         private string _toggleButtonText = "Показать лог";
+
         public string ToggleButtonText
         {
             get => _toggleButtonText;
@@ -31,28 +33,19 @@ namespace WpfHomeNet.ViewModels
             }
         }
 
-        public AdminMenuViewModel( LogQueueManager logQueueManager)
+        public AdminMenuViewModel()
            
-        {
-            _logQueueManager = logQueueManager;
-
-            ToggleLogWindowCommand = new RelayCommand(ExecuteToggleLogWindow); 
+        {           
+            ToggleLogWindowCommand = new RelayCommand(ExecuteToggleLogWindow);        
         }
 
 
-        public void ConnectToMainViewModel(MainViewModel mainVm) => _mainVm = mainVm;
+        public void ConnectToMainViewModel(MainViewModel mainVm) => MainVm = mainVm;
        
         private void ExecuteToggleLogWindow(object? parameter)
-        {           
-            MainVm.ToggleLogWindow();
-
-            _logQueueManager.SetReady();
- 
-            ToggleButtonText = MainVm.LogVm.IsVisible
-                ? "Скрыть лог"
-                : "Показать лог";
+        {
+            MainVm.LogVm.ShowLogWindowDelegate?.Invoke();
         }
-
 
 
         public event PropertyChangedEventHandler? PropertyChanged;

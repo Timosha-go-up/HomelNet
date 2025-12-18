@@ -88,7 +88,7 @@ namespace HomeSocialNetwork
 
                 AdminMenuViewModel.ConnectToMainViewModel(MainVm);
 
-                _registrationViewModel.ConnectToMainViewModel(MainVm);
+               RegistrationViewModel.ConnectToMainViewModel(MainVm);
 
                 _mainWindow.Show();
             }
@@ -156,9 +156,9 @@ namespace HomeSocialNetwork
 
                 _loginViewModel = new LoginViewModel(_userService);
 
-                _logViewModel = new LogViewModel();
+                _logViewModel = new LogViewModel(LogQueueManager);
 
-                _adminMenuViewModel  = new AdminMenuViewModel(LogQueueManager);
+                _adminMenuViewModel  = new AdminMenuViewModel();
 
                 _mainVm = new MainViewModel(UserService, Logger, RegistrationViewModel, LoginViewModel,AdminMenuViewModel,LogWindow,_logViewModel);
 

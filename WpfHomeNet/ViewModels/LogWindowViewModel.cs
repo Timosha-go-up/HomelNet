@@ -1,18 +1,24 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using WpfHomeNet.UiHelpers;
 
 namespace WpfHomeNet.ViewModels
 {
     public class LogViewModel : INotifyPropertyChanged, IDisposable
     {
+        LogQueueManager _queueManager;
         public MainViewModel MainVm
         {
             get => _mainVm ?? throw new InvalidOperationException($"{nameof(_mainVm)} не инициализирован");
             set => _mainVm = value;
         }
 
+        public Action? ShowLogWindowDelegate { get; private set; }
+        public LogViewModel(LogQueueManager logQueueManager) => _queueManager = logQueueManager;
+
         private  MainViewModel? _mainVm;
+
         private bool _isSubscribed;
 
         public double Offset { get; set; } = 5;
@@ -29,6 +35,8 @@ namespace WpfHomeNet.ViewModels
                 MainVm.MainWindow.SizeChanged += OnMainWindowResized;
                 _isSubscribed = true;
             }
+
+            ShowLogWindowDelegate = ToggleLogWindow;
         }
 
         public void PositionLogWindow()
@@ -50,6 +58,33 @@ namespace WpfHomeNet.ViewModels
         public void Show() => MainVm.LogWindow.Show();
         public void Hide() => MainVm.LogWindow.Hide();
         public bool IsVisible => MainVm.LogWindow.Visibility == Visibility.Visible;
+
+
+
+        private void ToggleLogWindow()
+        {
+            if (IsVisible)
+            {
+                Hide();
+
+               MainVm.AdminMenuViewModel.ToggleButtonText = "Показать лог";
+            }
+
+            else
+            {
+                PositionLogWindow(); 
+                
+                Show();
+                _queueManager.SetReady();
+
+                MainVm.AdminMenuViewModel.ToggleButtonText ="Скрыть лог" ;
+            }
+
+        }
+
+
+
+      
 
         public void Dispose()
         {

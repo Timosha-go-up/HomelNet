@@ -11,7 +11,7 @@ namespace WpfHomeNet.ViewModels
     public class MainViewModel : INotifyPropertyChanged
     {
 
-        public Action<UserEntity?>? AddUserAction { get; private set; }   
+        public Action<UserEntity?>? AddUserAction { get; private set; }
         public RegistrationViewModel RegistrationViewModel { get; set; }
         public LoginViewModel LoginViewModel { get; set; }
         public LogWindow LogWindow { get; set; }
@@ -27,6 +27,7 @@ namespace WpfHomeNet.ViewModels
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
         private ObservableCollection<UserEntity> _users = new ObservableCollection<UserEntity>();
 
         private readonly UserService userService;
@@ -80,22 +81,10 @@ namespace WpfHomeNet.ViewModels
             RegistrationViewModel.PropertyChanged += OnChildVmPropertyChanged;
             LoginViewModel.PropertyChanged += OnChildVmPropertyChanged;
 
-
         }
 
+         public void ConnectToMainWindow(MainWindow mainWindow) => MainWindow = mainWindow;
 
-        private ObservableCollection<UserEntity> Users
-        {
-            get => _users;
-            set
-            {
-                if (_users == value) return;
-                _users = value;
-                OnPropertyChanged(nameof(Users));
-
-
-            }
-        }
 
         private async Task UpdateStatusText(string text)
         {
@@ -116,27 +105,10 @@ namespace WpfHomeNet.ViewModels
             Users = new ObservableCollection<UserEntity>(usersList);
         }
 
-        public void ConnectToMainWindow(MainWindow mainWindow) => MainWindow = mainWindow;
+        
 
 
-        public void ToggleLogWindow()
-        {
-            if (LogVm.IsVisible)
-            {
-                LogVm.Hide();
-            }
-
-            else
-            {
-                LogVm.PositionLogWindow();
-                LogVm.Show();
-            }
-
-        }
-
-        public void Dispose() => LogVm?.Dispose();
-
-
+       
 
         public ICommand ToggleFormVisibilityCommand => new RelayCommand(parameter =>
         {
@@ -150,7 +122,6 @@ namespace WpfHomeNet.ViewModels
                     : Visibility.Collapsed;
             }
         });
-
 
 
         public bool IsButtonsPanelEnabled =>
@@ -168,8 +139,18 @@ namespace WpfHomeNet.ViewModels
         }
 
 
+        private ObservableCollection<UserEntity> Users
+        {
+            get => _users;
+            set
+            {                
+                _users = value;
+                OnPropertyChanged(nameof(Users));
+            }
+        }
 
-        private string _statusText;
+
+        private string _statusText = string.Empty;
         public string StatusText
         {
             get => _statusText;
@@ -181,13 +162,8 @@ namespace WpfHomeNet.ViewModels
         }
 
 
-
-
-
-
-
-
         public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public void Dispose() => LogVm?.Dispose();
     }
 }
 
