@@ -14,10 +14,10 @@ namespace WpfHomeNet.ViewModels
             set => _mainVm = value;
         }
 
-        public Action? ShowLogWindowDelegate { get; private set; }
+        public Func<LogWindowState>? ShowLogWindowDelegate { get; private set; }
         public LogViewModel(LogQueueManager logQueueManager) => _queueManager = logQueueManager;
 
-        private  MainViewModel? _mainVm;
+        private MainViewModel? _mainVm;
 
         private bool _isSubscribed;
 
@@ -26,9 +26,17 @@ namespace WpfHomeNet.ViewModels
         public void ConnectToMainViewModel(MainViewModel mainVm)
         {
             MainVm = mainVm;
-            
-            PositionLogWindow();
 
+            PositionLogWindow();
+            StartBinding();
+
+
+            ShowLogWindowDelegate = ToggleLogWindow;
+        }
+
+
+        private void StartBinding()
+        {
             if (!_isSubscribed)
             {
                 MainVm.MainWindow.LocationChanged += OnMainWindowMoved;
@@ -36,15 +44,12 @@ namespace WpfHomeNet.ViewModels
                 _isSubscribed = true;
             }
 
-            ShowLogWindowDelegate = ToggleLogWindow;
         }
 
-        public void PositionLogWindow()
-        {
-            //if (_mainVm.LogWindow.Visibility != Visibility.Visible) return;
-
+        private void PositionLogWindow()
+        {          
             var mainWindow = MainVm.MainWindow;
-            if ( !mainWindow.IsLoaded) return;
+            if (!mainWindow.IsLoaded) return;
 
             MainVm.LogWindow.Left = mainWindow.Left + mainWindow.Width + Offset;
             MainVm.LogWindow.Top = mainWindow.Top;
@@ -61,30 +66,26 @@ namespace WpfHomeNet.ViewModels
 
 
 
-        private void ToggleLogWindow()
+        private LogWindowState ToggleLogWindow()
         {
             if (IsVisible)
             {
                 Hide();
-
-               MainVm.AdminMenuViewModel.ToggleButtonText = "Показать лог";
+                return LogWindowState.Hidden;
             }
-
             else
             {
-                PositionLogWindow(); 
-                
+                PositionLogWindow();
                 Show();
                 _queueManager.SetReady();
-
-                MainVm.AdminMenuViewModel.ToggleButtonText ="Скрыть лог" ;
+                return LogWindowState.Visible;
             }
-
         }
 
+        public enum LogWindowState { Visible, Hidden }
 
 
-      
+
 
         public void Dispose()
         {

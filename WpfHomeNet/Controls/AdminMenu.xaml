@@ -26,7 +26,7 @@
               />
         
         
-        <Button Content="Test list Users"/>
+             <Button Content="Test list Users"/>
 
              <Button Content="Добавить юзера"                     
               Command="{Binding DataContext.ToggleFormVisibilityCommand,
@@ -38,10 +38,11 @@
               RelativeSource={RelativeSource AncestorType=Window}}"/> 
         
              <Button x:Name="DeleteUsers" Content="Удалить юзера"/>
-      
-             <Button x:Name="ShowUsers" Content="Показать юзеров"/>
+
+        <Button x:Name="ShowUsers" Content="{Binding TableButtonText}"                     
+              Command="{Binding UserTableViewCommand}"/>
             
-             <Button Content="Обновить юзеров" />
+            
                         
              <Button x:Name="ShowLogs" 
               Command="{Binding ToggleLogWindowCommand}"     

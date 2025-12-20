@@ -3,6 +3,7 @@ using HomeNetCore.Models;
 using HomeNetCore.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
@@ -105,10 +106,27 @@ namespace WpfHomeNet.ViewModels
             Users = new ObservableCollection<UserEntity>(usersList);
         }
 
-        
 
 
-       
+        private Visibility _panelVisibility = Visibility.Collapsed;
+        public Visibility PanelVisibility
+        {
+            get => _panelVisibility;
+            set => SetField(ref _panelVisibility, value);
+        }
+
+        protected bool SetField<T>(
+           ref T field,
+           T value,
+           [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
 
         public ICommand ToggleFormVisibilityCommand => new RelayCommand(parameter =>
         {
@@ -117,6 +135,7 @@ namespace WpfHomeNet.ViewModels
 
             if (vm?.ControlVisibility != null)
             {
+                if (PanelVisibility == Visibility.Visible) return;
                 vm.ControlVisibility = vm.ControlVisibility == Visibility.Collapsed
                     ? Visibility.Visible
                     : Visibility.Collapsed;
@@ -139,7 +158,7 @@ namespace WpfHomeNet.ViewModels
         }
 
 
-        private ObservableCollection<UserEntity> Users
+        public ObservableCollection<UserEntity> Users
         {
             get => _users;
             set
